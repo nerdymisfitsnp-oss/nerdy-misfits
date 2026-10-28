@@ -555,18 +555,8 @@
     showToast(`🎨 Inky added "${studioState.title}" to your Stash!`);
   };
 
-  // Cart State (Starts with a Hatchling in the Stash)
-  let cart = [
-    {
-      uid: 'init-1',
-      id: 'M3W3KDERU2FU2JFHIBCZXY5V',
-      name: 'Hatchling',
-      price: 1.0,
-      image: 'https://152824795.cdn6.editmysite.com/uploads/1/5/2/8/152824795/GFJYCV7XFM3LI6PZHVSSERT7.jpeg?width=640',
-      meta: 'As Pictured • Ready to Ship',
-      qty: 1
-    }
-  ];
+  // Cart State (Starts empty each time visited)
+  let cart = [];
 
   document.getElementById('openCartBtn').onclick = () => toggleCartDrawer(true);
 
