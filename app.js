@@ -555,14 +555,14 @@
     showToast(`🎨 Inky added "${studioState.title}" to your Stash!`);
   };
 
-  // Cart State
+  // Cart State (Starts with a Hatchling in the Stash)
   let cart = [
     {
       uid: 'init-1',
-      id: '4X5S4JAOITI2OL7WAZWEBNY5',
-      name: 'Butterfly fae dragon',
-      price: 15.0,
-      image: 'https://140844618.cdn6.editmysite.com/uploads/1/4/0/8/140844618/B5EFYOVICPAOPGMHNR2BCRSC.jpeg?width=640&optimize=medium',
+      id: 'M3W3KDERU2FU2JFHIBCZXY5V',
+      name: 'Hatchling',
+      price: 1.0,
+      image: 'https://152824795.cdn6.editmysite.com/uploads/1/5/2/8/152824795/GFJYCV7XFM3LI6PZHVSSERT7.jpeg?width=640',
       meta: 'As Pictured • Ready to Ship',
       qty: 1
     }
