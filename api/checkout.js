@@ -48,7 +48,7 @@ export default async function handler(req, res) {
         error: 'Could not determine Square Location ID.'
       });
     }
-    const { items = [], fulfillment = 'Free US Shipping' } = req.body || {};
+    const { items = [], fulfillment = 'US Shipping' } = req.body || {};
 
     if (!items.length) {
       return res.status(400).json({ error: 'Cart is empty.' });

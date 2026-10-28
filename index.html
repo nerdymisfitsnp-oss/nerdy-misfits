@@ -43,12 +43,12 @@
         <div id="searchDropdown" class="search-dropdown"></div>
       </div>
 
-      <!-- Free Shipping Pill, Cake? Button & Stash Cart -->
+      <!-- Pickup Pill, Cake? Button & Stash Cart -->
       <div class="header-right-actions">
         <button type="button" id="cakeHeaderBtn" class="btn-cake-pill" onclick="toggleCakeSong()" title="The Cake Is Not A Lie — Play Portal: Still Alive">
           <span>🎂 Cake?</span>
         </button>
-        <span class="free-ship-pill" id="headerFulfillmentPill">🚚 Free US Shipping &amp; SWFL Pickup</span>
+        <span class="free-ship-pill" id="headerFulfillmentPill">📍 SWFL Market Pickup &amp; US Shipping</span>
         <button id="openCartBtn" class="stash-cart-btn">
           <span>🎒 My Stash</span>
           <span id="cartCountBadge" class="stash-count">0</span>
@@ -853,7 +853,7 @@
 
       <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:0.8rem;color:#969cb5;">
         <span>© 2026 Nerdy Misfits (2385 Mauve Terrace, North Port, FL 34286 • nerdymisfitsnp@gmail.com)</span>
-        <span>Apple Pay • Google Pay • Cash App Pay • Visa • Mastercard • Free US Shipping</span>
+        <span>Apple Pay • Google Pay • Cash App Pay • Visa • Mastercard</span>
       </div>
     </div>
   </footer>
@@ -913,10 +913,10 @@
         <!-- Fulfillment Selector -->
         <div style="margin-bottom:12px;">
           <label style="font-size:0.74rem;font-weight:700;color:var(--ink-secondary);display:block;margin-bottom:4px;">
-            Delivery or SWFL Booth Pickup ($0.00):
+            Delivery or SWFL Booth Pickup:
           </label>
           <select id="cartFulfillmentSelect" class="friendly-select" style="width:100%;" onchange="setPickup(this.value)">
-            <option value="🚚 Free US Shipping">🚚 Free US Shipping (North Port Workshop)</option>
+            <option value="🚚 US Shipping">🚚 US Shipping (North Port Workshop)</option>
             <option value="Thu Oct 29: The Market on Dearborn (Englewood)">📍 Thu Oct 29 (9a-1p): The Market on Dearborn — Englewood</option>
             <option value="Thu Oct 29: Imagine School Trunk or Treat (North Port)">🎃 Thu Oct 29 (5p-7p): Imagine School Trunk or Treat — North Port</option>
             <option value="Sat Oct 31: Miss Venice Fastpitch (Venice)">🥎 Sat Oct 31 (8a-3p): Miss Venice Fastpitch — Venice</option>
@@ -931,7 +931,7 @@
 
       <div style="border-top:2px solid var(--border-warm);padding-top:14px;margin-top:12px;">
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">
-          <span style="font-weight:800;">Total (Free Shipping):</span>
+          <span style="font-weight:800;">Subtotal:</span>
           <span id="cartSubtotalText" style="font-family:var(--font-mono);font-size:1.5rem;font-weight:900;color:var(--glitch-green);">$0.00</span>
         </div>
         <button id="squareCheckoutBtn" class="btn-friendly-primary" style="width:100%;justify-content:center;" onclick="handleSquareCheckout()">
