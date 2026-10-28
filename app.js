@@ -753,4 +753,31 @@
 
   initAllViews();
   renderCart();
+
+  // Automatically sync live stock & prices from Square (/api/catalog) in the background
+  fetch('/api/catalog')
+    .then((r) => (r.ok ? r.json() : null))
+    .then((live) => {
+      if (!live || !Array.isArray(live.data)) return;
+      const byId = {};
+      live.data.forEach((item) => {
+        byId[item.site_product_id || item.id] = item;
+      });
+      allProducts.forEach((p) => {
+        const remote = byId[p.id];
+        if (remote) {
+          if (remote.inventory) {
+            p.outOfStock = Boolean(remote.inventory.all_variants_out_of_stock);
+            p.lowStock = Boolean(remote.inventory.lowest_IS_low_stock);
+            p.stock = remote.inventory.total ?? p.stock;
+          }
+          if (remote.price && remote.price.regular_low_with_modifiers_subunits) {
+            p.price = remote.price.regular_low_with_modifiers_subunits / 100;
+            p.priceFormatted = remote.price.regular_low_with_modifiers_formatted || `$${p.price.toFixed(2)}`;
+          }
+        }
+      });
+      initAllViews();
+    })
+    .catch(() => {});
 })();
