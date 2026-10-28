@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nerdy Misfits | Weird is a Superpower — 3D Printed Creations</title>
+  <link rel="icon" type="image/png" href="assets/icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700;800&family=Outfit:wght@600;700;800;900&family=Permanent+Marker&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <!-- ====================================================================
+       1. TOP DARK FRAME HEADER (MATCHING THE MISFITS CREW SHEET)
+       ==================================================================== -->
+  <header class="top-sheet-header">
+    <div class="container header-top-row">
+      <!-- Brand Logo & Motto -->
+      <div class="brand-cluster" onclick="switchCrewTab('glitch')" title="Back to Glitch's Main Hub">
+        <img src="assets/official_logo.png" alt="Nerdy Misfits — There's One In All Of Us!" class="brand-sheet-logo" />
+        <div class="brand-tagline-box">
+          <div class="brand-superpower">THERE'S ONE IN ALL OF US!</div>
+          <div class="brand-subline">Weird is a superpower • Five misfits, one crew • North Port, FL</div>
+        </div>
+      </div>
+
+      <!-- Friendly Instant Search -->
+      <div class="header-search-wrap">
+        <div class="friendly-search-box">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8ce600" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          </svg>
+          <input
+            type="text"
+            id="globalSearchInput"
+            placeholder="Search 526 creations (Dragons, ACOTAR, Clickers, Frogs)..."
+            autocomplete="off"
+          />
+        </div>
+        <div id="searchDropdown" class="search-dropdown"></div>
+      </div>
+
+      <!-- Free Shipping Pill, Cake? Button & Stash Cart -->
+      <div class="header-right-actions">
+        <button type="button" id="cakeHeaderBtn" class="btn-cake-pill" onclick="toggleCakeSong()" title="The Cake Is Not A Lie — Play Portal: Still Alive">
+          <span>🎂 Cake?</span>
+        </button>
+        <span class="free-ship-pill" id="headerFulfillmentPill">🚚 Free US Shipping &amp; SWFL Pickup</span>
+        <button id="openCartBtn" class="stash-cart-btn">
+          <span>🎒 My Stash</span>
+          <span id="cartCountBadge" class="stash-count">1</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ==================================================================
+         2. THE GREMLIN CREW TAB BAR (GREMLINS REPRESENT EACH TAB!)
+         ================================================================== -->
+    <div class="crew-tabs-bar">
+      <div class="container">
+        <div class="crew-tabs-list" role="tablist">
+          <!-- Tab 1: Glitch -->
+          <button type="button" class="crew-tab-btn active" data-crew="glitch" onclick="switchCrewTab('glitch')">
+            <img src="assets/avatar_glitch.png" alt="Glitch" class="crew-tab-avatar" />
+            <div class="crew-tab-text">
+              <span class="crew-tab-who">🟢 GLITCH'S HUB</span>
+              <span class="crew-tab-what">Logo Circle &amp; Featured</span>
+            </div>
+          </button>
+
+          <!-- Tab 2: Pixel -->
+          <button type="button" class="crew-tab-btn" data-crew="pixel" onclick="switchCrewTab('pixel')">
+            <img src="assets/avatar_pixel.png" alt="Pixel" class="crew-tab-avatar" />
+            <div class="crew-tab-text">
+              <span class="crew-tab-who">🟣 PIXEL'S ARCADE</span>
+              <span class="crew-tab-what">Fidgets, Clickers &amp; Gaming</span>
+            </div>
+          </button>
+
+          <!-- Tab 3: Zap -->
+          <button type="button" class="crew-tab-btn" data-crew="zap" onclick="switchCrewTab('zap')">
+            <img src="assets/avatar_zap.png" alt="Zap" class="crew-tab-avatar" />
+            <div class="crew-tab-text">
+              <span class="crew-tab-who">⚡ ZAP'S BEAST LAIR</span>
+              <span class="crew-tab-what">Dragons, Dinos &amp; Animals</span>
+            </div>
+          </button>
+
+          <!-- Tab 4: Booksy -->
+          <button type="button" class="crew-tab-btn" data-crew="booksy" onclick="switchCrewTab('booksy')">
+            <img src="assets/avatar_booksy.png" alt="Booksy" class="crew-tab-avatar" />
+            <div class="crew-tab-text">
+              <span class="crew-tab-who">📚 BOOKSY'S NOOK</span>
+              <span class="crew-tab-what">BookTok, Decor &amp; Holidays</span>
+            </div>
+          </button>
+
+          <!-- Tab 5: Inky -->
+          <button type="button" class="crew-tab-btn" data-crew="inky" onclick="switchCrewTab('inky')">
+            <img src="assets/avatar_inky.png" alt="Inky" class="crew-tab-avatar" />
+            <div class="crew-tab-text">
+              <span class="crew-tab-who">🎨 INKY'S STUDIO</span>
+              <span class="crew-tab-what">Custom Prints &amp; Wall Art</span>
+            </div>
+          </button>
+
+          <!-- Tab 6: Markets & Full Catalog -->
+          <button type="button" class="crew-tab-btn" data-crew="markets" onclick="switchCrewTab('markets')">
+            <img src="assets/icon.png" alt="Nerdy Misfits Markets" class="crew-tab-avatar" style="background:#000;" />
+            <div class="crew-tab-text">
+              <span class="crew-tab-who">📍 MARKETS &amp; ALL</span>
+              <span class="crew-tab-what">SWFL Booths &amp; All 526</span>
+            </div>
+          </button>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ====================================================================
+       TAB 1: GLITCH'S HUB (CIRCLED AROUND THE LOGO + MEET THE CREW)
+       ==================================================================== -->
+  <main id="view-glitch" class="tab-view-panel active">
+    <div class="container">
+
+      <!-- HERO: GREMLINS CIRCLED AROUND THE NERDY MISFITS LOGO -->
+      <div class="hub-hero-grid">
+        <!-- Left: Circular Orbit Hub Around the Logo -->
+        <div class="logo-circle-stage">
+          <div class="orbit-dashed-ring"></div>
+
+          <!-- Center Logo Medallion -->
+          <div class="center-logo-hub" onclick="switchCrewTab('markets')" title="Click to browse all 526 creations">
+            <img src="assets/official_logo.png" alt="Nerdy Misfits — There's One In All Of Us!" />
+            <span class="center-logo-pill">Explore All 526 Prints →</span>
+          </div>
+
+          <!-- 12 O'Clock: GLITCH -->
+          <div class="orbit-gremlin-node glitch-node orbit-pos-top"
+               onmouseenter="previewCrewMember('glitch')"
+               onclick="switchCrewTab('glitch')">
+            <div class="orbit-avatar-ring">
+              <img src="assets/avatar_glitch.png" alt="Glitch" />
+            </div>
+            <span class="orbit-name-badge">GLITCH</span>
+            <span class="orbit-dept-label">Featured &amp; Crew</span>
+          </div>
+
+          <!-- 2 O'Clock: PIXEL -->
+          <div class="orbit-gremlin-node pixel-node orbit-pos-top-right"
+               onmouseenter="previewCrewMember('pixel')"
+               onclick="switchCrewTab('pixel')">
+            <div class="orbit-avatar-ring">
+              <img src="assets/avatar_pixel.png" alt="Pixel" />
+            </div>
+            <span class="orbit-name-badge">PIXEL</span>
+            <span class="orbit-dept-label">Fidgets &amp; Gaming</span>
+          </div>
+
+          <!-- 4:30 O'Clock: ZAP -->
+          <div class="orbit-gremlin-node zap-node orbit-pos-bot-right"
+               onmouseenter="previewCrewMember('zap')"
+               onclick="switchCrewTab('zap')">
+            <div class="orbit-avatar-ring">
+              <img src="assets/avatar_zap.png" alt="Zap" />
+            </div>
+            <span class="orbit-name-badge">ZAP</span>
+            <span class="orbit-dept-label">146 Dragons &amp; Beasts</span>
+          </div>
+
+          <!-- 7:30 O'Clock: BOOKSY -->
+          <div class="orbit-gremlin-node booksy-node orbit-pos-bot-left"
+               onmouseenter="previewCrewMember('booksy')"
+               onclick="switchCrewTab('booksy')">
+            <div class="orbit-avatar-ring">
+              <img src="assets/avatar_booksy.png" alt="Booksy" />
+            </div>
+            <span class="orbit-name-badge">BOOKSY</span>
+            <span class="orbit-dept-label">Bookish &amp; Home Decor</span>
+          </div>
+
+          <!-- 10 O'Clock: INKY -->
+          <div class="orbit-gremlin-node inky-node orbit-pos-top-left"
+               onmouseenter="previewCrewMember('inky')"
+               onclick="switchCrewTab('inky')">
+            <div class="orbit-avatar-ring">
+              <img src="assets/avatar_inky.png" alt="Inky" />
+            </div>
+            <span class="orbit-name-badge">INKY</span>
+            <span class="orbit-dept-label">Custom Prints &amp; Art</span>
+          </div>
+        </div>
+
+        <!-- Right: Interactive Gremlin Spotlight Card (Updates when hovering the circle!) -->
+        <div class="crew-spotlight-card" id="hubSpotlightCard">
+          <div class="spotlight-eyebrow">
+            <span>✨ HOVER OR CLICK ANY GREMLIN AROUND THE LOGO</span>
+          </div>
+
+          <div class="spotlight-flex">
+            <img id="spotImg" src="assets/crew_glitch.png" alt="Glitch" class="spotlight-character-img" />
+            <div>
+              <h1 id="spotName" class="spotlight-char-name" style="color:var(--glitch-green);">GLITCH</h1>
+              <div id="spotRole" class="spotlight-char-role">THE NERDY MISFIT • PIXEL BUDDY: BIT</div>
+              <div id="spotQuote" class="spotlight-quote-bubble">
+                “Welcome to the Nerdy Misfits workshop! Hover over any of our crew members circled around the logo—each of us runs our own tab of 3D-printed treasures!”
+              </div>
+            </div>
+          </div>
+
+          <div class="spotlight-stats-grid">
+            <div class="stat-mini-box">
+              <strong>Loves</strong>
+              <span id="spotLoves">Tech, video games, and late-night rabbit holes.</span>
+            </div>
+            <div class="stat-mini-box">
+              <strong>Special Power</strong>
+              <span id="spotPower">System Override — can hack, fix, or glitch anything.</span>
+            </div>
+          </div>
+
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+            <button id="spotActionBtn" class="btn-friendly-primary" onclick="switchCrewTab('pixel')">
+              <span>Explore Pixel's Arcade Next →</span>
+            </button>
+            <button class="btn-friendly-secondary" onclick="switchCrewTab('inky')">
+              <span>🎨 Custom Print Studio</span>
+            </button>
+            <button type="button" id="cakeHomeBtn" class="btn-cake-home" onclick="toggleCakeSong()">
+              <span>🎂 Cake?</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- FULL MISFITS CREW ROSTER (CLICK ANY CHARACTER TO OPEN THEIR TAB) -->
+      <section class="crew-roster-section">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+          <div>
+            <span class="host-pill">👾 THE MISFITS CREW</span>
+            <h2 style="font-family:var(--font-display);font-size:1.75rem;font-weight:900;margin-top:4px;">
+              Pick a Misfit Guide to Explore Their Shop Tab
+            </h2>
+          </div>
+          <p style="font-size:0.88rem;color:var(--ink-secondary);max-width:440px;">
+            We’re gamers, dreamers, readers, creators, and rebels. Click any crew member below to jump straight into their favorite 3D prints!
+          </p>
+        </div>
+
+        <div class="crew-roster-grid">
+          <!-- 1. Glitch -->
+          <div class="roster-char-card" onclick=" document.getElementById('glitchFeaturedAnchor').scrollIntoView({behavior:'smooth'})">
+            <div>
+              <div class="roster-sprite-wrap">
+                <img src="assets/crew_glitch.png" alt="Glitch — The Nerdy Misfit" />
+              </div>
+              <div class="roster-name" style="color:var(--glitch-green);">GLITCH</div>
+              <div class="roster-role">THE NERDY MISFIT</div>
+              <p class="roster-bio">Clever, curious, and always debugging the system. Curates our top workshop all-stars!</p>
+            </div>
+            <span class="roster-open-btn">★ Featured Picks ↓</span>
+          </div>
+
+          <!-- 2. Pixel -->
+          <div class="roster-char-card" onclick="switchCrewTab('pixel')">
+            <div>
+              <div class="roster-sprite-wrap">
+                <img src="assets/crew_pixel.png" alt="Pixel — The Game Goblin" />
+              </div>
+              <div class="roster-name" style="color:var(--pixel-purple);">PIXEL</div>
+              <div class="roster-role">THE GAME GOBLIN</div>
+              <p class="roster-bio">Speedrunner &amp; high-score chaser. Runs our Clickers, Fidgets, Keychains &amp; Dice Towers tab!</p>
+            </div>
+            <span class="roster-open-btn">Open Pixel's Tab →</span>
+          </div>
+
+          <!-- 3. Inky -->
+          <div class="roster-char-card" onclick="switchCrewTab('inky')">
+            <div>
+              <div class="roster-sprite-wrap">
+                <img src="assets/crew_inky.png" alt="Inky — The Creative Misfit" />
+              </div>
+              <div class="roster-name" style="color:var(--inky-blue);">INKY</div>
+              <div class="roster-role">THE CREATIVE MISFIT</div>
+              <p class="roster-bio">Artist &amp; story maker. Hosts our Custom 3D Print Studio &amp; HueForge Wall Art gallery!</p>
+            </div>
+            <span class="roster-open-btn">Open Inky's Tab →</span>
+          </div>
+
+          <!-- 4. Zap -->
+          <div class="roster-char-card" onclick="switchCrewTab('zap')">
+            <div>
+              <div class="roster-sprite-wrap">
+                <img src="assets/crew_zap.png" alt="Zap — The Tech Wizard" />
+              </div>
+              <div class="roster-name" style="color:var(--zap-olive);">ZAP</div>
+              <div class="roster-role">THE TECH WIZARD</div>
+              <p class="roster-bio">Smart, sarcastic &amp; supercharged. Keeper of 146 Articulated Dragons, Dinos &amp; Critters!</p>
+            </div>
+            <span class="roster-open-btn">Open Zap's Tab →</span>
+          </div>
+
+          <!-- 5. Booksy -->
+          <div class="roster-char-card" onclick="switchCrewTab('booksy')">
+            <div>
+              <div class="roster-sprite-wrap">
+                <img src="assets/crew_booksy.png" alt="Booksy — The Bookworm" />
+              </div>
+              <div class="roster-name" style="color:var(--booksy-plum);">BOOKSY</div>
+              <div class="roster-role">THE BOOKWORM</div>
+              <p class="roster-bio">Quiet, wise Lore Keeper. Curates BookTok gear, ACOTAR lamps, Home Decor &amp; Holidays!</p>
+            </div>
+            <span class="roster-open-btn">Open Booksy's Tab →</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- GLITCH'S FEATURED WORKSHOP FAVORITES (CLEAN, FRIENDLY 12-ITEM SHOWCASE) -->
+      <section id="glitchFeaturedAnchor">
+        <div class="toolbar-row">
+          <div>
+            <span class="host-pill">⭐ GLITCH'S TOP PICKS</span>
+            <h2 style="font-family:var(--font-display);font-size:1.75rem;font-weight:900;margin-top:4px;">
+              Workshop Fan-Favorites ($1 – $30)
+            </h2>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn-friendly-secondary" onclick="switchCrewTab('zap')">🐉 See All 146 Dragons</button>
+            <button class="btn-friendly-primary" onclick="switchCrewTab('markets')">📦 Browse All 526 Prints →</button>
+          </div>
+        </div>
+
+        <div id="glitchFeaturedGrid" class="product-grid"></div>
+      </section>
+
+      <!-- FIND US THIS WEEK SCHEDULE ON HOME SCREEN -->
+      <section class="schedule-banner-box" style="margin-top:48px;">
+        <div class="schedule-header-center">
+          <div class="schedule-headline">FIND US THIS WEEK</div>
+          <div class="schedule-date-range">OCTOBER 26 - NOVEMBER 1, 2026</div>
+        </div>
+
+        <div class="markets-grid">
+          <!-- Event 1: Thu Oct 29 Morning -->
+          <div class="schedule-event-card neon-pink">
+            <div>
+              <div class="schedule-top-meta">
+                <span>THU • OCT 29</span>
+                <span>9 AM - 1 PM</span>
+              </div>
+              <h3 class="schedule-event-title">THE MARKET ON DEARBORN</h3>
+              <div class="schedule-event-city">Englewood</div>
+              <div class="schedule-event-addr">232 West Dearborn Street, Englewood, FL</div>
+            </div>
+            <div class="schedule-event-actions">
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Thu Oct 29: The Market on Dearborn (Englewood)')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=232+West+Dearborn+Street+Englewood+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+            </div>
+          </div>
+
+          <!-- Event 2: Thu Oct 29 Evening -->
+          <div class="schedule-event-card neon-cyan">
+            <div>
+              <div class="schedule-top-meta">
+                <span>THU • OCT 29</span>
+                <span>5 PM - 7 PM</span>
+              </div>
+              <h3 class="schedule-event-title">IMAGINE SCHOOL TRUNK OR TREAT</h3>
+              <div class="schedule-event-city">North Port</div>
+              <div class="schedule-event-addr">1998 East Price Blvd, North Port, FL</div>
+            </div>
+            <div class="schedule-event-actions">
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Thu Oct 29: Imagine School Trunk or Treat (North Port)')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=1998+East+Price+Blvd+North+Port+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+            </div>
+          </div>
+
+          <!-- Event 3: Sat Oct 31 Venice -->
+          <div class="schedule-event-card neon-green">
+            <div>
+              <div class="schedule-top-meta">
+                <span>SAT • OCT 31</span>
+                <span>8 AM - 3 PM</span>
+              </div>
+              <h3 class="schedule-event-title">MISS VENICE FASTPITCH SUPER SATURDAY</h3>
+              <div class="schedule-event-city">Venice</div>
+              <div class="schedule-event-addr">1300 Ridgewood Ave, Venice, FL</div>
+            </div>
+            <div class="schedule-event-actions">
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sat Oct 31: Miss Venice Fastpitch (Venice)')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=1300+Ridgewood+Ave+Venice+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+            </div>
+          </div>
+
+          <!-- Event 4: Sat Oct 31 North Port -->
+          <div class="schedule-event-card neon-cyan">
+            <div>
+              <div class="schedule-top-meta">
+                <span>SAT • OCT 31</span>
+                <span>8:30 AM - 12:30 PM</span>
+              </div>
+              <h3 class="schedule-event-title">SHOP LOCAL NORTH PORT MARKET</h3>
+              <div class="schedule-event-city">North Port High School parking lot</div>
+              <div class="schedule-event-addr">6400 W. Price Blvd, North Port, FL</div>
+            </div>
+            <div class="schedule-event-actions">
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sat Oct 31: Shop Local North Port Market (@ NPHS)')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=6400+W+Price+Blvd+North+Port+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+            </div>
+          </div>
+
+          <!-- Event 5: Sat Oct 31 Port Charlotte -->
+          <div class="schedule-event-card neon-pink">
+            <div>
+              <div class="schedule-top-meta">
+                <span>SAT • OCT 31</span>
+                <span>3 PM - 9 PM</span>
+              </div>
+              <h3 class="schedule-event-title">PAPER &amp; PIXELS TRUNK OR TREAT</h3>
+              <div class="schedule-event-city">Port Charlotte</div>
+              <div class="schedule-event-addr">941 South Tamiami Trail Suite A, Port Charlotte, FL</div>
+            </div>
+            <div class="schedule-event-actions">
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sat Oct 31: Paper & Pixels Trunk or Treat (Port Charlotte)')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=941+South+Tamiami+Trail+Suite+A+Port+Charlotte+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+            </div>
+          </div>
+
+          <!-- Event 6: Sun Nov 1 Punta Gorda -->
+          <div class="schedule-event-card neon-cyan">
+            <div>
+              <div class="schedule-top-meta">
+                <span>SUN • NOV 1</span>
+                <span>9 AM - 1 PM</span>
+              </div>
+              <h3 class="schedule-event-title">PUNTA GORDA HISTORY PARK</h3>
+              <div class="schedule-event-city">Farmers Market</div>
+              <div class="schedule-event-addr">501 Shreve St, Punta Gorda, FL</div>
+            </div>
+            <div class="schedule-event-actions">
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sun Nov 1: Punta Gorda History Park Farmers Market')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=501+Shreve+St+Punta+Gorda+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align:center;margin-top:22px;font-family:var(--font-display);font-weight:800;font-size:1.1rem;color:var(--neon-green);">
+          Come shop with the Misfits!
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ====================================================================
+       SHARED SHOP VIEW FOR PIXEL, ZAP, AND BOOKSY TABS
+       ==================================================================== -->
+  <section id="view-gremlin-shop" class="tab-view-panel">
+    <div class="container">
+      <!-- Dynamic Gremlin Host Banner -->
+      <div class="gremlin-host-banner" id="gremlinHostBanner">
+        <div class="host-left">
+          <img id="hostBannerImg" src="assets/crew_pixel.png" alt="Crew Host" class="host-sprite" />
+          <div>
+            <div class="host-badge-row">
+              <span id="hostBannerBadge" class="host-pill">PIXEL • THE GAME GOBLIN</span>
+              <span id="hostBuddyBadge" class="host-pill" style="background:#f1ecff;color:#5b21b6;">PIXEL BUDDY: 8-BIT</span>
+            </div>
+            <h1 id="hostBannerTitle" class="host-title">Pixel’s Arcade: Fidgets, Clickers &amp; Gaming</h1>
+            <p id="hostBannerSpeech" class="host-speech">
+              “High score chasers &amp; chaos enjoyers welcome! Here are all my favorite mechanical clickers, sensory fidgets, pocket keychains, and tabletop dice towers.”
+            </p>
+            <div id="hostSubcatPills" class="friendly-filter-pills"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Simple Friendly Filter Toolbar -->
+      <div class="toolbar-row">
+        <div id="gremlinResultsCount" style="font-weight:700;color:var(--ink-secondary);">
+          Showing creations
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+          <select id="gremlinStockSelect" class="friendly-select" onchange="renderActiveGremlinProducts()">
+            <option value="all">All Availability</option>
+            <option value="instock">⚡ Ready to Ship Only</option>
+            <option value="print">🎨 Print-to-Order (3–5 Days)</option>
+          </select>
+
+          <select id="gremlinSortSelect" class="friendly-select" onchange="renderActiveGremlinProducts()">
+            <option value="featured">Featured &amp; Photos First</option>
+            <option value="price-asc">Price: Low to High ($1 → $30)</option>
+            <option value="price-desc">Price: High to Low ($30 → $1)</option>
+            <option value="name-asc">Name: A to Z</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Product Grid for Active Gremlin -->
+      <div id="gremlinProductGrid" class="product-grid"></div>
+
+      <div style="text-align:center;margin-top:32px;">
+        <button id="gremlinLoadMoreBtn" class="btn-friendly-primary" onclick="loadMoreGremlinItems()">
+          <span>Show More Creations ↓</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       TAB 5: INKY'S ART & CUSTOM 3D PRINT STUDIO
+       ==================================================================== -->
+  <section id="view-inky" class="tab-view-panel">
+    <div class="container">
+      <!-- Inky Host Banner -->
+      <div class="gremlin-host-banner" style="border-color:var(--inky-blue);">
+        <div class="host-left">
+          <img src="assets/crew_inky.png" alt="Inky — The Creative Misfit" class="host-sprite" />
+          <div>
+            <div class="host-badge-row">
+              <span class="host-pill" style="background:var(--inky-blue);color:#fff;">INKY • THE CREATIVE MISFIT</span>
+              <span class="host-pill" style="background:var(--inky-bg);color:var(--inky-blue);">SPECIAL POWER: INK BLAST • BUDDY: SPLAT</span>
+            </div>
+            <h1 class="host-title">Inky’s Custom 3D Print Studio &amp; Wall Art</h1>
+            <p class="host-speech">
+              “Artist. Dreamer. Story maker! Want a custom dragon in your favorite colors, a personalized ornament, or multi-layered HueForge wall art? Let’s bring your idea to life in 3 easy steps!”
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3-Step Friendly Custom Print Builder -->
+      <div class="inky-studio-grid">
+        <div class="studio-card">
+          <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;">1. Pick What Inky Should Print for You</h3>
+          <div id="studioTypeGrid" class="studio-choices">
+            <button type="button" class="choice-card-btn active" data-title="Custom Articulated Dragon" data-price="15" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.9rem;">🐉 Custom Dragon</strong>
+              <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--glitch-green);">$15.00</span>
+            </button>
+            <button type="button" class="choice-card-btn" data-title="Bookish Counter / ACOTAR Sign" data-price="20" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.9rem;">📚 Bookish / ACOTAR</strong>
+              <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--glitch-green);">$20.00</span>
+            </button>
+            <button type="button" class="choice-card-btn" data-title="Custom Name Ornament / Plaque" data-price="10" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.9rem;">🎄 Name Ornament</strong>
+              <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--glitch-green);">$10.00</span>
+            </button>
+            <button type="button" class="choice-card-btn" data-title="5-Pack Fidget Clickers" data-price="12" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.9rem;">🕹️ 5x Clicker Pack</strong>
+              <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--glitch-green);">$12.00</span>
+            </button>
+            <button type="button" class="choice-card-btn" data-title="Tabletop Dice Tower" data-price="22" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.9rem;">🎲 Dice Tower</strong>
+              <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--glitch-green);">$22.00</span>
+            </button>
+            <button type="button" class="choice-card-btn" data-title="Special Idea / Custom STL" data-price="18" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.9rem;">✨ Special Idea</strong>
+              <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--glitch-green);">Est. $18.00</span>
+            </button>
+          </div>
+
+          <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;margin-bottom:10px;">2. Pick Your Misfit Crew Color Palette</h3>
+          <div id="studioSwatchGrid" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+            <button type="button" class="swatch-pill-btn active" data-color="Glitch Lime &amp; Obsidian Silk" onclick="selectStudioColor(this)">
+              <span class="swatch-circle" style="background:linear-gradient(135deg,#8ce600,#14151d);"></span>
+              <span>Glitch Lime / Black</span>
+            </button>
+            <button type="button" class="swatch-pill-btn" data-color="Pixel Grape &amp; Neon Berry" onclick="selectStudioColor(this)">
+              <span class="swatch-circle" style="background:linear-gradient(135deg,#7344f5,#ec4899);"></span>
+              <span>Pixel Purple / Berry</span>
+            </button>
+            <button type="button" class="swatch-pill-btn" data-color="Inky Sky Blue &amp; Cyan Shimmer" onclick="selectStudioColor(this)">
+              <span class="swatch-circle" style="background:linear-gradient(135deg,#1b76e5,#00d2ff);"></span>
+              <span>Inky Blue / Cyan</span>
+            </button>
+            <button type="button" class="swatch-pill-btn" data-color="Zap Gold &amp; Dragonfire Red" onclick="selectStudioColor(this)">
+              <span class="swatch-circle" style="background:linear-gradient(135deg,#eab308,#ef4444);"></span>
+              <span>Dragonfire Gold / Red</span>
+            </button>
+            <button type="button" class="swatch-pill-btn" data-color="Booksy Night Court Plum &amp; Silver" onclick="selectStudioColor(this)">
+              <span class="swatch-circle" style="background:linear-gradient(135deg,#581c87,#cbd5e1);"></span>
+              <span>Booksy Plum / Silver</span>
+            </button>
+            <button type="button" class="swatch-pill-btn" data-color="UV Glow-in-the-Dark" onclick="selectStudioColor(this)">
+              <span class="swatch-circle" style="background:linear-gradient(135deg,#bef264,#4ade80);"></span>
+              <span>Glow-in-the-Dark</span>
+            </button>
+          </div>
+
+          <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;margin-bottom:8px;">3. Add a Name or Special Request Note</h3>
+          <input
+            type="text"
+            id="studioNotesInput"
+            placeholder="e.g. 'Put name KAYLA on it', 'Extra purple shimmer', or describe your custom request..."
+            oninput="updateStudioPreview()"
+            style="width:100%;padding:12px 16px;border-radius:var(--radius-md);border:1.5px solid rgba(0,229,255,0.4);background:#0f121c;color:#fff;font-size:0.92rem;"
+          />
+        </div>
+
+        <!-- Right: Inky's Sketch Ticket -->
+        <div class="studio-card" style="background:linear-gradient(155deg,#182036 0%,#101422 100%);border-color:var(--neon-cyan);display:flex;flex-direction:column;justify-content:space-between;">
+          <div>
+            <span class="host-pill" style="background:var(--neon-cyan);color:#041014;border-color:var(--neon-cyan);">🎨 INKY'S BUILD TICKET</span>
+            <h3 id="previewBuildTitle" style="font-family:var(--font-display);font-size:1.6rem;font-weight:900;margin-top:10px;">
+              Custom Articulated Dragon
+            </h3>
+            <p style="font-size:0.86rem;color:var(--text-secondary);margin-top:4px;">
+              Printed fresh in North Port, FL in 3–5 business days.
+            </p>
+
+            <div style="margin:18px 0;padding:14px;background:rgba(0,0,0,0.35);border-radius:var(--radius-md);border:1px solid rgba(0,229,255,0.3);font-size:0.88rem;">
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                <span style="color:var(--text-secondary);">Color Palette:</span>
+                <strong id="previewFilamentText" style="color:var(--neon-cyan);">Glitch Lime &amp; Obsidian Silk</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+                <span style="color:var(--text-secondary);">Custom Note:</span>
+                <strong id="previewNoteText">Standard Workshop Finish</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;">
+                <span style="color:var(--text-secondary);">Shipping / SWFL Pickup:</span>
+                <strong style="color:var(--neon-green);">FREE ($0.00)</strong>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;">
+              <span style="font-weight:800;">Estimated Price:</span>
+              <span id="previewTotalPrice" style="font-family:var(--font-mono);font-size:1.85rem;font-weight:900;color:var(--neon-green);">$15.00</span>
+            </div>
+            <button type="button" class="btn-friendly-primary" style="width:100%;justify-content:center;" onclick="addCustomStudioBuildToCart()">
+              <span>✨ Add Custom Print to Stash</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Inky's HueForge Wall Art & Coasters Gallery -->
+      <div>
+        <div class="toolbar-row">
+          <div>
+            <span class="host-pill" style="background:var(--inky-blue);color:#fff;">🖼️ INKY'S GALLERY</span>
+            <h2 style="font-family:var(--font-display);font-size:1.65rem;font-weight:900;margin-top:4px;">
+              3D HueForge Wall Art, Coasters &amp; Creative Prints
+            </h2>
+          </div>
+        </div>
+        <div id="inkyArtGrid" class="product-grid"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       TAB 6: SWFL MARKETS, AUTHORIZED PARTNERS & FULL 526 CATALOG
+       ==================================================================== -->
+  <section id="view-markets" class="tab-view-panel">
+    <div class="container">
+      <!-- SWFL Weekly Schedule Banner (Matching Uploaded Graphic) -->
+      <div class="schedule-banner-box">
+        <div class="schedule-header-center">
+          <img src="assets/official_logo.png" alt="Nerdy Misfits" style="height:84px;margin:0 auto 12px;background:#000;padding:6px 14px;border-radius:12px;border:2px solid var(--neon-green);" />
+          <div class="schedule-headline">FIND US THIS WEEK</div>
+          <div class="schedule-date-range">OCTOBER 26 - NOVEMBER 1, 2026</div>
+        </div>
+
+        <div class="markets-grid">
+          <!-- Event 1: Thu Oct 29 Morning -->
+          <div class="schedule-event-card neon-pink">
+            <div>
+              <div class="schedule-top-meta">
+                <span>THU • OCT 29</span>
+                <span>9 AM - 1 PM</span>
+              </div>
+              <h3 class="schedule-event-title">THE MARKET ON DEARBORN</h3>
+              <div class="schedule-event-city">Englewood</div>
+              <div class="schedule-event-addr">232 West Dearborn Street, Englewood, FL</div>
+            </div>
+            <div class="schedule-event-actions">
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Thu Oct 29: The Market on Dearborn (Englewood)')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=232+West+Dearborn+Street+Englewood+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+            </div>
+          </div>
+
+          <!-- Event 2: Thu Oct 29 Evening -->
+          <div class="schedule-event-card neon-cyan">
+            <div>
+              <div class="schedule-top-meta">
+                <span>THU • OCT 29</span>
+                <span>5 PM - 7 PM</span>
+              </div>
+              <h3 class="schedule-event-title">IMAGINE SCHOOL TRUNK OR TREAT</h3>
+              <div class="schedule-event-city">North Port</div>
+              <div class="schedule-event-addr">1998 East Price Blvd, North Port, FL</div>
+            </div>
+            <div class="schedule-event-actions">
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Thu Oct 29: Imagine School Trunk or Treat (North Port)')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=1998+East+Price+Blvd+North+Port+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+            </div>
+          </div>
+
+          <!-- Event 3: Sat Oct 31 Venice -->
+          <div class="schedule-event-card neon-green">
+            <div>
+              <div class="schedule-top-meta">
+                <span>SAT • OCT 31</span>
+                <span>8 AM - 3 PM</span>
+              </div>
+              <h3 class="schedule-event-title">MISS VENICE FASTPITCH SUPER SATURDAY</h3>
+              <div class="schedule-event-city">Venice</div>
+              <div class="schedule-event-addr">1300 Ridgewood Ave, Venice, FL</div>
+            </div>
+            <div class="schedule-event-actions">
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sat Oct 31: Miss Venice Fastpitch (Venice)')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=1300+Ridgewood+Ave+Venice+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+            </div>
+          </div>
+
+          <!-- Event 4: Sat Oct 31 North Port -->
+          <div class="schedule-event-card neon-cyan">
+            <div>
+              <div class="schedule-top-meta">
+                <span>SAT • OCT 31</span>
+                <span>8:30 AM - 12:30 PM</span>
+              </div>
+              <h3 class="schedule-event-title">SHOP LOCAL NORTH PORT MARKET</h3>
+              <div class="schedule-event-city">North Port High School parking lot</div>
+              <div class="schedule-event-addr">6400 W. Price Blvd, North Port, FL</div>
+            </div>
+            <div class="schedule-event-actions">
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sat Oct 31: Shop Local North Port Market (@ NPHS)')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=6400+W+Price+Blvd+North+Port+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+            </div>
+          </div>
+
+          <!-- Event 5: Sat Oct 31 Port Charlotte -->
+          <div class="schedule-event-card neon-pink">
+            <div>
+              <div class="schedule-top-meta">
+                <span>SAT • OCT 31</span>
+                <span>3 PM - 9 PM</span>
+              </div>
+              <h3 class="schedule-event-title">PAPER &amp; PIXELS TRUNK OR TREAT</h3>
+              <div class="schedule-event-city">Port Charlotte</div>
+              <div class="schedule-event-addr">941 South Tamiami Trail Suite A, Port Charlotte, FL</div>
+            </div>
+            <div class="schedule-event-actions">
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sat Oct 31: Paper & Pixels Trunk or Treat (Port Charlotte)')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=941+South+Tamiami+Trail+Suite+A+Port+Charlotte+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+            </div>
+          </div>
+
+          <!-- Event 6: Sun Nov 1 Punta Gorda -->
+          <div class="schedule-event-card neon-cyan">
+            <div>
+              <div class="schedule-top-meta">
+                <span>SUN • NOV 1</span>
+                <span>9 AM - 1 PM</span>
+              </div>
+              <h3 class="schedule-event-title">PUNTA GORDA HISTORY PARK</h3>
+              <div class="schedule-event-city">Farmers Market</div>
+              <div class="schedule-event-addr">501 Shreve St, Punta Gorda, FL</div>
+            </div>
+            <div class="schedule-event-actions">
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sun Nov 1: Punta Gorda History Park Farmers Market')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=501+Shreve+St+Punta+Gorda+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+            </div>
+          </div>
+        </div>
+
+        <div style="text-align:center;margin-top:22px;font-family:var(--font-display);font-weight:800;font-size:1.1rem;color:var(--neon-green);">
+          Come shop with the Misfits!
+        </div>
+      </div>
+
+      <!-- Authorized Commercial Seller Badges -->
+      <div class="crew-roster-section" style="text-align:center;margin-bottom:42px;">
+        <span class="host-pill">✓ LICENSED COMMERCIAL 3D PRINT PARTNER</span>
+        <h3 style="font-family:var(--font-display);font-size:1.45rem;font-weight:900;margin-top:6px;">
+          Official Authorized Seller for 7 Renowned 3D Design Studios
+        </h3>
+        <div class="partners-row">
+          <div class="partner-pill"><img src="assets/badge_7.png" alt="Flexi Factory" /><strong>Flexi Factory</strong></div>
+          <div class="partner-pill"><img src="assets/badge_4.png" alt="Zou3D" /><strong>Zou3D</strong></div>
+          <div class="partner-pill"><img src="assets/badge_1.png" alt="Steven Wolf Studio" /><strong>Steven Wolf Studio</strong></div>
+          <div class="partner-pill"><img src="assets/badge_2.png" alt="Rebel Alicorn" /><strong>Rebel Alicorn</strong></div>
+          <div class="partner-pill"><img src="assets/badge_3.png" alt="RAKI-BOX" /><strong>RAKI-BOX</strong></div>
+          <div class="partner-pill"><img src="assets/badge_5.png" alt="Print N Play NZ" /><strong>Print 'N' Play NZ</strong></div>
+          <div class="partner-pill"><img src="assets/badge_6.png" alt="The Dragons Den" /><strong>The Dragons Den</strong></div>
+        </div>
+      </div>
+
+      <!-- Full 526-Product Master Catalog Browser -->
+      <div>
+        <div class="toolbar-row">
+          <div>
+            <span class="host-pill">📦 COMPLETE WORKSHOP ARCHIVE</span>
+            <h2 style="font-family:var(--font-display);font-size:1.75rem;font-weight:900;margin-top:4px;">
+              Browse All 526 Nerdy Misfits Creations
+            </h2>
+          </div>
+
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <select id="masterCatSelect" class="friendly-select" onchange="renderMasterCatalog(true)">
+              <option value="all">All 39 Categories (526)</option>
+            </select>
+            <select id="masterSortSelect" class="friendly-select" onchange="renderMasterCatalog(true)">
+              <option value="featured">Featured First</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="name-asc">Name: A to Z</option>
+            </select>
+          </div>
+        </div>
+
+        <div id="masterCatalogGrid" class="product-grid"></div>
+
+        <div style="text-align:center;margin-top:32px;">
+          <button id="masterLoadMoreBtn" class="btn-friendly-primary" onclick="loadMoreMasterItems()">
+            <span>Load More Creations ↓</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       BOTTOM DARK SHEET FOOTER (EXACT MATCH TO CHARACTER SHEET FOOTER!)
+       ==================================================================== -->
+  <footer class="sheet-footer">
+    <div class="container">
+      <div class="sheet-footer-motto">
+        <div style="font-family:var(--font-display);font-weight:800;font-size:0.95rem;color:#cfd3e2;">
+          TOGETHER, WE DON’T FIT IN. <strong style="color:var(--glitch-lime);">WE LEVEL UP.</strong>
+        </div>
+
+        <div class="motto-badges">
+          <span><strong style="color:#9b6bfa;">✖</strong> BE DIFFERENT.</span>
+          <span><strong style="color:var(--glitch-lime);">👾</strong> BE NERDY.</span>
+          <span><strong style="color:#9b6bfa;">😈</strong> BE A MISFIT.</span>
+        </div>
+
+        <div style="font-family:var(--font-mono);font-size:0.82rem;">
+          <strong style="color:var(--glitch-lime);">JOIN THE CREW.</strong><br />
+          <span>North Port, FL • (941) 266-1801</span>
+        </div>
+      </div>
+
+      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:0.8rem;color:#969cb5;">
+        <span>© 2026 Nerdy Misfits (2385 Mauve Terrace, North Port, FL 34286 • nerdymisfitsnp@gmail.com)</span>
+        <span>Apple Pay • Google Pay • Cash App Pay • Visa • Mastercard • Free US Shipping</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ====================================================================
+       QUICK-VIEW MODAL
+       ==================================================================== -->
+  <div id="quickViewModalBackdrop" class="modal-backdrop" onclick="if(event.target===this) closeQuickView()">
+    <div class="quickview-box">
+      <button class="close-circle-btn" onclick="closeQuickView()">✕</button>
+      <div id="qvMediaContainer" style="aspect-ratio:1/1;border-radius:var(--radius-lg);overflow:hidden;background:#14151d;border:2px solid var(--border-warm);"></div>
+
+      <div style="display:flex;flex-direction:column;justify-content:space-between;">
+        <div>
+          <span id="qvStockBadge" class="host-pill" style="margin-bottom:8px;display:inline-block;">IN STOCK</span>
+          <div id="qvCategoryTag" style="font-family:var(--font-mono);font-size:0.75rem;color:var(--ink-muted);margin-bottom:4px;">CATEGORY</div>
+          <h2 id="qvTitle" style="font-family:var(--font-display);font-size:1.65rem;font-weight:900;line-height:1.15;margin-bottom:8px;">Product Name</h2>
+          <div id="qvPrice" style="font-family:var(--font-mono);font-size:1.55rem;font-weight:900;color:var(--glitch-green);margin-bottom:12px;">$15.00</div>
+          <p id="qvDesc" style="font-size:0.9rem;color:var(--ink-secondary);margin-bottom:16px;"></p>
+
+          <label style="display:block;font-family:var(--font-mono);font-size:0.74rem;font-weight:700;text-transform:uppercase;margin-bottom:6px;">
+            Filament Color Choice:
+          </label>
+          <select id="qvColorSelect" class="friendly-select" style="width:100%;margin-bottom:16px;">
+            <option value="As Pictured (Signature Finish)">As Pictured (Signature Finish)</option>
+            <option value="Glitch Lime &amp; Obsidian">Glitch Lime &amp; Obsidian</option>
+            <option value="Pixel Purple &amp; Berry">Pixel Purple &amp; Berry</option>
+            <option value="Inky Blue &amp; Cyan Silk">Inky Blue &amp; Cyan Silk</option>
+            <option value="Dragonfire Gold &amp; Red">Dragonfire Gold &amp; Red</option>
+            <option value="Surprise Me! (Crew's Choice)">Surprise Me! (Crew's Choice)</option>
+          </select>
+        </div>
+
+        <button id="qvAddBtn" class="btn-friendly-primary" style="width:100%;justify-content:center;">
+          Add to My Stash
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       SLIDE-OVER STASH (CART) DRAWER
+       ==================================================================== -->
+  <div id="cartDrawerBackdrop" class="cart-backdrop" onclick="if(event.target===this) toggleCartDrawer(false)">
+    <div class="cart-drawer">
+      <div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <h3 style="font-family:var(--font-display);font-size:1.4rem;font-weight:900;">🎒 Your Misfit Stash</h3>
+          <button class="close-circle-btn" style="position:static;" onclick="toggleCartDrawer(false)">✕</button>
+        </div>
+
+        <!-- Bundle Progress -->
+        <div style="background:var(--glitch-bg);border:2px solid var(--glitch-green);border-radius:var(--radius-md);padding:10px 12px;margin-bottom:14px;font-size:0.82rem;">
+          <div id="bundleMeterText">Add $10.00 more for a <strong>FREE Mystery Pixel Buddy Mini!</strong></div>
+        </div>
+
+        <!-- Fulfillment Selector -->
+        <div style="margin-bottom:12px;">
+          <label style="font-size:0.74rem;font-weight:700;color:var(--ink-secondary);display:block;margin-bottom:4px;">
+            Delivery or SWFL Booth Pickup ($0.00):
+          </label>
+          <select id="cartFulfillmentSelect" class="friendly-select" style="width:100%;" onchange="setPickup(this.value)">
+            <option value="🚚 Free US Shipping">🚚 Free US Shipping (North Port Workshop)</option>
+            <option value="Thu Oct 29: The Market on Dearborn (Englewood)">📍 Thu Oct 29 (9a-1p): The Market on Dearborn — Englewood</option>
+            <option value="Thu Oct 29: Imagine School Trunk or Treat (North Port)">🎃 Thu Oct 29 (5p-7p): Imagine School Trunk or Treat — North Port</option>
+            <option value="Sat Oct 31: Miss Venice Fastpitch (Venice)">🥎 Sat Oct 31 (8a-3p): Miss Venice Fastpitch — Venice</option>
+            <option value="Sat Oct 31: Shop Local North Port Market (@ NPHS)">☀️ Sat Oct 31 (8:30a-12:30p): Shop Local Market — NPHS</option>
+            <option value="Sat Oct 31: Paper & Pixels Trunk or Treat (Port Charlotte)">👾 Sat Oct 31 (3p-9p): Paper &amp; Pixels Trunk or Treat — Port Charlotte</option>
+            <option value="Sun Nov 1: Punta Gorda History Park Farmers Market">🌴 Sun Nov 1 (9a-1p): Punta Gorda History Park Farmers Market</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="cartItemsContainer" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;"></div>
+
+      <div style="border-top:2px solid var(--border-warm);padding-top:14px;margin-top:12px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">
+          <span style="font-weight:800;">Total (Free Shipping):</span>
+          <span id="cartSubtotalText" style="font-family:var(--font-mono);font-size:1.5rem;font-weight:900;color:var(--glitch-green);">$15.00</span>
+        </div>
+        <button id="squareCheckoutBtn" class="btn-friendly-primary" style="width:100%;justify-content:center;" onclick="handleSquareCheckout()">
+          <span>Checkout with Square →</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div id="toastContainer" class="toast-container"></div>
+
+  <!-- ====================================================================
+       PORTAL "STILL ALIVE" (CAKE?) AUDIO
+       ==================================================================== -->
+  <audio id="stillAliveAudio" src="assets/still_alive.mp3?v=2" preload="auto"></audio>
+
+  <script src="catalog-data.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
