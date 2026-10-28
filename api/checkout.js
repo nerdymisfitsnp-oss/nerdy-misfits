@@ -14,15 +14,40 @@ export default async function handler(req, res) {
   }
 
   const accessToken = process.env.SQUARE_ACCESS_TOKEN;
-  const locationId = process.env.SQUARE_LOCATION_ID;
+  let locationId = process.env.SQUARE_LOCATION_ID;
 
-  if (!accessToken || !locationId) {
+  if (!accessToken) {
     return res.status(400).json({
-      error: 'Missing SQUARE_ACCESS_TOKEN or SQUARE_LOCATION_ID environment variables.'
+      error: 'Missing SQUARE_ACCESS_TOKEN environment variable.'
     });
   }
 
   try {
+    // Automatically look up the active Square Location ID if SQUARE_LOCATION_ID was not manually set
+    if (!locationId) {
+      const locRes = await fetch('https://connect.squareup.com/v2/locations', {
+        headers: {
+          'Square-Version': '2024-10-17',
+          Authorization: `Bearer ${accessToken}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      if (locRes.ok) {
+        const locData = await locRes.json();
+        const activeLoc =
+          (locData.locations || []).find((l) => l.status === 'ACTIVE') ||
+          (locData.locations || [])[0];
+        if (activeLoc?.id) {
+          locationId = activeLoc.id;
+        }
+      }
+    }
+
+    if (!locationId) {
+      return res.status(400).json({
+        error: 'Could not determine Square Location ID.'
+      });
+    }
     const { items = [], fulfillment = 'Free US Shipping' } = req.body || {};
 
     if (!items.length) {
