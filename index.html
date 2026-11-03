@@ -7,7 +7,7 @@
   <link rel="icon" type="image/png" href="assets/icon.png" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@600;700;800&family=Outfit:wght@600;700;800;900&family=Permanent+Marker&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Cinzel+Decorative:wght@700;900&family=JetBrains+Mono:wght@600;700;800&family=Metal+Mania&family=Outfit:wght@600;700;800;900&family=Permanent+Marker&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Press+Start+2P&family=Righteous&family=Rubik+Glitch&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -64,7 +64,7 @@
         <div class="crew-tabs-list" role="tablist">
           <!-- Tab 1: Glitch -->
           <button type="button" class="crew-tab-btn active" data-crew="glitch" onclick="switchCrewTab('glitch')">
-            <img src="assets/avatar_glitch.png" alt="Glitch" class="crew-tab-avatar" />
+            <img src="assets/avatar_glitch.png?v=3" alt="Glitch" class="crew-tab-avatar" />
             <div class="crew-tab-text">
               <span class="crew-tab-who"><span class="tab-full-label">🟢 GLITCH'S HUB</span><span class="tab-short-label">GLITCH</span></span>
               <span class="crew-tab-what">Rotating Dial &amp; Picks</span>
@@ -73,7 +73,7 @@
 
           <!-- Tab 2: Fokal (Sensory Fidgets & Clickers!) -->
           <button type="button" class="crew-tab-btn" data-crew="fokal" onclick="switchCrewTab('fokal')">
-            <img src="assets/avatar_fokal.png" alt="Fokal" class="crew-tab-avatar" />
+            <img src="assets/avatar_fokal.png?v=3" alt="Fokal" class="crew-tab-avatar" />
             <div class="crew-tab-text">
               <span class="crew-tab-who"><span class="tab-full-label">💖 FOKAL'S SENSORY</span><span class="tab-short-label">FOKAL</span></span>
               <span class="crew-tab-what">Fidgets, Clickers &amp; Keys</span>
@@ -82,7 +82,7 @@
 
           <!-- Tab 3: Crit & Spark -->
           <button type="button" class="crew-tab-btn" data-crew="crit" onclick="switchCrewTab('crit')">
-            <img src="assets/avatar_crit.png" alt="Crit" class="crew-tab-avatar" />
+            <img src="assets/avatar_crit.png?v=3" alt="Crit" class="crew-tab-avatar" />
             <div class="crew-tab-text">
               <span class="crew-tab-who"><span class="tab-full-label">🎲 CRIT &amp; SPARK</span><span class="tab-short-label">CRIT</span></span>
               <span class="crew-tab-what">146 Dragons &amp; RPG Dice</span>
@@ -91,7 +91,7 @@
 
           <!-- Tab 4: Justus -->
           <button type="button" class="crew-tab-btn" data-crew="justus" onclick="switchCrewTab('justus')">
-            <img src="assets/avatar_justus.png" alt="Justus" class="crew-tab-avatar" />
+            <img src="assets/avatar_justus.png?v=3" alt="Justus" class="crew-tab-avatar" />
             <div class="crew-tab-text">
               <span class="crew-tab-who"><span class="tab-full-label">🐺 JUSTUS'S BEASTS</span><span class="tab-short-label">JUSTUS</span></span>
               <span class="crew-tab-what">Dinos, Wolves &amp; Critters</span>
@@ -100,7 +100,7 @@
 
           <!-- Tab 5: Booksy -->
           <button type="button" class="crew-tab-btn" data-crew="booksy" onclick="switchCrewTab('booksy')">
-            <img src="assets/avatar_booksy.png" alt="Booksy" class="crew-tab-avatar" />
+            <img src="assets/avatar_booksy.png?v=3" alt="Booksy" class="crew-tab-avatar" />
             <div class="crew-tab-text">
               <span class="crew-tab-who"><span class="tab-full-label">📚 BOOKSY'S NOOK</span><span class="tab-short-label">BOOKSY</span></span>
               <span class="crew-tab-what">BookTok, Decor &amp; Holidays</span>
@@ -109,7 +109,7 @@
 
           <!-- Tab 6: Inky -->
           <button type="button" class="crew-tab-btn" data-crew="inky" onclick="switchCrewTab('inky')">
-            <img src="assets/avatar_inky.png" alt="Inky" class="crew-tab-avatar" />
+            <img src="assets/avatar_inky.png?v=3" alt="Inky" class="crew-tab-avatar" />
             <div class="crew-tab-text">
               <span class="crew-tab-who"><span class="tab-full-label">🎨 INKY'S STUDIO</span><span class="tab-short-label">INKY</span></span>
               <span class="crew-tab-what">Custom Prints &amp; Wall Art</span>
@@ -118,7 +118,7 @@
 
           <!-- Tab 7: Pixel (Mini-Games Arcade Coming Soon!) -->
           <button type="button" class="crew-tab-btn" data-crew="pixel" onclick="switchCrewTab('pixel')">
-            <img src="assets/avatar_pixel.png" alt="Pixel" class="crew-tab-avatar" />
+            <img src="assets/avatar_pixel.png?v=3" alt="Pixel" class="crew-tab-avatar" />
             <div class="crew-tab-text">
               <span class="crew-tab-who"><span class="tab-full-label">🟣 PIXEL'S ARCADE</span><span class="tab-short-label">PIXEL</span></span>
               <span class="crew-tab-what">Mini-Games (Coming Soon)</span>
@@ -157,82 +157,89 @@
           </div>
 
           <!-- Slowly Rotating Dial Ring Containing All 7 Crew Members -->
-          <div class="orbit-rotating-dial">
+          <div class="orbit-rotating-dial" id="orbitRotatingDial">
             <!-- Pos 1: GLITCH -->
             <div class="orbit-gremlin-node glitch-node orbit-pos-1"
-                 onmouseenter="previewCrewMember('glitch')"
+                 data-crew="glitch"
+                 onmouseenter="previewCrewMember('glitch', true)"
+                 onmouseleave="releaseDialHover()"
                  onclick="switchCrewTab('glitch')">
               <div class="orbit-avatar-ring">
-                <img src="assets/avatar_glitch.png" alt="Glitch" />
+                <img src="assets/avatar_glitch.png?v=3" alt="Glitch" />
               </div>
               <span class="orbit-name-badge">GLITCH</span>
-              <span class="orbit-dept-label">Featured &amp; Crew</span>
             </div>
 
             <!-- Pos 2: FOKAL (Sensory Fidgets & Clickers) -->
             <div class="orbit-gremlin-node fokal-node orbit-pos-2"
-                 onmouseenter="previewCrewMember('fokal')"
+                 data-crew="fokal"
+                 onmouseenter="previewCrewMember('fokal', true)"
+                 onmouseleave="releaseDialHover()"
                  onclick="switchCrewTab('fokal')">
               <div class="orbit-avatar-ring">
-                <img src="assets/avatar_fokal.png" alt="Fokal" />
+                <img src="assets/avatar_fokal.png?v=3" alt="Fokal" />
               </div>
               <span class="orbit-name-badge">FOKAL</span>
-              <span class="orbit-dept-label">Sensory &amp; Clickers</span>
             </div>
 
             <!-- Pos 3: CRIT & SPARK -->
-            <div class="orbit-gremlin-node crit-node orbit-pos-3"
-                 onmouseenter="previewCrewMember('crit')"
+            <div class="orbit-gremlin-node crit-node orbit-pos-3 active-coin"
+                 data-crew="crit"
+                 onmouseenter="previewCrewMember('crit', true)"
+                 onmouseleave="releaseDialHover()"
                  onclick="switchCrewTab('crit')">
               <div class="orbit-avatar-ring">
-                <img src="assets/avatar_crit.png" alt="Crit &amp; Spark" />
+                <img src="assets/avatar_crit.png?v=3" alt="Crit &amp; Spark" />
               </div>
               <span class="orbit-name-badge">CRIT &amp; SPARK</span>
-              <span class="orbit-dept-label">146 Dragons &amp; RPG</span>
             </div>
 
             <!-- Pos 4: JUSTUS -->
             <div class="orbit-gremlin-node justus-node orbit-pos-4"
-                 onmouseenter="previewCrewMember('justus')"
+                 data-crew="justus"
+                 onmouseenter="previewCrewMember('justus', true)"
+                 onmouseleave="releaseDialHover()"
                  onclick="switchCrewTab('justus')">
               <div class="orbit-avatar-ring">
-                <img src="assets/avatar_justus.png" alt="Justus" />
+                <img src="assets/avatar_justus.png?v=3" alt="Justus" />
               </div>
               <span class="orbit-name-badge">JUSTUS</span>
-              <span class="orbit-dept-label">Dinos, Wolves &amp; Beasts</span>
             </div>
 
             <!-- Pos 5: BOOKSY -->
             <div class="orbit-gremlin-node booksy-node orbit-pos-5"
-                 onmouseenter="previewCrewMember('booksy')"
+                 data-crew="booksy"
+                 onmouseenter="previewCrewMember('booksy', true)"
+                 onmouseleave="releaseDialHover()"
                  onclick="switchCrewTab('booksy')">
               <div class="orbit-avatar-ring">
-                <img src="assets/avatar_booksy.png" alt="Booksy" />
+                <img src="assets/avatar_booksy.png?v=3" alt="Booksy" />
               </div>
               <span class="orbit-name-badge">BOOKSY</span>
-              <span class="orbit-dept-label">Bookish &amp; Home Decor</span>
             </div>
 
             <!-- Pos 6: INKY -->
             <div class="orbit-gremlin-node inky-node orbit-pos-6"
-                 onmouseenter="previewCrewMember('inky')"
+                 data-crew="inky"
+                 onmouseenter="previewCrewMember('inky', true)"
+                 onmouseleave="releaseDialHover()"
                  onclick="switchCrewTab('inky')">
               <div class="orbit-avatar-ring">
-                <img src="assets/avatar_inky.png" alt="Inky" />
+                <img src="assets/avatar_inky.png?v=3" alt="Inky" />
               </div>
               <span class="orbit-name-badge">INKY</span>
-              <span class="orbit-dept-label">Custom Prints &amp; Art</span>
             </div>
 
             <!-- Pos 7: PIXEL -->
             <div class="orbit-gremlin-node pixel-node orbit-pos-7"
-                 onmouseenter="previewCrewMember('pixel')"
+                 data-crew="pixel"
+                 onmouseenter="previewCrewMember('pixel', true)"
+                 onmouseleave="releaseDialHover()"
                  onclick="switchCrewTab('pixel')">
               <div class="orbit-avatar-ring">
-                <img src="assets/avatar_pixel.png" alt="Pixel" />
+                <img src="assets/avatar_pixel.png?v=3" alt="Pixel" />
               </div>
               <span class="orbit-name-badge">PIXEL</span>
-              <span class="orbit-dept-label">Mini-Games Arcade</span>
             </div>
           </div>
         </div>
@@ -240,11 +247,11 @@
         <!-- Right: Interactive Gremlin Spotlight Card (Updates when hovering the dial!) -->
         <div class="crew-spotlight-card" id="hubSpotlightCard">
           <div class="spotlight-eyebrow">
-            <span>✨ HOVER TO PAUSE DIAL OR CLICK ANY MISFIT CREW MEMBER</span>
+            <span>✨ AUTO-SPOTLIGHTING RIGHTMOST TURNTABLE COIN • HOVER OR CLICK ANY MISFIT</span>
           </div>
 
           <div class="spotlight-flex">
-            <img id="spotImg" src="assets/crew_glitch.png" alt="Glitch" class="spotlight-character-img" />
+            <img id="spotImg" src="assets/crew_glitch.png?v=3" alt="Glitch" class="spotlight-character-img" />
             <div>
               <h1 id="spotName" class="spotlight-char-name" style="color:var(--glitch-green);">GLITCH</h1>
               <div id="spotRole" class="spotlight-char-role">THE NERDY MISFIT • SIDEKICK: BIT ⭐</div>
@@ -425,7 +432,7 @@
       <!-- Dynamic Gremlin Host Banner -->
       <div class="gremlin-host-banner" id="gremlinHostBanner">
         <div class="host-left">
-          <img id="hostBannerImg" src="assets/crew_pixel.png" alt="Crew Host" class="host-sprite" />
+          <img id="hostBannerImg" src="assets/crew_pixel.png?v=3" alt="Crew Host" class="host-sprite" />
           <div>
             <div class="host-badge-row">
               <span id="hostBannerBadge" class="host-pill">PIXEL • THE GAME GOBLIN</span>
@@ -483,7 +490,7 @@
         <div class="pixel-arcade-hero-grid" style="display:grid;grid-template-columns:auto 1fr;gap:32px;align-items:center;">
           <!-- Pixel & 8-Bit Sprite -->
           <div style="background:radial-gradient(circle, rgba(192,66,255,0.32) 0%, #131626 75%);border:2.5px solid var(--pixel-purple);border-radius:22px;padding:18px;text-align:center;box-shadow:0 0 28px rgba(192,66,255,0.4);">
-            <img src="assets/crew_pixel.png" alt="Pixel — The Game Goblin &amp; 8-Bit" style="height:240px;width:auto;object-fit:contain;margin:0 auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.7));" />
+            <img src="assets/crew_pixel.png?v=3" alt="Pixel — The Game Goblin &amp; 8-Bit" style="height:240px;width:auto;object-fit:contain;margin:0 auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.7));" />
             <div style="margin-top:10px;font-family:var(--font-mono);font-size:0.75rem;color:var(--neon-green);font-weight:800;">
               👾 PIXEL &amp; 8-BIT // PLAYER 1 READY
             </div>
@@ -589,7 +596,7 @@
       <!-- Inky Host Banner -->
       <div class="gremlin-host-banner" style="border-color:var(--inky-blue);">
         <div class="host-left">
-          <img src="assets/crew_inky.png" alt="Inky — The Creative Misfit" class="host-sprite" />
+          <img src="assets/crew_inky.png?v=3" alt="Inky — The Creative Misfit" class="host-sprite" />
           <div>
             <div class="host-badge-row">
               <span class="host-pill" style="background:var(--inky-blue);color:#fff;">INKY • THE CREATIVE MISFIT</span>

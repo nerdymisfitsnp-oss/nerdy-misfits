@@ -63,8 +63,8 @@
       buddy: 'SIDEKICK: BIT ⭐',
       color: 'var(--glitch-green)',
       badgeBg: 'var(--glitch-green)',
-      sprite: 'assets/crew_glitch.png',
-      avatar: 'assets/avatar_glitch.png',
+      sprite: 'assets/crew_glitch.png?v=3',
+      avatar: 'assets/avatar_glitch.png?v=3',
       loves: 'Tech, video games, and late-night rabbit holes.',
       power: 'System Override — can hack, fix, or glitch anything.',
       quote: '“Clever, curious, and always debugging the system! Hover or click any of our 7 Misfits Crew members rotating around the logo—each of us hosts our own tab of 3D-printed treasures & games!”',
@@ -78,8 +78,8 @@
       buddy: 'SUPER STRENGTH: EMBRACE THE SPECTRUM 🌈',
       color: 'var(--neon-pink)',
       badgeBg: 'var(--neon-pink)',
-      sprite: 'assets/crew_fokal.png',
-      avatar: 'assets/avatar_fokal.png',
+      sprite: 'assets/crew_fokal.png?v=3',
+      avatar: 'assets/avatar_fokal.png?v=3',
       loves: 'Fidgets, textures, stims, and anything sensory.',
       power: 'Feel Everything • Super Strength: Embrace the spectrum • Turns overwhelm into good vibes.',
       quote: '“Fidget. Focus. Feel everything. Embrace the textures, stim, and good vibes! My tab is packed with mechanical keyboard clickers, tactile sensory fidgets, pocket keychains, and 3D magnets!”',
@@ -102,8 +102,8 @@
       buddy: 'SIDEKICK: 8-BIT 👾',
       color: 'var(--pixel-purple)',
       badgeBg: 'var(--pixel-purple)',
-      sprite: 'assets/crew_pixel.png',
-      avatar: 'assets/avatar_pixel.png',
+      sprite: 'assets/crew_pixel.png?v=3',
+      avatar: 'assets/avatar_pixel.png?v=3',
       loves: 'Retro games, snacks, and beating everyone.',
       power: 'Extra Life — respawns when it counts.',
       quote: '“Speedrunner. High-score chaser. Chaos enjoyer! Me and 8-Bit are wiring up playable Nerdy Misfits browser mini-games right now—visit our Arcade tab to see what’s coming soon!”',
@@ -117,8 +117,8 @@
       buddy: 'COMPANION: SPARK THE DRAGON 🔥',
       color: 'var(--neon-volt)',
       badgeBg: '#99cc00',
-      sprite: 'assets/crew_crit.png',
-      avatar: 'assets/avatar_crit.png',
+      sprite: 'assets/crew_crit.png?v=3',
+      avatar: 'assets/avatar_crit.png?v=3',
       loves: 'Tabletop RPGs, lore, dice, epic campaigns, shiny things, snacks, and mayhem.',
       power: 'Critical Influence — can bend fate (and rules) • Spark breathes chaos (and fire).',
       quote: '“Story weaver. Dungeon builder. Rules are suggestions! Join me and my mischievous dragon Spark to explore 146 articulated dragons, character dragons, and tabletop RPG dice towers!”',
@@ -140,8 +140,8 @@
       buddy: 'BEAST CREW: NEMAIN, GROG & BOLT 🐺',
       color: '#ff9f1c',
       badgeBg: '#d97706',
-      sprite: 'assets/crew_justus.png',
-      avatar: 'assets/avatar_justus.png',
+      sprite: 'assets/crew_justus.png?v=3',
+      avatar: 'assets/avatar_justus.png?v=3',
       loves: 'Animals, mead, and being left alone.',
       power: 'Beast Bond — commands and protects with his crew (Nemain the Raven, Grog the Wolf & Bolt the Boar).',
       quote: '“Half-dwarf. Half-orc. All attitude. Loyal to my beasts—enter the Beast Lair for 198+ articulated dinosaurs, wolves, boars, reptiles, frogs, sea creatures, and wild critters!”',
@@ -165,8 +165,8 @@
       buddy: 'SIDEKICK: SHADOW 🐈‍⬛',
       color: 'var(--booksy-plum)',
       badgeBg: 'var(--booksy-plum)',
-      sprite: 'assets/crew_booksy.png',
-      avatar: 'assets/avatar_booksy.png',
+      sprite: 'assets/crew_booksy.png?v=3',
+      avatar: 'assets/avatar_booksy.png?v=3',
       loves: 'Books, tea, and conspiracies.',
       power: 'Lore Keeper — remembers everything.',
       quote: '“Quiet. Wise. Collects stories and random facts! Browse my cozy library of BookTok & ACOTAR reading counters, LED lightboxes, coasters, wine holders, and holiday decor.”',
@@ -190,8 +190,8 @@
       buddy: 'SIDEKICK: SPLAT 🎨',
       color: 'var(--inky-blue)',
       badgeBg: 'var(--inky-blue)',
-      sprite: 'assets/crew_inky.png',
-      avatar: 'assets/avatar_inky.png',
+      sprite: 'assets/crew_inky.png?v=3',
+      avatar: 'assets/avatar_inky.png?v=3',
       loves: 'Drawing, comics, music, and caffeine.',
       power: 'Ink Blast — brings ideas to life.',
       quote: '“Artist. Dreamer. Story maker. Sees magic in the margins! Step into my Custom 3D Print Studio to design a personalized print in your favorite colors, or browse our HueForge 3D Wall Art!”',
@@ -201,21 +201,38 @@
   };
 
   // ========================================================================
-  // 2. INTERACTIVE CIRCLE SPOTLIGHT & TAB SWITCHING
+  // 2. INTERACTIVE CIRCLE SPOTLIGHT, RIGHTMOST COIN TRACKER & TAB SWITCHING
   // ========================================================================
-  let lastPreviewedCrew = 'glitch';
+  let lastPreviewedCrew = '';
+  let isDialManualHover = false;
 
-  window.previewCrewMember = function (crewKey) {
-    if (lastPreviewedCrew === crewKey) return;
+  window.previewCrewMember = function (crewKey, fromHover) {
+    if (fromHover) isDialManualHover = true;
     const profile = CREW_PROFILES[crewKey];
     if (!profile) return;
+
+    // Always highlight and slightly enlarge the active character's coin on the turntable
+    document.querySelectorAll('.orbit-gremlin-node[data-crew]').forEach((node) => {
+      node.classList.toggle('active-coin', node.getAttribute('data-crew') === crewKey);
+    });
+
+    if (lastPreviewedCrew === crewKey) return;
     lastPreviewedCrew = crewKey;
 
-    document.getElementById('spotImg').src = profile.sprite;
-    document.getElementById('spotImg').alt = profile.name;
+    const spotImg = document.getElementById('spotImg');
+    if (spotImg) {
+      spotImg.src = profile.sprite;
+      spotImg.alt = profile.name;
+    }
     const spotName = document.getElementById('spotName');
-    spotName.textContent = profile.name;
-    spotName.style.color = profile.color;
+    if (spotName) {
+      spotName.textContent = profile.name;
+      spotName.style.color = profile.color;
+    }
+    const spotCard = document.getElementById('hubSpotlightCard');
+    if (spotCard) {
+      spotCard.style.borderColor = profile.color;
+    }
 
     document.getElementById('spotRole').textContent = profile.role;
     document.getElementById('spotQuote').textContent = profile.quote;
@@ -226,6 +243,40 @@
     btn.innerHTML = `<span>${profile.btnLabel}</span>`;
     btn.onclick = profile.btnAction;
   };
+
+  window.releaseDialHover = function () {
+    isDialManualHover = false;
+    updateRightmostTurntableCoin();
+  };
+
+  function updateRightmostTurntableCoin() {
+    if (isDialManualHover) return;
+    const glitchView = document.getElementById('view-glitch');
+    if (!glitchView || !glitchView.classList.contains('active')) return;
+
+    const nodes = document.querySelectorAll('#orbitRotatingDial .orbit-gremlin-node[data-crew]');
+    if (!nodes.length) return;
+
+    let rightmostKey = null;
+    let maxRightX = -Infinity;
+
+    nodes.forEach((node) => {
+      const rect = node.getBoundingClientRect();
+      if (rect.width === 0 && rect.height === 0) return;
+      const centerX = rect.left + rect.width * 0.5;
+      if (centerX > maxRightX) {
+        maxRightX = centerX;
+        rightmostKey = node.getAttribute('data-crew');
+      }
+    });
+
+    if (rightmostKey) {
+      window.previewCrewMember(rightmostKey, false);
+    }
+  }
+
+  setInterval(updateRightmostTurntableCoin, 150);
+  setTimeout(updateRightmostTurntableCoin, 50);
 
   let activeGremlinKey = 'fokal';
   let activeGremlinSubCat = 'all';
@@ -250,7 +301,7 @@
 
     if (tabKey === 'glitch') {
       document.getElementById('view-glitch').classList.add('active');
-      previewCrewMember('glitch');
+      updateRightmostTurntableCoin();
     } else if (tabKey === 'pixel') {
       document.getElementById('view-pixel').classList.add('active');
     } else if (tabKey === 'inky') {
