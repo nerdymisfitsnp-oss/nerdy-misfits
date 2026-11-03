@@ -326,21 +326,28 @@ img {
 
 .crew-tabs-list {
   display: grid;
-  grid-template-columns: repeat(8, 1fr);
+  grid-template-columns: repeat(8, minmax(0, 1fr));
   gap: 7px;
+  justify-content: center;
+  align-items: stretch;
+  margin: 0 auto;
+  width: 100%;
 }
 
 .crew-tab-btn {
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   background: var(--bg-card);
   border: 2px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-md);
   padding: 6px 8px;
-  text-align: left;
+  text-align: center;
   transition: var(--transition);
   position: relative;
+  min-width: 0;
+  width: 100%;
 }
 
 .crew-tab-btn:hover {
@@ -413,6 +420,7 @@ img {
 
 .crew-tab-text {
   min-width: 0;
+  text-align: center;
 }
 
 .crew-tab-who {
@@ -1863,10 +1871,111 @@ img {
   }
 }
 
+/* ==========================================================================
+   14. ADMIN COMMAND CENTER (FULFILLMENT QUEUE, ORDER RECORDS & ANALYTICS)
+   ========================================================================== */
+.admin-subtab-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--bg-card);
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  color: var(--text-secondary);
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.92rem;
+  padding: 11px 20px;
+  border-radius: var(--radius-pill);
+  transition: var(--transition);
+}
+
+.admin-subtab-btn:hover {
+  border-color: var(--neon-cyan);
+  color: var(--text-bright);
+}
+
+.admin-subtab-btn.active {
+  background: rgba(57, 255, 20, 0.15);
+  border-color: var(--neon-green);
+  color: var(--neon-green);
+  box-shadow: var(--glow-green);
+}
+
+.admin-order-card {
+  background: var(--bg-card);
+  border: 2px solid rgba(255, 255, 255, 0.14);
+  border-radius: var(--radius-lg);
+  padding: 20px;
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: 20px;
+  align-items: start;
+  transition: border-color 0.2s ease, background 0.2s ease;
+}
+
+.admin-order-card:hover {
+  border-color: var(--neon-cyan);
+}
+
+.admin-order-card.fulfilled-record {
+  border-color: rgba(57, 255, 20, 0.35);
+  background: linear-gradient(145deg, #131a18 0%, #121520 100%);
+}
+
+.admin-check-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(57, 255, 20, 0.08);
+  border: 2px solid rgba(57, 255, 20, 0.4);
+  border-radius: 14px;
+  padding: 12px 14px;
+  cursor: pointer;
+  user-select: none;
+  min-width: 92px;
+  text-align: center;
+  transition: var(--transition);
+}
+
+.admin-check-wrap:hover {
+  background: rgba(57, 255, 20, 0.2);
+  border-color: var(--neon-green);
+  box-shadow: var(--glow-green);
+}
+
+.admin-check-wrap input[type="checkbox"] {
+  width: 24px;
+  height: 24px;
+  accent-color: #39ff14;
+  cursor: pointer;
+}
+
+.admin-check-wrap span {
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--neon-green);
+}
+
+@media (max-width: 780px) {
+  .admin-order-card {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+  .admin-check-wrap {
+    flex-direction: row;
+    justify-content: flex-start;
+  }
+}
+
 /* Responsive */
 @media (max-width: 1060px) {
   .crew-tabs-list {
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    justify-content: center;
   }
   .hub-hero-grid,
   .inky-studio-grid {
@@ -1963,52 +2072,52 @@ img {
     font-size: 0.82rem;
   }
 
-  /* Single-row horizontal swipeable Crew Tab Strip instead of 4 stacked rows! */
+  /* Centered 2-column compact Crew Tabs grid on mobile with zero overflow */
   .crew-tabs-bar {
     padding: 6px 0 8px;
-    position: sticky;
-    top: 0;
-    z-index: 99;
     background: #0d1019;
     border-bottom: 1.5px solid rgba(57, 255, 20, 0.35);
   }
 
   .crew-tabs-list {
-    display: flex;
-    overflow-x: auto;
-    gap: 8px;
-    padding: 2px 2px 4px;
-    scroll-snap-type: x proximity;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
-  }
-
-  .crew-tabs-list::-webkit-scrollbar {
-    display: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    padding: 2px 0;
+    justify-content: center;
+    align-items: stretch;
   }
 
   .crew-tab-btn {
-    flex: 0 0 auto;
-    width: auto;
-    min-width: 138px;
-    max-width: 165px;
-    padding: 5px 9px;
-    gap: 7px;
-    scroll-snap-align: start;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    padding: 6px 8px;
+    gap: 6px;
+    justify-content: center;
+    text-align: center;
   }
 
   .crew-tab-avatar {
-    width: 30px;
-    height: 30px;
+    width: 26px;
+    height: 26px;
   }
 
   .crew-tab-who {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .crew-tab-what {
-    font-size: 0.65rem;
+    font-size: 0.62rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   /* Tab panels & Hero spacing on mobile */

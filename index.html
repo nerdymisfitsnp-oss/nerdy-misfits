@@ -17,12 +17,12 @@
        ==================================================================== -->
   <header class="top-sheet-header">
     <div class="container header-top-row">
-      <!-- Brand Logo & Motto -->
-      <div class="brand-cluster" onclick="switchCrewTab('glitch')" title="Back to Glitch's Main Hub">
-        <img src="assets/official_logo.png" alt="Nerdy Misfits — There's One In All Of Us!" class="brand-sheet-logo" />
-        <div class="brand-tagline-box">
+      <!-- Brand Logo (Hidden-in-Plain-Sight Admin Login) & Motto (Home) -->
+      <div class="brand-cluster">
+        <img src="assets/official_logo.png" alt="Nerdy Misfits — There's One In All Of Us!" class="brand-sheet-logo" onclick="handleLogoAdminClick(event)" title="Nerdy Misfits" />
+        <div class="brand-tagline-box" onclick="switchCrewTab('glitch')" title="Back to Glitch's Main Hub">
           <div class="brand-superpower">THERE'S ONE IN ALL OF US!</div>
-          <div class="brand-subline">Weird is a superpower • Five misfits, one crew • North Port, FL</div>
+          <div class="brand-subline">Weird is a superpower • Seven misfits, one crew • North Port, FL</div>
         </div>
       </div>
 
@@ -1127,6 +1127,216 @@
   </section>
 
   <!-- ====================================================================
+       HIDDEN ADMIN COMMAND CENTER (UNLOCKED VIA TOP-LEFT LOGO LOGIN)
+       ==================================================================== -->
+  <section id="view-admin" class="tab-view-panel">
+    <div class="container">
+      <!-- Admin Header Banner -->
+      <div class="gremlin-host-banner" style="border-color:var(--neon-green);background:linear-gradient(145deg, #0d1612 0%, #101420 100%);">
+        <div class="host-left">
+          <img src="assets/official_logo.png" alt="Nerdy Misfits Command Center" style="height:82px;width:auto;background:#000;padding:8px 14px;border-radius:14px;border:2px solid var(--neon-green);" />
+          <div>
+            <div class="host-badge-row">
+              <span class="host-pill" style="background:var(--neon-green);color:#050805;">🔓 ADMIN COMMAND CENTER</span>
+              <span class="host-pill" style="background:rgba(0,229,255,0.14);color:var(--neon-cyan);border-color:var(--neon-cyan);">nerdymisfitsnp@gmail.com</span>
+            </div>
+            <h1 class="host-title">Nerdy Misfits Order Fulfillment &amp; Traffic Analytics</h1>
+            <p class="host-speech" style="margin-bottom:0;">
+              Check the <strong>Filled</strong> box next to any order to move it into your Previous Orders record, or inspect live site traffic and customer conversion rates.
+            </p>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+          <button type="button" class="btn-friendly-secondary" style="border-color:var(--neon-cyan);color:var(--neon-cyan);background:rgba(0,229,255,0.1);" onclick="refreshAdminData()">
+            <span>🔄 Refresh Live Data</span>
+          </button>
+          <button type="button" class="btn-friendly-secondary" onclick="switchCrewTab('glitch')">
+            <span>🟢 Back to Glitch's Hub</span>
+          </button>
+          <button type="button" class="btn-friendly-secondary" style="border-color:#ff4d6d;color:#ff8fa3;background:rgba(255,77,109,0.14);" onclick="adminLogout()">
+            <span>🔒 Log Out</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 3 Admin Navigation Sub-Tabs -->
+      <div class="admin-subtabs-bar" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:26px;">
+        <button type="button" id="adminTabBtnUnfulfilled" class="admin-subtab-btn active" onclick="switchAdminSubTab('unfulfilled')">
+          <span>📦 Orders Needing Fulfilled</span>
+          <span id="adminUnfulfilledCountBadge" class="stash-count" style="background:var(--neon-pink);color:#fff;">0</span>
+        </button>
+        <button type="button" id="adminTabBtnFulfilled" class="admin-subtab-btn" onclick="switchAdminSubTab('fulfilled')">
+          <span>🗂️ Previous Orders (Record)</span>
+          <span id="adminFulfilledCountBadge" class="stash-count" style="background:var(--neon-cyan);color:#041014;">0</span>
+        </button>
+        <button type="button" id="adminTabBtnAnalytics" class="admin-subtab-btn" onclick="switchAdminSubTab('analytics')">
+          <span>📈 Site Traffic &amp; Conversion Rates</span>
+        </button>
+      </div>
+
+      <!-- ================================================================
+           ADMIN SUB-PANEL 1: ORDERS NEEDING FULFILLED
+           ================================================================ -->
+      <div id="adminPanelUnfulfilled" class="admin-subpanel active">
+        <div class="toolbar-row" style="margin-bottom:16px;">
+          <div>
+            <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:900;">
+              📦 Active Queue: Orders Needing Fulfilled
+            </h2>
+            <p style="font-size:0.86rem;color:var(--text-secondary);">
+              Check the <strong>"Filled"</strong> box on the left of any order once packed or picked up—it will automatically move to your Previous Orders record.
+            </p>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;">
+            <input
+              type="text"
+              id="adminSearchUnfulfilled"
+              class="friendly-input"
+              placeholder="Search unfulfilled orders..."
+              oninput="renderAdminOrders()"
+              style="width:240px;"
+            />
+          </div>
+        </div>
+
+        <div id="adminUnfulfilledList" style="display:flex;flex-direction:column;gap:16px;"></div>
+      </div>
+
+      <!-- ================================================================
+           ADMIN SUB-PANEL 2: PREVIOUS ORDERS FOR RECORD (FULFILLED)
+           ================================================================ -->
+      <div id="adminPanelFulfilled" class="admin-subpanel" style="display:none;">
+        <div class="toolbar-row" style="margin-bottom:16px;">
+          <div>
+            <h2 style="font-family:var(--font-display);font-size:1.5rem;font-weight:900;">
+              🗂️ Previous Fulfilled Orders (Permanent Record)
+            </h2>
+            <p style="font-size:0.86rem;color:var(--text-secondary);">
+              Complete archive of all filled orders. Uncheck an order's box if you ever need to return it to the active fulfillment queue.
+            </p>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <input
+              type="text"
+              id="adminSearchFulfilled"
+              class="friendly-input"
+              placeholder="Search past orders by name, ID, email..."
+              oninput="renderAdminOrders()"
+              style="width:260px;"
+            />
+            <button type="button" class="btn-friendly-primary" style="padding:8px 16px;font-size:0.82rem;" onclick="exportFulfilledOrdersCsv()">
+              <span>📥 Export Records (CSV)</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="adminFulfilledList" style="display:flex;flex-direction:column;gap:16px;"></div>
+      </div>
+
+      <!-- ================================================================
+           ADMIN SUB-PANEL 3: SITE TRAFFIC & CUSTOMER CONVERSION ANALYTICS
+           ================================================================ -->
+      <div id="adminPanelAnalytics" class="admin-subpanel" style="display:none;">
+        <!-- Top 4 KPI Summary Cards -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));gap:18px;margin-bottom:28px;">
+          <!-- KPI 1: Site Visitors -->
+          <div class="studio-card" style="padding:20px;border-color:var(--neon-cyan);">
+            <div style="font-family:var(--font-mono);font-size:0.74rem;color:var(--neon-cyan);font-weight:800;text-transform:uppercase;">
+              🌐 Total Site Traffic
+            </div>
+            <div id="kpiTotalVisitors" style="font-family:var(--font-display);font-size:2.3rem;font-weight:900;color:#fff;margin:6px 0 2px;">
+              0
+            </div>
+            <div id="kpiTotalPageViews" style="font-size:0.82rem;color:var(--text-secondary);">
+              0 Total Page &amp; Tab Views
+            </div>
+          </div>
+
+          <!-- KPI 2: Add-to-Stash Rate -->
+          <div class="studio-card" style="padding:20px;border-color:var(--pixel-purple);box-shadow:var(--glow-purple);">
+            <div style="font-family:var(--font-mono);font-size:0.74rem;color:#df8eff;font-weight:800;text-transform:uppercase;">
+              🎒 Add-to-Stash Rate
+            </div>
+            <div id="kpiCartRate" style="font-family:var(--font-display);font-size:2.3rem;font-weight:900;color:#fff;margin:6px 0 2px;">
+              0.0%
+            </div>
+            <div id="kpiCartSubtext" style="font-size:0.82rem;color:var(--text-secondary);">
+              Visitors who added items to Stash
+            </div>
+          </div>
+
+          <!-- KPI 3: Customer Conversion Rate -->
+          <div class="studio-card" style="padding:20px;border-color:var(--neon-green);box-shadow:var(--glow-green);">
+            <div style="font-family:var(--font-mono);font-size:0.74rem;color:var(--neon-green);font-weight:800;text-transform:uppercase;">
+              ⚡ Customer Conversion Rate
+            </div>
+            <div id="kpiConversionRate" style="font-family:var(--font-display);font-size:2.3rem;font-weight:900;color:var(--neon-green);margin:6px 0 2px;">
+              0.0%
+            </div>
+            <div id="kpiConversionSubtext" style="font-size:0.82rem;color:var(--text-secondary);">
+              Orders ÷ Unique Visitors (Avg e-comm: 2.1%)
+            </div>
+          </div>
+
+          <!-- KPI 4: Total Revenue & AOV -->
+          <div class="studio-card" style="padding:20px;border-color:var(--neon-pink);box-shadow:var(--glow-pink);">
+            <div style="font-family:var(--font-mono);font-size:0.74rem;color:#ff7be2;font-weight:800;text-transform:uppercase;">
+              💰 Total Order Volume &amp; AOV
+            </div>
+            <div id="kpiTotalRevenue" style="font-family:var(--font-display);font-size:2.3rem;font-weight:900;color:#fff;margin:6px 0 2px;">
+              $0.00
+            </div>
+            <div id="kpiAovSubtext" style="font-size:0.82rem;color:var(--text-secondary);">
+              Avg Order Value: $0.00
+            </div>
+          </div>
+        </div>
+
+        <!-- Funnel + Crew Tab Traffic Grid -->
+        <div class="inky-studio-grid" style="margin-bottom:28px;">
+          <!-- Left: Customer Conversion Funnel -->
+          <div class="studio-card" style="border-color:var(--neon-green);">
+            <span class="host-pill" style="margin-bottom:8px;display:inline-block;">📊 CONVERSION FUNNEL</span>
+            <h3 style="font-family:var(--font-display);font-size:1.35rem;font-weight:900;margin-bottom:6px;">
+              Visitor-to-Customer Conversion Funnel
+            </h3>
+            <p style="font-size:0.84rem;color:var(--text-secondary);margin-bottom:18px;">
+              Tracks how visitors move from landing on Glitch’s Hub to browsing Crew Tabs, adding 3D prints to their Stash, and completing checkout.
+            </p>
+            <div id="adminFunnelContainer" style="display:flex;flex-direction:column;gap:14px;"></div>
+          </div>
+
+          <!-- Right: Traffic by Misfits Crew Tab & Device Split -->
+          <div class="studio-card" style="border-color:var(--neon-cyan);">
+            <span class="host-pill" style="background:rgba(0,229,255,0.16);color:var(--neon-cyan);border-color:var(--neon-cyan);margin-bottom:8px;display:inline-block;">👾 TRAFFIC BY CREW TAB</span>
+            <h3 style="font-family:var(--font-display);font-size:1.35rem;font-weight:900;margin-bottom:6px;">
+              Most Visited Misfit Crew Sections
+            </h3>
+            <p style="font-size:0.84rem;color:var(--text-secondary);margin-bottom:16px;">
+              Live breakdown of which Misfit character tabs and devices customers use most.
+            </p>
+            <div id="adminCrewTrafficBars" style="display:flex;flex-direction:column;gap:10px;margin-bottom:18px;"></div>
+            <div id="adminDeviceSplitBox" style="padding:12px 14px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.12);border-radius:12px;font-size:0.84rem;"></div>
+          </div>
+        </div>
+
+        <!-- Recent Live Visitor & Order Activity Stream -->
+        <div class="studio-card" style="border-color:rgba(255,255,255,0.2);">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+            <div>
+              <span class="host-pill">⚡ LIVE ACTIVITY STREAM</span>
+              <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;margin-top:4px;">
+                Recent Site Visits, Cart Adds &amp; Conversions
+              </h3>
+            </div>
+          </div>
+          <div id="adminRecentEventsTable" style="overflow-x:auto;"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
        BOTTOM DARK SHEET FOOTER (EXACT MATCH TO CHARACTER SHEET FOOTER!)
        ==================================================================== -->
   <footer class="sheet-footer">
@@ -1260,6 +1470,64 @@
           <span>Checkout with Square →</span>
         </button>
       </div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       HIDDEN ADMIN LOGIN MODAL (TRIGGERED BY TOP-LEFT LOGO)
+       ==================================================================== -->
+  <div id="adminLoginModalBackdrop" class="modal-backdrop" onclick="if(event.target===this) closeAdminLoginModal()">
+    <div style="background:var(--bg-card);border:2.5px solid var(--neon-green);border-radius:var(--radius-xl);max-width:430px;width:100%;padding:28px;position:relative;box-shadow:0 24px 65px rgba(0,0,0,0.88), var(--glow-green);">
+      <button type="button" class="close-circle-btn" onclick="closeAdminLoginModal()">✕</button>
+
+      <div style="text-align:center;margin-bottom:18px;">
+        <img src="assets/official_logo.png" alt="Nerdy Misfits" style="height:64px;margin:0 auto 10px;background:#000;padding:6px 12px;border-radius:12px;border:2px solid var(--neon-green);" />
+        <span class="host-pill" style="margin-bottom:6px;display:inline-block;">🔒 CREW COMMAND ACCESS</span>
+        <h2 style="font-family:var(--font-display);font-size:1.55rem;font-weight:900;color:#fff;">
+          Nerdy Misfits Admin Login
+        </h2>
+        <p style="font-size:0.84rem;color:var(--text-secondary);margin-top:4px;">
+          Sign in to manage orders needing fulfilled, past order records, and site conversion analytics.
+        </p>
+      </div>
+
+      <form onsubmit="submitAdminLogin(event)" style="display:flex;flex-direction:column;gap:12px;">
+        <div>
+          <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">
+            Admin Email:
+          </label>
+          <input
+            type="email"
+            id="adminEmailInput"
+            class="friendly-input"
+            placeholder="nerdymisfitsnp@gmail.com"
+            autocomplete="username"
+            required
+          />
+        </div>
+
+        <div>
+          <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">
+            Password:
+          </label>
+          <input
+            type="password"
+            id="adminPasswordInput"
+            class="friendly-input"
+            placeholder="Enter password..."
+            autocomplete="current-password"
+            required
+          />
+        </div>
+
+        <div id="adminLoginError" style="display:none;background:rgba(255,42,133,0.16);border:1.5px solid #ff2a85;color:#ff9ebb;padding:8px 12px;border-radius:10px;font-size:0.8rem;font-weight:700;text-align:center;">
+          Invalid email or password.
+        </div>
+
+        <button type="submit" class="btn-friendly-primary" style="width:100%;justify-content:center;margin-top:4px;">
+          <span>🔓 Unlock Admin Dashboard →</span>
+        </button>
+      </form>
     </div>
   </div>
 

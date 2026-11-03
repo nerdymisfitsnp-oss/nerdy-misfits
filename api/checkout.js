@@ -9,6 +9,14 @@
 // ============================================================================
 
 export default async function handler(req, res) {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    return res.status(200).end();
+  }
+
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Method Not Allowed' });
   }
@@ -67,9 +75,9 @@ export default async function handler(req, res) {
       : '';
 
     const lineItems = items.map((item) => ({
-      name: item.name,
+      name: String(item.name || 'Nerdy Misfits Creation').slice(0, 250),
       quantity: String(item.qty || 1),
-      note: `${item.meta || ''} | Fulfillment: ${fulfillment} ${customerTag}`.trim(),
+      note: `${item.meta || ''} | Fulfillment: ${fulfillment} ${customerTag}`.trim().slice(0, 480),
       base_price_money: {
         amount: Math.round(Number(item.price) * 100), // Square uses cents
         currency: 'USD'
@@ -80,7 +88,7 @@ export default async function handler(req, res) {
       lineItems.push({
         name: 'US Standard Shipping (North Port Workshop)',
         quantity: '1',
-        note: customer.address || fulfillment,
+        note: String(customer.address || fulfillment).slice(0, 480),
         base_price_money: {
           amount: Math.round(Number(shipping) * 100),
           currency: 'USD'
@@ -90,10 +98,9 @@ export default async function handler(req, res) {
 
     const idempotencyKey = `nm-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
-    const prePopulatedData = {};
-    if (customer.email) prePopulatedData.buyer_email = customer.email;
-    if (customer.phone) prePopulatedData.buyer_phone_number = customer.phone;
-
+    // Note: Do NOT pass customer.phone into pre_populated_data.buyer_phone_number
+    // because Square strictly rejects non-E.164 phone numbers with 400 Bad Request.
+    // Customer contact info is already included in the order note, Supabase, and email alert.
     const squareResponse = await fetch(
       'https://connect.squareup.com/v2/online-checkout/payment-links',
       {
@@ -107,7 +114,7 @@ export default async function handler(req, res) {
           idempotency_key: idempotencyKey,
           order: {
             location_id: locationId,
-            reference_id: orderId,
+            reference_id: String(orderId).slice(0, 38),
             line_items: lineItems
           },
           checkout_options: {
@@ -118,8 +125,7 @@ export default async function handler(req, res) {
               cash_app_pay: true,
               afterpay_clearpay: true
             }
-          },
-          pre_populated_data: Object.keys(prePopulatedData).length ? prePopulatedData : undefined
+          }
         })
       }
     );

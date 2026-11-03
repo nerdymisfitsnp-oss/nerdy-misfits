@@ -257,12 +257,18 @@
       document.getElementById('view-inky').classList.add('active');
     } else if (tabKey === 'markets') {
       document.getElementById('view-markets').classList.add('active');
+    } else if (tabKey === 'admin') {
+      document.getElementById('view-admin').classList.add('active');
     } else if (CREW_PROFILES[tabKey]) {
       activeGremlinKey = tabKey;
       activeGremlinSubCat = 'all';
       gremlinVisibleCount = 20;
       setupGremlinShopTab(tabKey);
       document.getElementById('view-gremlin-shop').classList.add('active');
+    }
+
+    if (tabKey !== 'admin' && typeof window.trackAnalyticsEvent === 'function') {
+      window.trackAnalyticsEvent('tab_view', tabKey, null);
     }
 
     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -552,6 +558,9 @@
     };
 
     document.getElementById('quickViewModalBackdrop').classList.add('open');
+    if (typeof window.trackAnalyticsEvent === 'function') {
+      window.trackAnalyticsEvent('product_view', activeGremlinKey || 'glitch', p.name);
+    }
   };
 
   window.closeQuickView = function () {
@@ -650,6 +659,9 @@
     renderCart();
     toggleCartDrawer(true);
     showToast(`🎨 Inky added "${studioState.title}" with your custom specs to your Stash!`);
+    if (typeof window.trackAnalyticsEvent === 'function') {
+      window.trackAnalyticsEvent('add_to_cart', 'inky', `Inky Custom: ${studioState.title}`);
+    }
   };
 
   // Cart State (Starts empty each time visited)
@@ -682,6 +694,9 @@
     }
     renderCart();
     showToast(`🎒 Added "${p.name}" to your Stash!`);
+    if (typeof window.trackAnalyticsEvent === 'function') {
+      window.trackAnalyticsEvent('add_to_cart', activeGremlinKey || 'glitch', p.name);
+    }
   };
 
   window.changeCartQty = function (uid, delta) {
@@ -848,45 +863,46 @@
     const btn = document.getElementById('squareCheckoutBtn');
     if (btn) btn.innerHTML = '<span>Sending Order Details &amp; Connecting...</span>';
 
+    if (typeof window.trackAnalyticsEvent === 'function') {
+      window.trackAnalyticsEvent('checkout_started', activeGremlinKey || 'glitch', `Order ${orderId}`);
+    }
+
     // Dispatch order email notification to nerdymisfitsnp@gmail.com + log to Supabase
     await window.sendMisfitOrderNotification(orderPayload);
 
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          orderId,
-          items: cart,
-          fulfillment,
-          customer,
-          subtotal,
-          shipping,
-          totalCharged,
-          freeMiniUnlocked
-        })
-      });
-      if (res.ok) {
-        const data = await res.json();
-        if (data.url) {
-          window.location.href = data.url;
-          return;
+    const checkoutBody = JSON.stringify({
+      orderId,
+      items: cart,
+      fulfillment,
+      customer,
+      subtotal,
+      shipping,
+      totalCharged,
+      freeMiniUnlocked
+    });
+
+    const checkoutEndpoints = ['/api/checkout', 'https://www.nerdymisfits.com/api/checkout'];
+    for (const endpoint of checkoutEndpoints) {
+      try {
+        const res = await fetch(endpoint, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: checkoutBody
+        });
+        if (res.ok) {
+          const data = await res.json();
+          if (data.url) {
+            window.location.href = data.url;
+            return;
+          }
         }
+      } catch (_) {
+        // Try next endpoint if running on local static server
       }
-    } catch (_) {
-      // Fallback when running on local static server before Square API token is added
     }
 
     if (btn) btn.innerHTML = '<span>Checkout with Square →</span>';
-    showToast(`📧 Order ${orderId} ($${totalCharged.toFixed(2)}) emailed to Nerdy Misfits!`);
-    // Fallback to opening the first cart item's real Square product page
-    const firstWithId = cart.find((c) => c.id);
-    const matchedProd = firstWithId ? allProducts.find((p) => p.id === firstWithId.id) : null;
-    if (matchedProd && matchedProd.link) {
-      window.open(matchedProd.link, '_blank', 'noopener');
-    } else {
-      window.open('https://nerdy-misfits.square.site/', '_blank', 'noopener');
-    }
+    showToast(`✅ Order ${orderId} ($${totalCharged.toFixed(2)}) received! We've logged your order and will send your Square invoice shortly.`);
   };
 
   // ========================================================================
@@ -944,6 +960,555 @@
       .replace(/>/g, '&gt;')
       .replace(/"/g, '&quot;');
   }
+
+  // ========================================================================
+  // 8. ADMIN LOGIN (TOP-LEFT LOGO), FULFILLMENT QUEUE, RECORDS & ANALYTICS
+  // ========================================================================
+  const SUPABASE_REST_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/rest/v1';
+  const SUPABASE_ANON_KEY =
+    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4YXZ2cnF5enB3c2N6cGl3bXVhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTIwMTA4MDksImV4cCI6MjEwNzU4NjgwOX0.XvOWwBlOBjGYxkQrD8eZvnaWaKb0qMW9HVtWhlnI6Yo';
+
+  const ADMIN_EMAIL = 'nerdymisfitsnp@gmail.com';
+  const ADMIN_PASS = 'notyours';
+
+  // Visitor Session ID for live traffic & conversion tracking
+  let visitorSessionId = sessionStorage.getItem('nm_visitor_session');
+  if (!visitorSessionId) {
+    visitorSessionId = 'sess-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 6);
+    sessionStorage.setItem('nm_visitor_session', visitorSessionId);
+  }
+
+  window.trackAnalyticsEvent = function (eventType, tabOrPage, productName) {
+    const deviceType = window.innerWidth <= 780 ? 'Mobile' : 'Desktop';
+    fetch(`${SUPABASE_REST_URL}/misfits_analytics_events`, {
+      method: 'POST',
+      headers: {
+        apikey: SUPABASE_ANON_KEY,
+        Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal'
+      },
+      body: JSON.stringify({
+        session_id: visitorSessionId,
+        event_type: eventType,
+        tab_or_page: tabOrPage || 'glitch',
+        product_name: productName || null,
+        device_type: deviceType
+      })
+    }).catch(() => {});
+  };
+
+  // Track initial landing page view once per session load
+  window.trackAnalyticsEvent('page_view', 'glitch', null);
+
+  let adminOrdersCache = [];
+  let adminAnalyticsCache = [];
+  let activeAdminSubTab = 'unfulfilled';
+
+  window.handleLogoAdminClick = function (event) {
+    if (event) event.stopPropagation();
+    if (sessionStorage.getItem('nm_admin_authenticated') === 'true') {
+      openAdminDashboard();
+    } else {
+      const errEl = document.getElementById('adminLoginError');
+      if (errEl) errEl.style.display = 'none';
+      document.getElementById('adminLoginModalBackdrop').classList.add('open');
+      setTimeout(() => {
+        document.getElementById('adminEmailInput')?.focus();
+      }, 60);
+    }
+  };
+
+  window.closeAdminLoginModal = function () {
+    document.getElementById('adminLoginModalBackdrop').classList.remove('open');
+  };
+
+  window.submitAdminLogin = function (event) {
+    if (event) event.preventDefault();
+    const emailVal = (document.getElementById('adminEmailInput')?.value || '').trim().toLowerCase();
+    const passVal = document.getElementById('adminPasswordInput')?.value || '';
+    const errEl = document.getElementById('adminLoginError');
+
+    if (emailVal === ADMIN_EMAIL && passVal === ADMIN_PASS) {
+      sessionStorage.setItem('nm_admin_authenticated', 'true');
+      if (errEl) errEl.style.display = 'none';
+      closeAdminLoginModal();
+      showToast('🔓 Welcome to Nerdy Misfits Command Center!');
+      openAdminDashboard();
+    } else {
+      if (errEl) {
+        errEl.textContent = 'Invalid admin email or password. Please try again.';
+        errEl.style.display = 'block';
+      }
+    }
+  };
+
+  window.adminLogout = function () {
+    sessionStorage.removeItem('nm_admin_authenticated');
+    document.getElementById('adminPasswordInput').value = '';
+    showToast('🔒 Logged out of Admin Command Center.');
+    switchCrewTab('glitch');
+  };
+
+  function openAdminDashboard() {
+    switchCrewTab('admin');
+    refreshAdminData();
+  }
+
+  window.switchAdminSubTab = function (subKey) {
+    activeAdminSubTab = subKey;
+    document.getElementById('adminTabBtnUnfulfilled').classList.toggle('active', subKey === 'unfulfilled');
+    document.getElementById('adminTabBtnFulfilled').classList.toggle('active', subKey === 'fulfilled');
+    document.getElementById('adminTabBtnAnalytics').classList.toggle('active', subKey === 'analytics');
+
+    document.getElementById('adminPanelUnfulfilled').style.display = subKey === 'unfulfilled' ? 'block' : 'none';
+    document.getElementById('adminPanelFulfilled').style.display = subKey === 'fulfilled' ? 'block' : 'none';
+    document.getElementById('adminPanelAnalytics').style.display = subKey === 'analytics' ? 'block' : 'none';
+  };
+
+  window.refreshAdminData = async function () {
+    try {
+      const [ordersRes, analyticsRes] = await Promise.all([
+        fetch(`${SUPABASE_REST_URL}/misfits_orders?select=*&order=created_at.desc`, {
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+          }
+        }),
+        fetch(`${SUPABASE_REST_URL}/misfits_analytics_events?select=*&order=created_at.desc&limit=500`, {
+          headers: {
+            apikey: SUPABASE_ANON_KEY,
+            Authorization: `Bearer ${SUPABASE_ANON_KEY}`
+          }
+        })
+      ]);
+
+      if (ordersRes.ok) {
+        adminOrdersCache = await ordersRes.json();
+      }
+      if (analyticsRes.ok) {
+        adminAnalyticsCache = await analyticsRes.json();
+      }
+    } catch (_) {
+      // Fallback if offline
+    }
+
+    renderAdminOrders();
+    renderAdminAnalytics();
+  };
+
+  window.toggleOrderFulfilled = async function (orderId, isFulfilled) {
+    const nowIso = isFulfilled ? new Date().toISOString() : null;
+    const newStatus = isFulfilled ? 'Fulfilled' : 'Pending Fulfillment';
+
+    // Optimistic UI update
+    const target = adminOrdersCache.find((o) => o.order_id === orderId || String(o.id) === String(orderId));
+    if (target) {
+      target.fulfilled = isFulfilled;
+      target.fulfilled_at = nowIso;
+      target.status = newStatus;
+    }
+    renderAdminOrders();
+    renderAdminAnalytics();
+
+    showToast(
+      isFulfilled
+        ? `✅ Order ${orderId} marked FILLED & moved to Previous Orders Record!`
+        : `↩️ Order ${orderId} returned to Orders Needing Fulfilled.`
+    );
+
+    try {
+      await fetch(`${SUPABASE_REST_URL}/misfits_orders?order_id=eq.${encodeURIComponent(orderId)}`, {
+        method: 'PATCH',
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal'
+        },
+        body: JSON.stringify({
+          fulfilled: isFulfilled,
+          fulfilled_at: nowIso,
+          status: newStatus
+        })
+      });
+    } catch (_) {}
+  };
+
+  function formatAdminDate(isoStr) {
+    if (!isoStr) return 'Just now';
+    const d = new Date(isoStr);
+    if (isNaN(d.getTime())) return isoStr;
+    return d.toLocaleString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+      hour: 'numeric',
+      minute: '2-digit'
+    });
+  }
+
+  function renderSingleOrderCard(order, isFulfilledTab) {
+    const items = Array.isArray(order.items) ? order.items : [];
+    const itemsHtml = items
+      .map(
+        (it) => `
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 10px;background:rgba(255,255,255,0.04);border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
+          <div>
+            <strong style="color:#fff;font-size:0.86rem;">${escapeHtml(it.name || '3D Print Item')}</strong>
+            <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--neon-cyan);margin-left:6px;">×${it.qty || 1}</span>
+            <div style="font-size:0.74rem;color:var(--text-secondary);">${escapeHtml(it.meta || 'Standard Workshop Finish')}</div>
+          </div>
+          <strong style="font-family:var(--font-mono);color:var(--neon-green);font-size:0.86rem;">
+            $${(Number(it.price || 0) * Number(it.qty || 1)).toFixed(2)}
+          </strong>
+        </div>
+      `
+      )
+      .join('');
+
+    const totalNum = Number(order.total_charged || 0);
+    const subNum = Number(order.subtotal || totalNum);
+    const shipNum = Number(order.shipping_cost || 0);
+
+    return `
+      <div class="admin-order-card ${isFulfilledTab ? 'fulfilled-record' : ''}">
+        <!-- Left Checkbox Column: Click to Mark Filled / Unfilled -->
+        <label class="admin-check-wrap" title="${isFulfilledTab ? 'Uncheck to move back to Needs Fulfilled' : 'Check to mark order Filled & move to Previous Orders'}">
+          <input
+            type="checkbox"
+            ${order.fulfilled ? 'checked' : ''}
+            onchange="toggleOrderFulfilled('${escapeHtml(order.order_id)}', this.checked)"
+          />
+          <span>${order.fulfilled ? '✅ Filled' : 'Mark Filled'}</span>
+        </label>
+
+        <!-- Center Order Details & Customer Info -->
+        <div>
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
+            <span style="font-family:var(--font-mono);font-size:0.95rem;font-weight:900;color:var(--neon-green);background:rgba(57,255,20,0.12);padding:3px 10px;border-radius:8px;border:1px solid var(--neon-green);">
+              #${escapeHtml(order.order_id)}
+            </span>
+            <span style="font-size:0.8rem;color:var(--text-secondary);">
+              🕒 Ordered: ${formatAdminDate(order.created_at)}
+            </span>
+            <span class="host-pill" style="background:rgba(0,229,255,0.14);color:var(--neon-cyan);border-color:var(--neon-cyan);">
+              ${escapeHtml(order.fulfillment || '🚚 US Shipping')}
+            </span>
+            ${
+              order.free_mystery_mini
+                ? `<span class="host-pill" style="background:rgba(255,0,168,0.18);color:#ff85df;border-color:var(--neon-pink);">🎁 Include Free Mystery Mini</span>`
+                : ''
+            }
+            ${
+              order.fulfilled && order.fulfilled_at
+                ? `<span class="host-pill" style="background:rgba(57,255,20,0.2);color:var(--neon-green);border-color:var(--neon-green);">✓ Filled ${formatAdminDate(order.fulfilled_at)}</span>`
+                : ''
+            }
+          </div>
+
+          <!-- Customer Contact Bar -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(190px, 1fr));gap:10px;padding:10px 12px;background:rgba(0,0,0,0.35);border-radius:10px;border:1px solid rgba(255,255,255,0.1);margin-bottom:12px;font-size:0.82rem;">
+            <div>
+              <span style="color:var(--text-secondary);display:block;font-size:0.72rem;">CUSTOMER NAME</span>
+              <strong style="color:#fff;">👤 ${escapeHtml(order.customer_name || 'Guest Customer')}</strong>
+            </div>
+            <div>
+              <span style="color:var(--text-secondary);display:block;font-size:0.72rem;">EMAIL &amp; PHONE</span>
+              <a href="mailto:${escapeHtml(order.customer_email || '')}" style="color:var(--neon-cyan);font-weight:700;text-decoration:underline;">
+                ${escapeHtml(order.customer_email || 'No email')}
+              </a>
+              ${
+                order.customer_phone
+                  ? `<div style="color:#e2e8f0;font-family:var(--font-mono);font-size:0.76rem;">📞 ${escapeHtml(order.customer_phone)}</div>`
+                  : ''
+              }
+            </div>
+            <div>
+              <span style="color:var(--text-secondary);display:block;font-size:0.72rem;">SHIPPING ADDRESS / PICKUP NOTES</span>
+              <strong style="color:#ffd166;">📍 ${escapeHtml(order.shipping_address || order.fulfillment || 'See fulfillment')}</strong>
+            </div>
+          </div>
+
+          <!-- Ordered Items List -->
+          <div style="display:flex;flex-direction:column;gap:6px;">
+            ${itemsHtml || '<div style="font-size:0.8rem;color:var(--text-secondary);">No line items recorded.</div>'}
+          </div>
+        </div>
+
+        <!-- Right Column: Financial Breakdown -->
+        <div style="min-width:165px;text-align:right;background:rgba(0,0,0,0.35);padding:12px 14px;border-radius:12px;border:1px solid rgba(57,255,20,0.28);">
+          <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-secondary);text-transform:uppercase;">
+            Total Charged
+          </div>
+          <div style="font-family:var(--font-mono);font-size:1.55rem;font-weight:900;color:var(--neon-green);margin:2px 0 6px;">
+            $${totalNum.toFixed(2)}
+          </div>
+          <div style="font-size:0.75rem;color:var(--text-secondary);border-top:1px solid rgba(255,255,255,0.1);padding-top:6px;">
+            <div>Subtotal: $${subNum.toFixed(2)}</div>
+            <div>Shipping: $${shipNum.toFixed(2)}</div>
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  window.renderAdminOrders = function () {
+    const qUnfulfilled = (document.getElementById('adminSearchUnfulfilled')?.value || '').trim().toLowerCase();
+    const qFulfilled = (document.getElementById('adminSearchFulfilled')?.value || '').trim().toLowerCase();
+
+    const allUnfulfilled = adminOrdersCache.filter((o) => !o.fulfilled);
+    const allFulfilled = adminOrdersCache.filter((o) => Boolean(o.fulfilled));
+
+    const unfulfilledBadge = document.getElementById('adminUnfulfilledCountBadge');
+    const fulfilledBadge = document.getElementById('adminFulfilledCountBadge');
+    if (unfulfilledBadge) unfulfilledBadge.textContent = allUnfulfilled.length;
+    if (fulfilledBadge) fulfilledBadge.textContent = allFulfilled.length;
+
+    const filteredUnfulfilled = allUnfulfilled.filter((o) => {
+      if (!qUnfulfilled) return true;
+      const blob = `${o.order_id} ${o.customer_name} ${o.customer_email} ${o.customer_phone} ${o.shipping_address} ${JSON.stringify(o.items || [])}`.toLowerCase();
+      return blob.includes(qUnfulfilled);
+    });
+
+    const filteredFulfilled = allFulfilled.filter((o) => {
+      if (!qFulfilled) return true;
+      const blob = `${o.order_id} ${o.customer_name} ${o.customer_email} ${o.customer_phone} ${o.shipping_address} ${JSON.stringify(o.items || [])}`.toLowerCase();
+      return blob.includes(qFulfilled);
+    });
+
+    const unfulfilledEl = document.getElementById('adminUnfulfilledList');
+    if (unfulfilledEl) {
+      unfulfilledEl.innerHTML =
+        filteredUnfulfilled.length > 0
+          ? filteredUnfulfilled.map((o) => renderSingleOrderCard(o, false)).join('')
+          : `<div class="studio-card" style="text-align:center;padding:36px 20px;border-color:rgba(57,255,20,0.35);">
+               <div style="font-size:2rem;margin-bottom:6px;">🎉</div>
+               <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;color:var(--neon-green);">All Caught Up! Zero Orders Waiting for Fulfillment</h3>
+               <p style="font-size:0.86rem;color:var(--text-secondary);margin-top:4px;">Every order has been packed and checked off into your Previous Orders record.</p>
+             </div>`;
+    }
+
+    const fulfilledEl = document.getElementById('adminFulfilledList');
+    if (fulfilledEl) {
+      fulfilledEl.innerHTML =
+        filteredFulfilled.length > 0
+          ? filteredFulfilled.map((o) => renderSingleOrderCard(o, true)).join('')
+          : `<div class="studio-card" style="text-align:center;padding:36px 20px;border-color:rgba(255,255,255,0.18);">
+               <h3 style="font-family:var(--font-display);font-size:1.2rem;font-weight:800;">No Fulfilled Orders Match Your Filter Yet</h3>
+               <p style="font-size:0.84rem;color:var(--text-secondary);margin-top:4px;">Check the "Mark Filled" box on any active order to move it into this permanent record.</p>
+             </div>`;
+    }
+  };
+
+  window.exportFulfilledOrdersCsv = function () {
+    const rows = [
+      ['Order ID', 'Created At', 'Fulfilled At', 'Customer Name', 'Email', 'Phone', 'Fulfillment', 'Address', 'Subtotal', 'Shipping', 'Total Charged', 'Items']
+    ];
+    adminOrdersCache.forEach((o) => {
+      const itemsSummary = (Array.isArray(o.items) ? o.items : [])
+        .map((i) => `${i.name} (x${i.qty || 1})`)
+        .join('; ');
+      rows.push([
+        o.order_id || '',
+        o.created_at || '',
+        o.fulfilled_at || (o.fulfilled ? 'Fulfilled' : 'Pending'),
+        o.customer_name || '',
+        o.customer_email || '',
+        o.customer_phone || '',
+        o.fulfillment || '',
+        o.shipping_address || '',
+        Number(o.subtotal || 0).toFixed(2),
+        Number(o.shipping_cost || 0).toFixed(2),
+        Number(o.total_charged || 0).toFixed(2),
+        itemsSummary
+      ]);
+    });
+
+    const csvContent = rows
+      .map((r) => r.map((cell) => `"${String(cell).replace(/"/g, '""')}"`).join(','))
+      .join('\n');
+
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `nerdy-misfits-orders-${new Date().toISOString().slice(0, 10)}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    showToast('📥 Exported Nerdy Misfits Order Records to CSV!');
+  };
+
+  window.renderAdminAnalytics = function () {
+    const events = adminAnalyticsCache || [];
+    const orders = adminOrdersCache || [];
+
+    const uniqueSessions = new Set(events.map((e) => e.session_id).filter(Boolean));
+    const totalVisitors = Math.max(uniqueSessions.size, orders.length, 1);
+    const totalPageViews = events.filter((e) => e.event_type === 'page_view' || e.event_type === 'tab_view').length || totalVisitors;
+
+    const engagedSessions = new Set(
+      events
+        .filter((e) => e.event_type === 'tab_view' || e.event_type === 'product_view' || e.event_type === 'add_to_cart')
+        .map((e) => e.session_id)
+    ).size;
+
+    const cartSessions = new Set(
+      events.filter((e) => e.event_type === 'add_to_cart' || e.event_type === 'checkout_started').map((e) => e.session_id)
+    ).size;
+
+    const totalOrdersCount = orders.length;
+    const totalRevenue = orders.reduce((sum, o) => sum + Number(o.total_charged || 0), 0);
+    const aov = totalOrdersCount > 0 ? totalRevenue / totalOrdersCount : 0;
+
+    const cartRatePct = Math.min(100, (Math.max(cartSessions, totalOrdersCount) / totalVisitors) * 100);
+    const conversionRatePct = Math.min(100, (totalOrdersCount / totalVisitors) * 100);
+    const engagedRatePct = Math.min(100, (Math.max(engagedSessions, cartSessions, totalOrdersCount) / totalVisitors) * 100);
+
+    const kpiVis = document.getElementById('kpiTotalVisitors');
+    const kpiViews = document.getElementById('kpiTotalPageViews');
+    const kpiCart = document.getElementById('kpiCartRate');
+    const kpiCartSub = document.getElementById('kpiCartSubtext');
+    const kpiConv = document.getElementById('kpiConversionRate');
+    const kpiConvSub = document.getElementById('kpiConversionSubtext');
+    const kpiRev = document.getElementById('kpiTotalRevenue');
+    const kpiAov = document.getElementById('kpiAovSubtext');
+
+    if (kpiVis) kpiVis.textContent = `${totalVisitors} Visitors`;
+    if (kpiViews) kpiViews.textContent = `${totalPageViews} Total Page & Tab Views`;
+    if (kpiCart) kpiCart.textContent = `${cartRatePct.toFixed(1)}%`;
+    if (kpiCartSub) kpiCartSub.textContent = `${Math.max(cartSessions, totalOrdersCount)} of ${totalVisitors} visitors added to Stash`;
+    if (kpiConv) kpiConv.textContent = `${conversionRatePct.toFixed(1)}%`;
+    if (kpiConvSub) kpiConvSub.textContent = `${totalOrdersCount} Orders from ${totalVisitors} Visitors (Industry avg: 2.1%)`;
+    if (kpiRev) kpiRev.textContent = `$${totalRevenue.toFixed(2)}`;
+    if (kpiAov) kpiAov.textContent = `Avg Order Value (AOV): $${aov.toFixed(2)} across ${totalOrdersCount} orders`;
+
+    // Render Conversion Funnel
+    const funnelEl = document.getElementById('adminFunnelContainer');
+    if (funnelEl) {
+      const funnelSteps = [
+        { label: '1. Unique Site Visitors (Landed on Site)', count: totalVisitors, pct: 100, color: 'var(--neon-cyan)' },
+        { label: '2. Explored Misfits Crew Tabs / Products', count: Math.max(engagedSessions, totalOrdersCount), pct: engagedRatePct, color: 'var(--pixel-purple)' },
+        { label: '3. Added 3D Creation to Stash (Cart)', count: Math.max(cartSessions, totalOrdersCount), pct: cartRatePct, color: 'var(--neon-pink)' },
+        { label: '4. Completed Order (Converted Customers)', count: totalOrdersCount, pct: conversionRatePct, color: 'var(--neon-green)' }
+      ];
+
+      funnelEl.innerHTML = funnelSteps
+        .map(
+          (step) => `
+          <div>
+            <div style="display:flex;justify-content:space-between;font-size:0.84rem;font-weight:700;margin-bottom:4px;">
+              <span>${step.label}</span>
+              <span style="font-family:var(--font-mono);color:${step.color};">${step.count} (${step.pct.toFixed(1)}%)</span>
+            </div>
+            <div style="width:100%;height:12px;background:#0b0d14;border-radius:99px;overflow:hidden;border:1px solid rgba(255,255,255,0.12);">
+              <div style="width:${Math.max(step.pct, 4)}%;height:100%;background:${step.color};border-radius:99px;"></div>
+            </div>
+          </div>
+        `
+        )
+        .join('');
+    }
+
+    // Render Crew Tab Traffic Breakdown
+    const tabLabels = {
+      glitch: "🟢 Glitch's Hub (Home)",
+      fokal: "💖 Fokal's Sensory & Clickers",
+      crit: "🎲 Crit & Spark (Dragons/RPG)",
+      justus: "🐺 Justus's Beast Lair",
+      booksy: "📚 Booksy's Cozy Nook",
+      inky: "🎨 Inky's Custom Studio",
+      pixel: "🟣 Pixel's Mini-Games Arcade",
+      markets: '📍 SWFL Markets & All 526'
+    };
+
+    const tabCounts = {};
+    Object.keys(tabLabels).forEach((k) => (tabCounts[k] = 0));
+    events.forEach((e) => {
+      const k = (e.tab_or_page || 'glitch').toLowerCase();
+      if (tabCounts[k] !== undefined) tabCounts[k] += 1;
+    });
+
+    const maxTabCount = Math.max(...Object.values(tabCounts), 1);
+    const crewBarsEl = document.getElementById('adminCrewTrafficBars');
+    if (crewBarsEl) {
+      crewBarsEl.innerHTML = Object.entries(tabLabels)
+        .sort((a, b) => tabCounts[b[0]] - tabCounts[a[0]])
+        .map(([key, label]) => {
+          const count = tabCounts[key];
+          const pct = Math.round((count / maxTabCount) * 100);
+          return `
+            <div>
+              <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:3px;">
+                <strong>${label}</strong>
+                <span style="font-family:var(--font-mono);color:var(--neon-cyan);">${count} interactions</span>
+              </div>
+              <div style="width:100%;height:8px;background:#0b0d14;border-radius:99px;overflow:hidden;">
+                <div style="width:${Math.max(pct, 6)}%;height:100%;background:linear-gradient(90deg, var(--neon-green), var(--neon-cyan));border-radius:99px;"></div>
+              </div>
+            </div>
+          `;
+        })
+        .join('');
+    }
+
+    // Device Split
+    const mobileCount = events.filter((e) => e.device_type === 'Mobile').length;
+    const desktopCount = events.length - mobileCount;
+    const mobilePct = events.length ? Math.round((mobileCount / events.length) * 100) : 55;
+    const desktopPct = 100 - mobilePct;
+    const deviceBox = document.getElementById('adminDeviceSplitBox');
+    if (deviceBox) {
+      deviceBox.innerHTML = `
+        <div style="display:flex;justify-content:space-between;align-items:center;">
+          <span>📱 <strong>Mobile Traffic:</strong> ${mobilePct}% (${mobileCount} events)</span>
+          <span>💻 <strong>Desktop Traffic:</strong> ${desktopPct}% (${desktopCount} events)</span>
+        </div>
+      `;
+    }
+
+    // Recent Events Table
+    const recentEl = document.getElementById('adminRecentEventsTable');
+    if (recentEl) {
+      const recentSlice = events.slice(0, 15);
+      recentEl.innerHTML = `
+        <table style="width:100%;border-collapse:collapse;font-size:0.82rem;text-align:left;">
+          <thead>
+            <tr style="border-bottom:1.5px solid rgba(255,255,255,0.15);color:var(--text-secondary);font-family:var(--font-mono);font-size:0.72rem;">
+              <th style="padding:8px 10px;">TIME</th>
+              <th style="padding:8px 10px;">SESSION</th>
+              <th style="padding:8px 10px;">EVENT</th>
+              <th style="padding:8px 10px;">CREW TAB</th>
+              <th style="padding:8px 10px;">ITEM / ORDER</th>
+              <th style="padding:8px 10px;">DEVICE</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${recentSlice
+              .map(
+                (ev) => `
+              <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+                <td style="padding:8px 10px;color:var(--text-secondary);">${formatAdminDate(ev.created_at)}</td>
+                <td style="padding:8px 10px;font-family:var(--font-mono);font-size:0.75rem;color:var(--neon-cyan);">${escapeHtml(ev.session_id)}</td>
+                <td style="padding:8px 10px;font-weight:800;color:${
+                  ev.event_type === 'checkout_started'
+                    ? 'var(--neon-green)'
+                    : ev.event_type === 'add_to_cart'
+                    ? 'var(--neon-pink)'
+                    : '#fff'
+                };">${escapeHtml(ev.event_type.toUpperCase())}</td>
+                <td style="padding:8px 10px;">${escapeHtml(ev.tab_or_page || 'glitch')}</td>
+                <td style="padding:8px 10px;color:#ffd166;">${escapeHtml(ev.product_name || '—')}</td>
+                <td style="padding:8px 10px;">${escapeHtml(ev.device_type || 'Desktop')}</td>
+              </tr>
+            `
+              )
+              .join('')}
+          </tbody>
+        </table>
+      `;
+    }
+  };
 
   initAllViews();
   renderCart();
