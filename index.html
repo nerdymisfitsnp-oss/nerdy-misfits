@@ -57,7 +57,7 @@
     </div>
 
     <!-- ==================================================================
-         2. THE GREMLIN CREW TAB BAR (GREMLINS REPRESENT EACH TAB!)
+         2. THE MISFITS CREW TAB BAR (ALL 7 CREW MEMBERS + MARKETS!)
          ================================================================== -->
     <div class="crew-tabs-bar">
       <div class="container">
@@ -67,29 +67,38 @@
             <img src="assets/avatar_glitch.png" alt="Glitch" class="crew-tab-avatar" />
             <div class="crew-tab-text">
               <span class="crew-tab-who">🟢 GLITCH'S HUB</span>
-              <span class="crew-tab-what">Logo Circle &amp; Featured</span>
+              <span class="crew-tab-what">Rotating Dial &amp; Picks</span>
             </div>
           </button>
 
-          <!-- Tab 2: Pixel -->
-          <button type="button" class="crew-tab-btn" data-crew="pixel" onclick="switchCrewTab('pixel')">
-            <img src="assets/avatar_pixel.png" alt="Pixel" class="crew-tab-avatar" />
+          <!-- Tab 2: Fokal (Sensory Fidgets & Clickers!) -->
+          <button type="button" class="crew-tab-btn" data-crew="fokal" onclick="switchCrewTab('fokal')">
+            <img src="assets/avatar_fokal.png" alt="Fokal" class="crew-tab-avatar" />
             <div class="crew-tab-text">
-              <span class="crew-tab-who">🟣 PIXEL'S ARCADE</span>
-              <span class="crew-tab-what">Fidgets, Clickers &amp; Gaming</span>
+              <span class="crew-tab-who">💖 FOKAL'S SENSORY</span>
+              <span class="crew-tab-what">Fidgets, Clickers &amp; Keys</span>
             </div>
           </button>
 
-          <!-- Tab 3: Zap -->
-          <button type="button" class="crew-tab-btn" data-crew="zap" onclick="switchCrewTab('zap')">
-            <img src="assets/avatar_zap.png" alt="Zap" class="crew-tab-avatar" />
+          <!-- Tab 3: Crit & Spark -->
+          <button type="button" class="crew-tab-btn" data-crew="crit" onclick="switchCrewTab('crit')">
+            <img src="assets/avatar_crit.png" alt="Crit" class="crew-tab-avatar" />
             <div class="crew-tab-text">
-              <span class="crew-tab-who">⚡ ZAP'S BEAST LAIR</span>
-              <span class="crew-tab-what">Dragons, Dinos &amp; Animals</span>
+              <span class="crew-tab-who">🎲 CRIT &amp; SPARK</span>
+              <span class="crew-tab-what">146 Dragons &amp; RPG Dice</span>
             </div>
           </button>
 
-          <!-- Tab 4: Booksy -->
+          <!-- Tab 4: Justus -->
+          <button type="button" class="crew-tab-btn" data-crew="justus" onclick="switchCrewTab('justus')">
+            <img src="assets/avatar_justus.png" alt="Justus" class="crew-tab-avatar" />
+            <div class="crew-tab-text">
+              <span class="crew-tab-who">🐺 JUSTUS'S BEASTS</span>
+              <span class="crew-tab-what">Dinos, Wolves &amp; Critters</span>
+            </div>
+          </button>
+
+          <!-- Tab 5: Booksy -->
           <button type="button" class="crew-tab-btn" data-crew="booksy" onclick="switchCrewTab('booksy')">
             <img src="assets/avatar_booksy.png" alt="Booksy" class="crew-tab-avatar" />
             <div class="crew-tab-text">
@@ -98,7 +107,7 @@
             </div>
           </button>
 
-          <!-- Tab 5: Inky -->
+          <!-- Tab 6: Inky -->
           <button type="button" class="crew-tab-btn" data-crew="inky" onclick="switchCrewTab('inky')">
             <img src="assets/avatar_inky.png" alt="Inky" class="crew-tab-avatar" />
             <div class="crew-tab-text">
@@ -107,7 +116,16 @@
             </div>
           </button>
 
-          <!-- Tab 6: Markets & Full Catalog -->
+          <!-- Tab 7: Pixel (Mini-Games Arcade Coming Soon!) -->
+          <button type="button" class="crew-tab-btn" data-crew="pixel" onclick="switchCrewTab('pixel')">
+            <img src="assets/avatar_pixel.png" alt="Pixel" class="crew-tab-avatar" />
+            <div class="crew-tab-text">
+              <span class="crew-tab-who">🟣 PIXEL'S ARCADE</span>
+              <span class="crew-tab-what">Mini-Games (Coming Soon)</span>
+            </div>
+          </button>
+
+          <!-- Tab 8: Markets & Full Catalog -->
           <button type="button" class="crew-tab-btn" data-crew="markets" onclick="switchCrewTab('markets')">
             <img src="assets/icon.png" alt="Nerdy Misfits Markets" class="crew-tab-avatar" style="background:#000;" />
             <div class="crew-tab-text">
@@ -121,92 +139,117 @@
   </header>
 
   <!-- ====================================================================
-       TAB 1: GLITCH'S HUB (CIRCLED AROUND THE LOGO + MEET THE CREW)
+       TAB 1: GLITCH'S HUB (ROTATING DIAL AROUND THE LOGO + MEET THE CREW)
        ==================================================================== -->
   <main id="view-glitch" class="tab-view-panel active">
     <div class="container">
 
-      <!-- HERO: GREMLINS CIRCLED AROUND THE NERDY MISFITS LOGO -->
+      <!-- HERO: THE 7 MISFITS CREW MEMBERS ORBITING SLOWLY AROUND THE NERDY MISFITS LOGO -->
       <div class="hub-hero-grid">
-        <!-- Left: Circular Orbit Hub Around the Logo -->
+        <!-- Left: Slowly Rotating Circular Dial Around the Logo -->
         <div class="logo-circle-stage">
           <div class="orbit-dashed-ring"></div>
 
-          <!-- Center Logo Medallion -->
+          <!-- Center Stationary Logo Medallion -->
           <div class="center-logo-hub" onclick="switchCrewTab('markets')" title="Click to browse all 526 creations">
             <img src="assets/official_logo.png" alt="Nerdy Misfits — There's One In All Of Us!" />
             <span class="center-logo-pill">Explore All 526 Prints →</span>
           </div>
 
-          <!-- 12 O'Clock: GLITCH -->
-          <div class="orbit-gremlin-node glitch-node orbit-pos-top"
-               onmouseenter="previewCrewMember('glitch')"
-               onclick="switchCrewTab('glitch')">
-            <div class="orbit-avatar-ring">
-              <img src="assets/avatar_glitch.png" alt="Glitch" />
+          <!-- Slowly Rotating Dial Ring Containing All 7 Crew Members -->
+          <div class="orbit-rotating-dial">
+            <!-- Pos 1: GLITCH -->
+            <div class="orbit-gremlin-node glitch-node orbit-pos-1"
+                 onmouseenter="previewCrewMember('glitch')"
+                 onclick="switchCrewTab('glitch')">
+              <div class="orbit-avatar-ring">
+                <img src="assets/avatar_glitch.png" alt="Glitch" />
+              </div>
+              <span class="orbit-name-badge">GLITCH</span>
+              <span class="orbit-dept-label">Featured &amp; Crew</span>
             </div>
-            <span class="orbit-name-badge">GLITCH</span>
-            <span class="orbit-dept-label">Featured &amp; Crew</span>
-          </div>
 
-          <!-- 2 O'Clock: PIXEL -->
-          <div class="orbit-gremlin-node pixel-node orbit-pos-top-right"
-               onmouseenter="previewCrewMember('pixel')"
-               onclick="switchCrewTab('pixel')">
-            <div class="orbit-avatar-ring">
-              <img src="assets/avatar_pixel.png" alt="Pixel" />
+            <!-- Pos 2: FOKAL (Sensory Fidgets & Clickers) -->
+            <div class="orbit-gremlin-node fokal-node orbit-pos-2"
+                 onmouseenter="previewCrewMember('fokal')"
+                 onclick="switchCrewTab('fokal')">
+              <div class="orbit-avatar-ring">
+                <img src="assets/avatar_fokal.png" alt="Fokal" />
+              </div>
+              <span class="orbit-name-badge">FOKAL</span>
+              <span class="orbit-dept-label">Sensory &amp; Clickers</span>
             </div>
-            <span class="orbit-name-badge">PIXEL</span>
-            <span class="orbit-dept-label">Fidgets &amp; Gaming</span>
-          </div>
 
-          <!-- 4:30 O'Clock: ZAP -->
-          <div class="orbit-gremlin-node zap-node orbit-pos-bot-right"
-               onmouseenter="previewCrewMember('zap')"
-               onclick="switchCrewTab('zap')">
-            <div class="orbit-avatar-ring">
-              <img src="assets/avatar_zap.png" alt="Zap" />
+            <!-- Pos 3: CRIT & SPARK -->
+            <div class="orbit-gremlin-node crit-node orbit-pos-3"
+                 onmouseenter="previewCrewMember('crit')"
+                 onclick="switchCrewTab('crit')">
+              <div class="orbit-avatar-ring">
+                <img src="assets/avatar_crit.png" alt="Crit &amp; Spark" />
+              </div>
+              <span class="orbit-name-badge">CRIT &amp; SPARK</span>
+              <span class="orbit-dept-label">146 Dragons &amp; RPG</span>
             </div>
-            <span class="orbit-name-badge">ZAP</span>
-            <span class="orbit-dept-label">146 Dragons &amp; Beasts</span>
-          </div>
 
-          <!-- 7:30 O'Clock: BOOKSY -->
-          <div class="orbit-gremlin-node booksy-node orbit-pos-bot-left"
-               onmouseenter="previewCrewMember('booksy')"
-               onclick="switchCrewTab('booksy')">
-            <div class="orbit-avatar-ring">
-              <img src="assets/avatar_booksy.png" alt="Booksy" />
+            <!-- Pos 4: JUSTUS -->
+            <div class="orbit-gremlin-node justus-node orbit-pos-4"
+                 onmouseenter="previewCrewMember('justus')"
+                 onclick="switchCrewTab('justus')">
+              <div class="orbit-avatar-ring">
+                <img src="assets/avatar_justus.png" alt="Justus" />
+              </div>
+              <span class="orbit-name-badge">JUSTUS</span>
+              <span class="orbit-dept-label">Dinos, Wolves &amp; Beasts</span>
             </div>
-            <span class="orbit-name-badge">BOOKSY</span>
-            <span class="orbit-dept-label">Bookish &amp; Home Decor</span>
-          </div>
 
-          <!-- 10 O'Clock: INKY -->
-          <div class="orbit-gremlin-node inky-node orbit-pos-top-left"
-               onmouseenter="previewCrewMember('inky')"
-               onclick="switchCrewTab('inky')">
-            <div class="orbit-avatar-ring">
-              <img src="assets/avatar_inky.png" alt="Inky" />
+            <!-- Pos 5: BOOKSY -->
+            <div class="orbit-gremlin-node booksy-node orbit-pos-5"
+                 onmouseenter="previewCrewMember('booksy')"
+                 onclick="switchCrewTab('booksy')">
+              <div class="orbit-avatar-ring">
+                <img src="assets/avatar_booksy.png" alt="Booksy" />
+              </div>
+              <span class="orbit-name-badge">BOOKSY</span>
+              <span class="orbit-dept-label">Bookish &amp; Home Decor</span>
             </div>
-            <span class="orbit-name-badge">INKY</span>
-            <span class="orbit-dept-label">Custom Prints &amp; Art</span>
+
+            <!-- Pos 6: INKY -->
+            <div class="orbit-gremlin-node inky-node orbit-pos-6"
+                 onmouseenter="previewCrewMember('inky')"
+                 onclick="switchCrewTab('inky')">
+              <div class="orbit-avatar-ring">
+                <img src="assets/avatar_inky.png" alt="Inky" />
+              </div>
+              <span class="orbit-name-badge">INKY</span>
+              <span class="orbit-dept-label">Custom Prints &amp; Art</span>
+            </div>
+
+            <!-- Pos 7: PIXEL -->
+            <div class="orbit-gremlin-node pixel-node orbit-pos-7"
+                 onmouseenter="previewCrewMember('pixel')"
+                 onclick="switchCrewTab('pixel')">
+              <div class="orbit-avatar-ring">
+                <img src="assets/avatar_pixel.png" alt="Pixel" />
+              </div>
+              <span class="orbit-name-badge">PIXEL</span>
+              <span class="orbit-dept-label">Mini-Games Arcade</span>
+            </div>
           </div>
         </div>
 
-        <!-- Right: Interactive Gremlin Spotlight Card (Updates when hovering the circle!) -->
+        <!-- Right: Interactive Gremlin Spotlight Card (Updates when hovering the dial!) -->
         <div class="crew-spotlight-card" id="hubSpotlightCard">
           <div class="spotlight-eyebrow">
-            <span>✨ HOVER OR CLICK ANY GREMLIN AROUND THE LOGO</span>
+            <span>✨ HOVER TO PAUSE DIAL OR CLICK ANY MISFIT CREW MEMBER</span>
           </div>
 
           <div class="spotlight-flex">
             <img id="spotImg" src="assets/crew_glitch.png" alt="Glitch" class="spotlight-character-img" />
             <div>
               <h1 id="spotName" class="spotlight-char-name" style="color:var(--glitch-green);">GLITCH</h1>
-              <div id="spotRole" class="spotlight-char-role">THE NERDY MISFIT • PIXEL BUDDY: BIT</div>
+              <div id="spotRole" class="spotlight-char-role">THE NERDY MISFIT • SIDEKICK: BIT ⭐</div>
               <div id="spotQuote" class="spotlight-quote-bubble">
-                “Welcome to the Nerdy Misfits workshop! Hover over any of our crew members circled around the logo—each of us runs our own tab of 3D-printed treasures!”
+                “Clever, curious, and always debugging the system! Hover or click any of our 7 Misfits Crew members rotating around the logo—each of us runs our own tab of 3D-printed treasures!”
               </div>
             </div>
           </div>
@@ -223,8 +266,8 @@
           </div>
 
           <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
-            <button id="spotActionBtn" class="btn-friendly-primary" onclick="switchCrewTab('pixel')">
-              <span>Explore Pixel's Arcade Next →</span>
+            <button id="spotActionBtn" class="btn-friendly-primary" onclick="switchCrewTab('fokal')">
+              <span>Explore Fokal's Sensory Fidgets →</span>
             </button>
             <button class="btn-friendly-secondary" onclick="switchCrewTab('inky')">
               <span>🎨 Custom Print Studio</span>
@@ -236,85 +279,129 @@
         </div>
       </div>
 
-      <!-- FULL MISFITS CREW ROSTER (CLICK ANY CHARACTER TO OPEN THEIR TAB) -->
+      <!-- FULL MISFITS CREW ROSTER (ALL 7 CREW + SIDEKICKS & COMPANIONS) -->
       <section class="crew-roster-section">
         <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
           <div>
-            <span class="host-pill">👾 THE MISFITS CREW</span>
+            <span class="host-pill">👾 THE MISFITS CREW • WEIRD IS A SUPERPOWER</span>
             <h2 style="font-family:var(--font-display);font-size:1.75rem;font-weight:900;margin-top:4px;">
-              Pick a Misfit Guide to Explore Their Shop Tab
+              Meet the Crew &amp; Pick a Guide to Explore Their Shop Tab
             </h2>
           </div>
-          <p style="font-size:0.88rem;color:var(--ink-secondary);max-width:440px;">
-            We’re gamers, dreamers, readers, creators, and rebels. Click any crew member below to jump straight into their favorite 3D prints!
+          <p style="font-size:0.88rem;color:var(--ink-secondary);max-width:460px;">
+            We’re gamers, dreamers, readers, creators, and rebels. We collect knowledge, defeat boredom, and make our own rules. And we don’t fit in—we level up!
           </p>
         </div>
 
         <div class="crew-roster-grid">
           <!-- 1. Glitch -->
-          <div class="roster-char-card" onclick=" document.getElementById('glitchFeaturedAnchor').scrollIntoView({behavior:'smooth'})">
+          <div class="roster-char-card" onclick="document.getElementById('glitchFeaturedAnchor').scrollIntoView({behavior:'smooth'})">
             <div>
               <div class="roster-sprite-wrap">
-                <img src="assets/crew_glitch.png" alt="Glitch — The Nerdy Misfit" />
+                <img src="assets/crew_glitch.png" alt="Glitch — The Nerdy Misfit" loading="lazy" decoding="async" />
               </div>
               <div class="roster-name" style="color:var(--glitch-green);">GLITCH</div>
-              <div class="roster-role">THE NERDY MISFIT</div>
-              <p class="roster-bio">Clever, curious, and always debugging the system. Curates our top workshop all-stars!</p>
+              <div class="roster-role">THE NERDY MISFIT • BIT ⭐</div>
+              <p class="roster-bio">Clever, curious, and always debugging the system. <strong>Power:</strong> System Override — can hack, fix, or glitch anything.</p>
             </div>
             <span class="roster-open-btn">★ Featured Picks ↓</span>
           </div>
 
-          <!-- 2. Pixel -->
+          <!-- 2. Fokal -->
+          <div class="roster-char-card" onclick="switchCrewTab('fokal')">
+            <div>
+              <div class="roster-sprite-wrap">
+                <img src="assets/crew_fokal.png" alt="Fokal — The Sensory Misfit" loading="lazy" decoding="async" />
+              </div>
+              <div class="roster-name" style="color:#ff2a85;">FOKAL</div>
+              <div class="roster-role">THE SENSORY MISFIT 🎧</div>
+              <p class="roster-bio">Fidget. Focus. Feel everything. Embrace the textures, stim, and good vibes. <strong>Power:</strong> Feel Everything — turns overwhelm into good vibes.</p>
+            </div>
+            <span class="roster-open-btn">Open Fokal's Tab →</span>
+          </div>
+
+          <!-- 3. Pixel -->
           <div class="roster-char-card" onclick="switchCrewTab('pixel')">
             <div>
               <div class="roster-sprite-wrap">
-                <img src="assets/crew_pixel.png" alt="Pixel — The Game Goblin" />
+                <img src="assets/crew_pixel.png" alt="Pixel — The Game Goblin" loading="lazy" decoding="async" />
               </div>
               <div class="roster-name" style="color:var(--pixel-purple);">PIXEL</div>
-              <div class="roster-role">THE GAME GOBLIN</div>
-              <p class="roster-bio">Speedrunner &amp; high-score chaser. Runs our Clickers, Fidgets, Keychains &amp; Dice Towers tab!</p>
+              <div class="roster-role">THE GAME GOBLIN • 8-BIT 👾</div>
+              <p class="roster-bio">Speedrunner. High-score chaser. Chaos enjoyer. Building our upcoming Misfit Mini-Games Arcade!</p>
             </div>
-            <span class="roster-open-btn">Open Pixel's Tab →</span>
+            <span class="roster-open-btn">Mini-Games Arcade →</span>
           </div>
 
-          <!-- 3. Inky -->
+          <!-- 4. Inky -->
           <div class="roster-char-card" onclick="switchCrewTab('inky')">
             <div>
               <div class="roster-sprite-wrap">
-                <img src="assets/crew_inky.png" alt="Inky — The Creative Misfit" />
+                <img src="assets/crew_inky.png" alt="Inky — The Creative Misfit" loading="lazy" decoding="async" />
               </div>
               <div class="roster-name" style="color:var(--inky-blue);">INKY</div>
-              <div class="roster-role">THE CREATIVE MISFIT</div>
-              <p class="roster-bio">Artist &amp; story maker. Hosts our Custom 3D Print Studio &amp; HueForge Wall Art gallery!</p>
+              <div class="roster-role">THE CREATIVE MISFIT • SPLAT 🎨</div>
+              <p class="roster-bio">Artist. Dreamer. Story maker. Sees magic in the margins. <strong>Power:</strong> Ink Blast — brings ideas to life.</p>
             </div>
             <span class="roster-open-btn">Open Inky's Tab →</span>
           </div>
 
-          <!-- 4. Zap -->
-          <div class="roster-char-card" onclick="switchCrewTab('zap')">
+          <!-- 5. Crit & Spark -->
+          <div class="roster-char-card" onclick="switchCrewTab('crit')">
             <div>
               <div class="roster-sprite-wrap">
-                <img src="assets/crew_zap.png" alt="Zap — The Tech Wizard" />
+                <img src="assets/crew_crit.png" alt="Crit — The Game Master &amp; Spark — The Mischievous Dragon" loading="lazy" decoding="async" />
               </div>
-              <div class="roster-name" style="color:var(--zap-olive);">ZAP</div>
-              <div class="roster-role">THE TECH WIZARD</div>
-              <p class="roster-bio">Smart, sarcastic &amp; supercharged. Keeper of 146 Articulated Dragons, Dinos &amp; Critters!</p>
+              <div class="roster-name" style="color:var(--neon-volt);">CRIT &amp; SPARK</div>
+              <div class="roster-role">THE GAME MASTER &amp; DRAGON 🐉</div>
+              <p class="roster-bio">Story weaver &amp; dungeon builder with <strong>Spark</strong> (tiny but mighty, breathes chaos &amp; fire!). <strong>Power:</strong> Critical Influence — bends fate &amp; rules.</p>
             </div>
-            <span class="roster-open-btn">Open Zap's Tab →</span>
+            <span class="roster-open-btn">Open Crit's Tab →</span>
           </div>
 
-          <!-- 5. Booksy -->
+          <!-- 6. Booksy -->
           <div class="roster-char-card" onclick="switchCrewTab('booksy')">
             <div>
               <div class="roster-sprite-wrap">
-                <img src="assets/crew_booksy.png" alt="Booksy — The Bookworm" />
+                <img src="assets/crew_booksy.png" alt="Booksy — The Bookworm" loading="lazy" decoding="async" />
               </div>
               <div class="roster-name" style="color:var(--booksy-plum);">BOOKSY</div>
-              <div class="roster-role">THE BOOKWORM</div>
-              <p class="roster-bio">Quiet, wise Lore Keeper. Curates BookTok gear, ACOTAR lamps, Home Decor &amp; Holidays!</p>
+              <div class="roster-role">THE BOOKWORM • SHADOW 🐈‍⬛</div>
+              <p class="roster-bio">Quiet. Wise. Collects stories, tea, and conspiracies. <strong>Power:</strong> Lore Keeper — remembers everything.</p>
             </div>
             <span class="roster-open-btn">Open Booksy's Tab →</span>
           </div>
+
+          <!-- 7. Justus -->
+          <div class="roster-char-card" onclick="switchCrewTab('justus')">
+            <div>
+              <div class="roster-sprite-wrap">
+                <img src="assets/crew_justus.png" alt="Justus — The Beast Master with Nemain, Grog &amp; Bolt" loading="lazy" decoding="async" />
+              </div>
+              <div class="roster-name" style="color:#ff9f1c;">JUSTUS</div>
+              <div class="roster-role">THE BEAST MASTER • GROG, BOLT &amp; NEMAIN 🐺</div>
+              <p class="roster-bio">Half-dwarf. Half-orc. All attitude. Loyal to his beasts. <strong>Power:</strong> Beast Bond — commands &amp; protects with his crew.</p>
+            </div>
+            <span class="roster-open-btn">Open Justus's Tab →</span>
+          </div>
+        </div>
+
+        <!-- SIDEKICKS & COMPANIONS STRIP -->
+        <div style="margin-top:20px;padding:14px 18px;background:rgba(0,0,0,0.35);border:1.5px solid rgba(57,255,20,0.28);border-radius:var(--radius-lg);display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+          <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+            <span class="host-pill" style="margin:0;">🐾 SIDEKICKS &amp; COMPANIONS</span>
+            <span style="font-size:0.82rem;color:var(--text-secondary);">
+              <strong style="color:var(--neon-green);">BIT</strong> (Glitch) •
+              <strong style="color:var(--pixel-purple);">8-BIT</strong> (Pixel) •
+              <strong style="color:var(--neon-cyan);">SPLAT</strong> (Inky) •
+              <strong style="color:var(--neon-pink);">SHADOW</strong> (Booksy &amp; Fokal) •
+              <strong style="color:var(--neon-volt);">SPARK</strong> (The Mischievous Dragon) •
+              <strong style="color:#ff9f1c;">NEMAIN</strong> (The Raven) •
+              <strong style="color:#ff9f1c;">GROG</strong> (The Wolf) •
+              <strong style="color:#ff9f1c;">BOLT</strong> (The Boar)
+            </span>
+          </div>
+          <img src="assets/pixel_buddies.png" alt="Sidekicks &amp; Companions: Bit, 8-Bit, Splat, Shadow, Spark, Grog, Bolt" loading="lazy" decoding="async" style="height:54px;border-radius:8px;border:1px solid rgba(255,255,255,0.15);" />
         </div>
       </section>
 
@@ -328,7 +415,8 @@
             </h2>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
-            <button class="btn-friendly-secondary" onclick="switchCrewTab('zap')">🐉 See All 146 Dragons</button>
+            <button class="btn-friendly-secondary" onclick="switchCrewTab('fokal')">💖 Fokal's Sensory &amp; Clickers</button>
+            <button class="btn-friendly-secondary" onclick="switchCrewTab('crit')">🐉 Crit &amp; Spark's 146 Dragons</button>
             <button class="btn-friendly-primary" onclick="switchCrewTab('markets')">📦 Browse All 526 Prints →</button>
           </div>
         </div>
@@ -512,7 +600,115 @@
   </section>
 
   <!-- ====================================================================
-       TAB 5: INKY'S ART & CUSTOM 3D PRINT STUDIO
+       PIXEL'S RETRO ARCADE & MINI-GAMES ARENA (COMING SOON BANNER!)
+       ==================================================================== -->
+  <section id="view-pixel" class="tab-view-panel">
+    <div class="container">
+      <!-- Neon Nerdy Misfits "Arcade Mini-Games Coming Soon" Hero Banner -->
+      <div style="background:linear-gradient(145deg, #1b0b32 0%, #0e101c 65%, #160928 100%);border:3px solid var(--pixel-purple);border-radius:var(--radius-xl);padding:42px 36px;box-shadow:0 24px 60px rgba(0,0,0,0.75), 0 0 38px rgba(192,66,255,0.35);position:relative;overflow:hidden;margin-bottom:36px;">
+        <div style="display:grid;grid-template-columns:auto 1fr;gap:32px;align-items:center;">
+          <!-- Pixel & 8-Bit Sprite -->
+          <div style="background:radial-gradient(circle, rgba(192,66,255,0.32) 0%, #131626 75%);border:2.5px solid var(--pixel-purple);border-radius:22px;padding:18px;text-align:center;box-shadow:0 0 28px rgba(192,66,255,0.4);">
+            <img src="assets/crew_pixel.png" alt="Pixel — The Game Goblin &amp; 8-Bit" style="height:240px;width:auto;object-fit:contain;margin:0 auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.7));" />
+            <div style="margin-top:10px;font-family:var(--font-mono);font-size:0.75rem;color:var(--neon-green);font-weight:800;">
+              👾 PIXEL &amp; 8-BIT // PLAYER 1 READY
+            </div>
+          </div>
+
+          <!-- Coming Soon Marquee & Copy -->
+          <div>
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+              <span class="host-pill" style="background:var(--pixel-purple);color:#fff;border-color:#fff;">🟣 PIXEL • THE GAME GOBLIN</span>
+              <span class="host-pill" style="background:rgba(57,255,20,0.16);color:var(--neon-green);border-color:var(--neon-green);">🕹️ INSERT COIN // LEVELING UP</span>
+            </div>
+
+            <div style="font-family:var(--font-mono);font-size:0.9rem;color:var(--neon-pink);font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;">
+              ★ NERDY MISFITS ARCADE ZONE — COMING SOON ★
+            </div>
+
+            <h1 style="font-family:var(--font-display);font-size:clamp(2rem, 3.8vw, 3.1rem);font-weight:900;line-height:1.08;color:#ffffff;text-shadow:0 0 24px rgba(192,66,255,0.55);margin-bottom:14px;">
+              Pixel’s Playable Mini-Games Are Loading Into the System…
+            </h1>
+
+            <p style="font-size:1.02rem;color:#d5daf0;max-width:680px;line-height:1.6;margin-bottom:20px;">
+              “Speedrunner. High-score chaser. Chaos enjoyer! Me and <strong>8-Bit</strong> are wiring up custom playable <strong>Nerdy Misfits Arcade Mini-Games</strong> right here on this tab—where you’ll be able to chase high scores, battle dungeon bosses, and win workshop loot!”
+            </p>
+
+            <!-- Loading Progress Bar -->
+            <div style="max-width:520px;background:#0a0c14;border:2px solid var(--neon-green);border-radius:99px;padding:5px;margin-bottom:24px;box-shadow:0 0 18px rgba(57,255,20,0.28);">
+              <div style="width:78%;background:linear-gradient(90deg, var(--neon-green), var(--neon-cyan), var(--pixel-purple));color:#050805;font-family:var(--font-mono);font-size:0.74rem;font-weight:900;padding:4px 14px;border-radius:99px;text-align:right;">
+                ARCADE BUILD: 78% LOADED...
+              </div>
+            </div>
+
+            <div style="display:flex;gap:12px;flex-wrap:wrap;">
+              <button type="button" class="btn-friendly-primary" onclick="switchCrewTab('fokal')">
+                <span>💖 Shop Fokal’s Sensory Fidgets &amp; Clickers →</span>
+              </button>
+              <button type="button" class="btn-friendly-secondary" onclick="switchCrewTab('crit')">
+                <span>🎲 Shop Crit &amp; Spark’s Dice Towers &amp; Dragons →</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3 Upcoming Mini-Game Cabinet Teasers -->
+      <div style="margin-bottom:16px;">
+        <span class="host-pill">🕹️ SNEAK PEEK AT UPCOMING CABINETS</span>
+        <h2 style="font-family:var(--font-display);font-size:1.65rem;font-weight:900;margin-top:6px;">
+          Future Misfit Mini-Games In Development
+        </h2>
+      </div>
+
+      <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(280px, 1fr));gap:18px;">
+        <!-- Cabinet 1 -->
+        <div style="background:var(--bg-card);border:2px solid rgba(192,66,255,0.45);border-radius:var(--radius-lg);padding:22px;box-shadow:0 14px 34px rgba(0,0,0,0.5);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <span style="font-family:var(--font-mono);font-size:0.74rem;color:var(--neon-pink);font-weight:800;">CABINET #01</span>
+            <span class="stock-pill print-order" style="position:static;">COMING SOON</span>
+          </div>
+          <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;color:#fff;margin-bottom:6px;">
+            👾 8-Bit Clicker Blitz
+          </h3>
+          <p style="font-size:0.86rem;color:var(--text-secondary);">
+            Test your button-mashing reflexes against Pixel &amp; 8-Bit in a 30-second neon speedrun challenge!
+          </p>
+        </div>
+
+        <!-- Cabinet 2 -->
+        <div style="background:var(--bg-card);border:2px solid rgba(204,255,0,0.45);border-radius:var(--radius-lg);padding:22px;box-shadow:0 14px 34px rgba(0,0,0,0.5);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <span style="font-family:var(--font-mono);font-size:0.74rem;color:var(--neon-volt);font-weight:800;">CABINET #02</span>
+            <span class="stock-pill print-order" style="position:static;">COMING SOON</span>
+          </div>
+          <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;color:#fff;margin-bottom:6px;">
+            🐉 Spark’s Dragon Hatchling Drop
+          </h3>
+          <p style="font-size:0.86rem;color:var(--text-secondary);">
+            Help Crit &amp; Spark catch falling crystal dragon eggs and dodge Critical Fail D20s!
+          </p>
+        </div>
+
+        <!-- Cabinet 3 -->
+        <div style="background:var(--bg-card);border:2px solid rgba(57,255,20,0.45);border-radius:var(--radius-lg);padding:22px;box-shadow:0 14px 34px rgba(0,0,0,0.5);">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+            <span style="font-family:var(--font-mono);font-size:0.74rem;color:var(--neon-green);font-weight:800;">CABINET #03</span>
+            <span class="stock-pill print-order" style="position:static;">COMING SOON</span>
+          </div>
+          <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;color:#fff;margin-bottom:6px;">
+            ⚡ Glitch’s System Override
+          </h3>
+          <p style="font-size:0.86rem;color:var(--text-secondary);">
+            Navigate late-night neon cyber mazes with Glitch &amp; Bit to unlock secret Misfit badges!
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       TAB 6: INKY'S ART & EXPANDED CUSTOM 3D PRINT STUDIO
        ==================================================================== -->
   <section id="view-inky" class="tab-view-panel">
     <div class="container">
@@ -523,52 +719,90 @@
           <div>
             <div class="host-badge-row">
               <span class="host-pill" style="background:var(--inky-blue);color:#fff;">INKY • THE CREATIVE MISFIT</span>
-              <span class="host-pill" style="background:var(--inky-bg);color:var(--inky-blue);">SPECIAL POWER: INK BLAST • BUDDY: SPLAT</span>
+              <span class="host-pill" style="background:var(--inky-bg);color:var(--inky-blue);">SPECIAL POWER: INK BLAST • SIDEKICK: SPLAT 🎨</span>
             </div>
-            <h1 class="host-title">Inky’s Custom 3D Print Studio &amp; Wall Art</h1>
+            <h1 class="host-title">Inky’s Custom 3D Print Studio &amp; Personalization Lab</h1>
             <p class="host-speech">
-              “Artist. Dreamer. Story maker! Want a custom dragon in your favorite colors, a personalized ornament, or multi-layered HueForge wall art? Let’s bring your idea to life in 3 easy steps!”
+              “Artist. Dreamer. Story maker! Tell me every detail of what you want printed—from exact dual/tri-color filament combos and eye colors to custom engraved names, sizes, or STL links!”
             </p>
           </div>
         </div>
       </div>
 
-      <!-- 3-Step Friendly Custom Print Builder -->
+      <!-- Expanded Multi-Detail Custom Print Builder -->
       <div class="inky-studio-grid">
         <div class="studio-card">
-          <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;">1. Pick What Inky Should Print for You</h3>
+          <h3 style="font-family:var(--font-display);font-size:1.28rem;font-weight:900;">1. Pick Your Base Project Type</h3>
           <div id="studioTypeGrid" class="studio-choices">
             <button type="button" class="choice-card-btn active" data-title="Custom Articulated Dragon" data-price="15" onclick="selectStudioType(this)">
-              <strong style="display:block;font-size:0.9rem;">🐉 Custom Dragon</strong>
-              <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--glitch-green);">$15.00</span>
+              <strong style="display:block;font-size:0.88rem;">🐉 Custom Dragon</strong>
+              <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--glitch-green);">Base $15.00</span>
+            </button>
+            <button type="button" class="choice-card-btn" data-title="Custom Beast / Dino / Critter" data-price="14" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.88rem;">🐺 Beast / Critter</strong>
+              <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--glitch-green);">Base $14.00</span>
             </button>
             <button type="button" class="choice-card-btn" data-title="Bookish Counter / ACOTAR Sign" data-price="20" onclick="selectStudioType(this)">
-              <strong style="display:block;font-size:0.9rem;">📚 Bookish / ACOTAR</strong>
-              <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--glitch-green);">$20.00</span>
+              <strong style="display:block;font-size:0.88rem;">📚 Bookish / ACOTAR</strong>
+              <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--glitch-green);">Base $20.00</span>
             </button>
             <button type="button" class="choice-card-btn" data-title="Custom Name Ornament / Plaque" data-price="10" onclick="selectStudioType(this)">
-              <strong style="display:block;font-size:0.9rem;">🎄 Name Ornament</strong>
-              <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--glitch-green);">$10.00</span>
+              <strong style="display:block;font-size:0.88rem;">🎄 Name Plaque / Orn.</strong>
+              <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--glitch-green);">Base $10.00</span>
             </button>
-            <button type="button" class="choice-card-btn" data-title="5-Pack Fidget Clickers" data-price="12" onclick="selectStudioType(this)">
-              <strong style="display:block;font-size:0.9rem;">🕹️ 5x Clicker Pack</strong>
-              <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--glitch-green);">$12.00</span>
+            <button type="button" class="choice-card-btn" data-title="Custom 5-Pack Sensory Clickers" data-price="12" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.88rem;">💖 5x Sensory Clickers</strong>
+              <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--glitch-green);">Base $12.00</span>
             </button>
-            <button type="button" class="choice-card-btn" data-title="Tabletop Dice Tower" data-price="22" onclick="selectStudioType(this)">
-              <strong style="display:block;font-size:0.9rem;">🎲 Dice Tower</strong>
-              <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--glitch-green);">$22.00</span>
+            <button type="button" class="choice-card-btn" data-title="Tabletop Dice Tower / RPG Terrain" data-price="22" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.88rem;">🎲 RPG Dice Tower</strong>
+              <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--glitch-green);">Base $22.00</span>
             </button>
-            <button type="button" class="choice-card-btn" data-title="Special Idea / Custom STL" data-price="18" onclick="selectStudioType(this)">
-              <strong style="display:block;font-size:0.9rem;">✨ Special Idea</strong>
-              <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--glitch-green);">Est. $18.00</span>
+            <button type="button" class="choice-card-btn" data-title="HueForge 3D Multi-Layer Wall Art" data-price="20" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.88rem;">🖼️ HueForge Wall Art</strong>
+              <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--glitch-green);">Base $20.00</span>
+            </button>
+            <button type="button" class="choice-card-btn" data-title="Special Idea / Customer STL File" data-price="18" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.88rem;">✨ Custom STL / Idea</strong>
+              <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--glitch-green);">Est. $18.00</span>
             </button>
           </div>
 
-          <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;margin-bottom:10px;">2. Pick Your Misfit Crew Color Palette</h3>
-          <div id="studioSwatchGrid" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;">
+          <h3 style="font-family:var(--font-display);font-size:1.28rem;font-weight:900;margin-bottom:10px;">2. Choose Scale, Finish &amp; Color Palette</h3>
+
+          <!-- Scale & Finish Dropdowns -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
+            <div>
+              <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">Size / Scale:</label>
+              <select id="studioSizeSelect" class="friendly-select" style="width:100%;" onchange="updateStudioPreview()">
+                <option value="Standard Workshop Scale">Standard Workshop Scale</option>
+                <option value="Mini / Pocket Size">Mini / Pocket Size</option>
+                <option value="Large / XL Statement Piece">Large / XL Statement Size</option>
+                <option value="Custom Dimensions (See Notes)">Custom Dimensions (Specify Below)</option>
+              </select>
+            </div>
+            <div>
+              <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">Filament Finish Type:</label>
+              <select id="studioFinishSelect" class="friendly-select" style="width:100%;" onchange="updateStudioPreview()">
+                <option value="Dual/Tri-Color Silk PLA">Dual / Tri-Color Shiny Silk PLA</option>
+                <option value="Matte / Velvet Textured PLA">Matte / Velvet Textured PLA</option>
+                <option value="Galaxy / Sparkle Shimmer">Galaxy / Sparkle Shimmer</option>
+                <option value="UV / Glow-in-the-Dark">UV / Glow-in-the-Dark</option>
+                <option value="Translucent Crystal / Ice">Translucent Crystal / Ice</option>
+                <option value="Inky's Artist Choice">Inky's Artist Choice</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Preset Color Swatches -->
+          <div id="studioSwatchGrid" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
             <button type="button" class="swatch-pill-btn active" data-color="Glitch Lime &amp; Obsidian Silk" onclick="selectStudioColor(this)">
               <span class="swatch-circle" style="background:linear-gradient(135deg,#8ce600,#14151d);"></span>
               <span>Glitch Lime / Black</span>
+            </button>
+            <button type="button" class="swatch-pill-btn" data-color="Fokal Berry Pink &amp; Neon Mint" onclick="selectStudioColor(this)">
+              <span class="swatch-circle" style="background:linear-gradient(135deg,#ff2a85,#39ff14);"></span>
+              <span>Fokal Pink / Mint</span>
             </button>
             <button type="button" class="swatch-pill-btn" data-color="Pixel Grape &amp; Neon Berry" onclick="selectStudioColor(this)">
               <span class="swatch-circle" style="background:linear-gradient(135deg,#7344f5,#ec4899);"></span>
@@ -578,9 +812,13 @@
               <span class="swatch-circle" style="background:linear-gradient(135deg,#1b76e5,#00d2ff);"></span>
               <span>Inky Blue / Cyan</span>
             </button>
-            <button type="button" class="swatch-pill-btn" data-color="Zap Gold &amp; Dragonfire Red" onclick="selectStudioColor(this)">
+            <button type="button" class="swatch-pill-btn" data-color="Crit &amp; Spark Dragonfire Gold" onclick="selectStudioColor(this)">
               <span class="swatch-circle" style="background:linear-gradient(135deg,#eab308,#ef4444);"></span>
-              <span>Dragonfire Gold / Red</span>
+              <span>Crit Dragonfire Gold</span>
+            </button>
+            <button type="button" class="swatch-pill-btn" data-color="Justus Beast Bronze &amp; Forest" onclick="selectStudioColor(this)">
+              <span class="swatch-circle" style="background:linear-gradient(135deg,#b45309,#4d7c0f);"></span>
+              <span>Justus Beast Bronze</span>
             </button>
             <button type="button" class="swatch-pill-btn" data-color="Booksy Night Court Plum &amp; Silver" onclick="selectStudioColor(this)">
               <span class="swatch-circle" style="background:linear-gradient(135deg,#581c87,#cbd5e1);"></span>
@@ -592,39 +830,98 @@
             </button>
           </div>
 
-          <h3 style="font-family:var(--font-display);font-size:1.3rem;font-weight:900;margin-bottom:8px;">3. Add a Name or Special Request Note</h3>
-          <input
-            type="text"
-            id="studioNotesInput"
-            placeholder="e.g. 'Put name KAYLA on it', 'Extra purple shimmer', or describe your custom request..."
-            oninput="updateStudioPreview()"
-            style="width:100%;padding:12px 16px;border-radius:var(--radius-md);border:1.5px solid rgba(0,229,255,0.4);background:#0f121c;color:#fff;font-size:0.92rem;"
-          />
+          <!-- Exact Custom Color Combo Input -->
+          <div style="margin-bottom:20px;">
+            <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">
+              Or Type Your Exact Primary, Secondary &amp; Eye Colors (Optional):
+            </label>
+            <input
+              type="text"
+              id="studioCustomColorsInput"
+              placeholder="e.g. 'Teal body, metallic gold wings/horns, and amethyst purple eyes'..."
+              oninput="updateStudioPreview()"
+              style="width:100%;padding:10px 14px;border-radius:var(--radius-md);border:1.5px solid rgba(0,229,255,0.35);background:#0f121c;color:#fff;font-size:0.88rem;"
+            />
+          </div>
+
+          <h3 style="font-family:var(--font-display);font-size:1.28rem;font-weight:900;margin-bottom:10px;">3. Customer Specifics, Personalization &amp; Detailed Notes</h3>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+            <div>
+              <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">
+                Custom Name / Text to Engrave or Emboss:
+              </label>
+              <input
+                type="text"
+                id="studioEngraveInput"
+                placeholder="e.g. 'KAYLA', 'Level 10 DM', 'The Night Court'..."
+                oninput="updateStudioPreview()"
+                style="width:100%;padding:10px 14px;border-radius:var(--radius-md);border:1.5px solid rgba(0,229,255,0.35);background:#0f121c;color:#fff;font-size:0.88rem;"
+              />
+            </div>
+            <div>
+              <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">
+                Reference / STL Link or Contact Info (Optional):
+              </label>
+              <input
+                type="text"
+                id="studioRefLinkInput"
+                placeholder="Paste MakerWorld/Printables link, phone, or email..."
+                oninput="updateStudioPreview()"
+                style="width:100%;padding:10px 14px;border-radius:var(--radius-md);border:1.5px solid rgba(0,229,255,0.35);background:#0f121c;color:#fff;font-size:0.88rem;"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">
+              Full Customization Details &amp; Special Instructions for Inky:
+            </label>
+            <textarea
+              id="studioNotesInput"
+              rows="5"
+              placeholder="Write as much detail as you want! Tell Inky exact measurements, character pose, wing style, keycap switch feel (clicky vs. silent), gift notes, or which SWFL weekend market you'd like to pick it up at..."
+              oninput="updateStudioPreview()"
+              style="width:100%;padding:12px 16px;border-radius:var(--radius-md);border:1.5px solid rgba(0,229,255,0.45);background:#0f121c;color:#fff;font-size:0.92rem;font-family:var(--font-body);line-height:1.5;resize:vertical;"
+            ></textarea>
+          </div>
         </div>
 
-        <!-- Right: Inky's Sketch Ticket -->
+        <!-- Right: Inky's Live Detailed Build Ticket -->
         <div class="studio-card" style="background:linear-gradient(155deg,#182036 0%,#101422 100%);border-color:var(--neon-cyan);display:flex;flex-direction:column;justify-content:space-between;">
           <div>
-            <span class="host-pill" style="background:var(--neon-cyan);color:#041014;border-color:var(--neon-cyan);">🎨 INKY'S BUILD TICKET</span>
+            <span class="host-pill" style="background:var(--neon-cyan);color:#041014;border-color:var(--neon-cyan);">🎨 INKY'S CUSTOM BUILD SPEC</span>
             <h3 id="previewBuildTitle" style="font-family:var(--font-display);font-size:1.6rem;font-weight:900;margin-top:10px;">
               Custom Articulated Dragon
             </h3>
             <p style="font-size:0.86rem;color:var(--text-secondary);margin-top:4px;">
-              Printed fresh in North Port, FL in 3–5 business days.
+              Hand-crafted to your exact specifications in North Port, FL (3–5 business days).
             </p>
 
-            <div style="margin:18px 0;padding:14px;background:rgba(0,0,0,0.35);border-radius:var(--radius-md);border:1px solid rgba(0,229,255,0.3);font-size:0.88rem;">
-              <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
+            <div style="margin:18px 0;padding:16px;background:rgba(0,0,0,0.42);border-radius:var(--radius-md);border:1px solid rgba(0,229,255,0.35);font-size:0.86rem;display:flex;flex-direction:column;gap:9px;">
+              <div style="display:flex;justify-content:space-between;gap:10px;">
+                <span style="color:var(--text-secondary);">Scale &amp; Finish:</span>
+                <strong id="previewScaleFinishText" style="color:#fff;text-align:right;">Standard Workshop Scale • Dual/Tri-Color Silk PLA</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;gap:10px;">
                 <span style="color:var(--text-secondary);">Color Palette:</span>
-                <strong id="previewFilamentText" style="color:var(--neon-cyan);">Glitch Lime &amp; Obsidian Silk</strong>
+                <strong id="previewFilamentText" style="color:var(--neon-cyan);text-align:right;">Glitch Lime &amp; Obsidian Silk</strong>
               </div>
-              <div style="display:flex;justify-content:space-between;margin-bottom:8px;">
-                <span style="color:var(--text-secondary);">Custom Note:</span>
-                <strong id="previewNoteText">Standard Workshop Finish</strong>
+              <div style="display:flex;justify-content:space-between;gap:10px;">
+                <span style="color:var(--text-secondary);">Engraved Name/Text:</span>
+                <strong id="previewEngraveText" style="color:var(--neon-volt);text-align:right;">None</strong>
               </div>
-              <div style="display:flex;justify-content:space-between;">
-                <span style="color:var(--text-secondary);">Shipping / SWFL Pickup:</span>
-                <strong style="color:var(--neon-green);">FREE ($0.00)</strong>
+              <div style="display:flex;justify-content:space-between;gap:10px;">
+                <span style="color:var(--text-secondary);">Ref Link / Contact:</span>
+                <strong id="previewRefText" style="color:#cbd5e1;text-align:right;">None</strong>
+              </div>
+              <div style="border-top:1px solid rgba(255,255,255,0.12);padding-top:8px;">
+                <span style="color:var(--text-secondary);display:block;margin-bottom:4px;">Customer Specifics &amp; Instructions:</span>
+                <div id="previewNoteText" style="color:#ffffff;background:rgba(255,255,255,0.05);padding:8px 10px;border-radius:8px;font-size:0.83rem;white-space:pre-wrap;max-height:140px;overflow-y:auto;">Standard Workshop Finish</div>
+              </div>
+              <div style="display:flex;justify-content:space-between;padding-top:4px;">
+                <span style="color:var(--text-secondary);">Fulfillment:</span>
+                <strong style="color:var(--neon-green);">SWFL Pickup or US Shipping</strong>
               </div>
             </div>
           </div>
@@ -785,13 +1082,13 @@
           Official Authorized Seller for 7 Renowned 3D Design Studios
         </h3>
         <div class="partners-row">
-          <div class="partner-pill"><img src="assets/badge_7.png" alt="Flexi Factory" /><strong>Flexi Factory</strong></div>
-          <div class="partner-pill"><img src="assets/badge_4.png" alt="Zou3D" /><strong>Zou3D</strong></div>
-          <div class="partner-pill"><img src="assets/badge_1.png" alt="Steven Wolf Studio" /><strong>Steven Wolf Studio</strong></div>
-          <div class="partner-pill"><img src="assets/badge_2.png" alt="Rebel Alicorn" /><strong>Rebel Alicorn</strong></div>
-          <div class="partner-pill"><img src="assets/badge_3.png" alt="RAKI-BOX" /><strong>RAKI-BOX</strong></div>
-          <div class="partner-pill"><img src="assets/badge_5.png" alt="Print N Play NZ" /><strong>Print 'N' Play NZ</strong></div>
-          <div class="partner-pill"><img src="assets/badge_6.png" alt="The Dragons Den" /><strong>The Dragons Den</strong></div>
+          <div class="partner-pill"><img src="assets/badge_7.png" alt="Flexi Factory" loading="lazy" decoding="async" /><strong>Flexi Factory</strong></div>
+          <div class="partner-pill"><img src="assets/badge_4.png" alt="Zou3D" loading="lazy" decoding="async" /><strong>Zou3D</strong></div>
+          <div class="partner-pill"><img src="assets/badge_1.png" alt="Steven Wolf Studio" loading="lazy" decoding="async" /><strong>Steven Wolf Studio</strong></div>
+          <div class="partner-pill"><img src="assets/badge_2.png" alt="Rebel Alicorn" loading="lazy" decoding="async" /><strong>Rebel Alicorn</strong></div>
+          <div class="partner-pill"><img src="assets/badge_3.png" alt="RAKI-BOX" loading="lazy" decoding="async" /><strong>RAKI-BOX</strong></div>
+          <div class="partner-pill"><img src="assets/badge_5.png" alt="Print N Play NZ" loading="lazy" decoding="async" /><strong>Print 'N' Play NZ</strong></div>
+          <div class="partner-pill"><img src="assets/badge_6.png" alt="The Dragons Den" loading="lazy" decoding="async" /><strong>The Dragons Den</strong></div>
         </div>
       </div>
 
@@ -946,7 +1243,7 @@
   <!-- ====================================================================
        PORTAL "STILL ALIVE" (CAKE?) AUDIO
        ==================================================================== -->
-  <audio id="stillAliveAudio" src="assets/still_alive.mp3?v=2" preload="auto"></audio>
+  <audio id="stillAliveAudio" src="assets/still_alive.mp3?v=2" preload="none"></audio>
 
   <script src="catalog-data.js"></script>
   <script src="app.js"></script>

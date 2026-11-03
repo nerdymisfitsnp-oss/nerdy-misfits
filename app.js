@@ -43,7 +43,7 @@
       if (lower.includes('dragon')) {
         p.smartDesc = `Articulated 3D-printed ${p.name} crafted in North Port, FL with silky multi-color PLA.`;
       } else if (lower.includes('clicker') || lower.includes('fidget') || lower.includes('keychain')) {
-        p.smartDesc = `Pocket-sized tactile ${p.name} from Pixel's Tiny Smiles collection. Fun, durable, and satisfying.`;
+        p.smartDesc = `Pocket-sized tactile ${p.name} from Fokal's Sensory & Clicker collection. Fun, durable, and satisfying.`;
       } else {
         p.smartDesc = `Hand-finished 3D-printed ${p.name} crafted by the Nerdy Misfits crew in North Port, Florida.`;
       }
@@ -53,87 +53,123 @@
   });
 
   // ========================================================================
-  // 1. THE 5 MISFITS CREW GREMLIN DEFINITIONS (FROM UPLOADED SHEET)
+  // 1. THE 7 MISFITS CREW PROFILES + SIDEKICKS & COMPANIONS
   // ========================================================================
   const CREW_PROFILES = {
     glitch: {
       id: 'glitch',
       name: 'GLITCH',
-      role: 'THE NERDY MISFIT • PIXEL BUDDY: BIT',
-      buddy: 'PIXEL BUDDY: BIT ⭐',
+      role: 'THE NERDY MISFIT • SIDEKICK: BIT ⭐',
+      buddy: 'SIDEKICK: BIT ⭐',
       color: 'var(--glitch-green)',
       badgeBg: 'var(--glitch-green)',
       sprite: 'assets/crew_glitch.png',
       avatar: 'assets/avatar_glitch.png',
       loves: 'Tech, video games, and late-night rabbit holes.',
       power: 'System Override — can hack, fix, or glitch anything.',
-      quote: '“Welcome to the Nerdy Misfits workshop! Hover or click any of our crew members circled around the logo—each of us hosts our own tab of 3D-printed treasures!”',
+      quote: '“Clever, curious, and always debugging the system! Hover or click any of our 7 Misfits Crew members rotating around the logo—each of us hosts our own tab of 3D-printed treasures & games!”',
       btnLabel: 'Jump to Featured Picks ↓',
       btnAction: () => document.getElementById('glitchFeaturedAnchor').scrollIntoView({ behavior: 'smooth' })
+    },
+    fokal: {
+      id: 'fokal',
+      name: 'FOKAL',
+      role: 'THE SENSORY MISFIT 🎧🌀',
+      buddy: 'SUPER STRENGTH: EMBRACE THE SPECTRUM 🌈',
+      color: 'var(--neon-pink)',
+      badgeBg: 'var(--neon-pink)',
+      sprite: 'assets/crew_fokal.png',
+      avatar: 'assets/avatar_fokal.png',
+      loves: 'Fidgets, textures, stims, and anything sensory.',
+      power: 'Feel Everything • Super Strength: Embrace the spectrum • Turns overwhelm into good vibes.',
+      quote: '“Fidget. Focus. Feel everything. Embrace the textures, stim, and good vibes! My tab is packed with mechanical keyboard clickers, tactile sensory fidgets, pocket keychains, and 3D magnets!”',
+      btnLabel: "Open Fokal's Sensory & Clickers Tab →",
+      btnAction: () => switchCrewTab('fokal'),
+      bannerTitle: "Fokal’s Sensory Zone: Clickers, Fidgets, Keychains & Magnets",
+      rootCatIds: ['Q65HXJOBIFHCUYY437SUOZS7', 'THLCGOV4DJ34MVEDM2BCAGRW'],
+      subFilterPills: [
+        { label: "All Fokal's Sensory Picks", id: 'all' },
+        { label: '🕹️ Mechanical Clickers (36)', id: 'QOC3NNHCCMGI32RIV52XHX43' },
+        { label: '🌀 Sensory Fidgets (22)', id: 'CTFX2XXA34VD7UAPWQAYWNJ7' },
+        { label: '🔑 Pocket Keychains (32)', id: 'XAOUDJVAQLDYFFB7KKXHC42D' },
+        { label: '🧲 Tactile Magnets (13)', id: 'XBGNXVNT2ZMCD47GQACWN5GJ' }
+      ]
     },
     pixel: {
       id: 'pixel',
       name: 'PIXEL',
-      role: 'THE GAME GOBLIN • PIXEL BUDDY: 8-BIT',
-      buddy: 'PIXEL BUDDY: 8-BIT 👾',
+      role: 'THE GAME GOBLIN • SIDEKICK: 8-BIT 👾',
+      buddy: 'SIDEKICK: 8-BIT 👾',
       color: 'var(--pixel-purple)',
       badgeBg: 'var(--pixel-purple)',
       sprite: 'assets/crew_pixel.png',
       avatar: 'assets/avatar_pixel.png',
       loves: 'Retro games, snacks, and beating everyone.',
       power: 'Extra Life — respawns when it counts.',
-      quote: '“Speedrunner & chaos enjoyer reporting in! My tab is packed with mechanical keyboard clickers, sensory fidgets, keychains, magnets, and tabletop dice towers!”',
-      btnLabel: "Open Pixel's Arcade Tab →",
-      btnAction: () => switchCrewTab('pixel'),
-      bannerTitle: "Pixel’s Arcade: Clickers, Fidgets & Gaming Gear",
-      rootCatIds: ['Q65HXJOBIFHCUYY437SUOZS7', 'TAZ4GVCDOX2HBTXL4P5J3DLY', 'THLCGOV4DJ34MVEDM2BCAGRW'],
-      subFilterPills: [
-        { label: "All Pixel's Picks", id: 'all' },
-        { label: '🕹️ Clickers (36)', id: 'QOC3NNHCCMGI32RIV52XHX43' },
-        { label: '🌀 Fidgets (22)', id: 'CTFX2XXA34VD7UAPWQAYWNJ7' },
-        { label: '🎲 Gaming & Dice Towers (13)', id: 'TAZ4GVCDOX2HBTXL4P5J3DLY' },
-        { label: '🔑 Keychains (32)', id: 'XAOUDJVAQLDYFFB7KKXHC42D' },
-        { label: '🧲 Magnets (13)', id: 'XBGNXVNT2ZMCD47GQACWN5GJ' }
-      ]
+      quote: '“Speedrunner. High-score chaser. Chaos enjoyer! Me and 8-Bit are wiring up playable Nerdy Misfits browser mini-games right now—visit our Arcade tab to see what’s coming soon!”',
+      btnLabel: "Open Pixel's Mini-Games Arcade →",
+      btnAction: () => switchCrewTab('pixel')
     },
-    zap: {
-      id: 'zap',
-      name: 'ZAP',
-      role: 'THE TECH WIZARD • PIXEL BUDDY: SPARK',
-      buddy: 'PIXEL BUDDY: SPARK ⚡',
-      color: 'var(--zap-olive)',
-      badgeBg: 'var(--zap-olive)',
-      sprite: 'assets/crew_zap.png',
-      avatar: 'assets/avatar_zap.png',
-      loves: 'Coding, inventions, and explaining complex things simply.',
-      power: 'Brain Zap — supercharges brains & tech.',
-      quote: '“Smart, sarcastic, and knows just enough to be dangerous! Enter my Beast Lair for 146 articulated dragons, 37 dinosaurs, and 161 print-in-place critters.”',
-      btnLabel: "Open Zap's Beast Lair Tab →",
-      btnAction: () => switchCrewTab('zap'),
-      bannerTitle: "Zap’s Beast Lair: 146 Dragons, Dinos & Articulated Critters",
-      rootCatIds: ['Y5S6IHG5LHAHHVF3AMNBXOZZ', '3VFMJ3TDDU55SK7Y6EVQUDP2', 'MKQM5ZY7OOZJVEHWEVQ52T77'],
+    crit: {
+      id: 'crit',
+      name: 'CRIT & SPARK',
+      role: 'THE GAME MASTER & MISCHIEVOUS DRAGON 🐉🎲',
+      buddy: 'COMPANION: SPARK THE DRAGON 🔥',
+      color: 'var(--neon-volt)',
+      badgeBg: '#99cc00',
+      sprite: 'assets/crew_crit.png',
+      avatar: 'assets/avatar_crit.png',
+      loves: 'Tabletop RPGs, lore, dice, epic campaigns, shiny things, snacks, and mayhem.',
+      power: 'Critical Influence — can bend fate (and rules) • Spark breathes chaos (and fire).',
+      quote: '“Story weaver. Dungeon builder. Rules are suggestions! Join me and my mischievous dragon Spark to explore 146 articulated dragons, character dragons, and tabletop RPG dice towers!”',
+      btnLabel: "Open Crit & Spark's Tab →",
+      btnAction: () => switchCrewTab('crit'),
+      bannerTitle: "Crit & Spark’s Sanctum: 146 Dragons, Character Dragons & Tabletop RPG Gear",
+      rootCatIds: ['Y5S6IHG5LHAHHVF3AMNBXOZZ', 'TAZ4GVCDOX2HBTXL4P5J3DLY'],
       subFilterPills: [
-        { label: 'All Beasts & Critters', id: 'all' },
+        { label: 'All Dragons & RPG Loot', id: 'all' },
         { label: '🐉 All Dragons (146)', id: 'Y5S6IHG5LHAHHVF3AMNBXOZZ' },
         { label: '🎭 Character Dragons (38)', id: '26CK2PGR4ONJ73IEK37ONNR7' },
+        { label: '🎲 Dice Towers & RPG Gaming (13)', id: 'TAZ4GVCDOX2HBTXL4P5J3DLY' }
+      ]
+    },
+    justus: {
+      id: 'justus',
+      name: 'JUSTUS',
+      role: 'THE BEAST MASTER • NEMAIN, GROG & BOLT 🐺🐗',
+      buddy: 'BEAST CREW: NEMAIN, GROG & BOLT 🐺',
+      color: '#ff9f1c',
+      badgeBg: '#d97706',
+      sprite: 'assets/crew_justus.png',
+      avatar: 'assets/avatar_justus.png',
+      loves: 'Animals, mead, and being left alone.',
+      power: 'Beast Bond — commands and protects with his crew (Nemain the Raven, Grog the Wolf & Bolt the Boar).',
+      quote: '“Half-dwarf. Half-orc. All attitude. Loyal to my beasts—enter the Beast Lair for 198+ articulated dinosaurs, wolves, boars, reptiles, frogs, sea creatures, and wild critters!”',
+      btnLabel: "Open Justus's Beast Lair →",
+      btnAction: () => switchCrewTab('justus'),
+      bannerTitle: "Justus’s Beast Lair: Dinosaurs, Wolves, Reptiles, Sea Life & Wild Critters",
+      rootCatIds: ['3VFMJ3TDDU55SK7Y6EVQUDP2', 'MKQM5ZY7OOZJVEHWEVQ52T77', 'Y5S6IHG5LHAHHVF3AMNBXOZZ'],
+      subFilterPills: [
+        { label: "All Justus's Beasts", id: 'all' },
+        { label: '🐺 Mammals, Wolves & Birds (72)', id: 'IGGLXWUT43NRF7UCSZDKJ5HQ' },
         { label: '🦖 Dinosaurs (37)', id: '3VFMJ3TDDU55SK7Y6EVQUDP2' },
         { label: '🐸 Frogs & Reptiles (41)', id: 'TKAS6EFG4NPP4V2WXA2MTFIA' },
         { label: '🐢 Turtles & Sea Life (50)', id: '56RVMZOFOGG7GO4X24FG6KBQ' },
-        { label: '🦊 Mammals & Birds (72)', id: 'IGGLXWUT43NRF7UCSZDKJ5HQ' }
+        { label: '🐉 Dragons (146)', id: 'Y5S6IHG5LHAHHVF3AMNBXOZZ' }
       ]
     },
     booksy: {
       id: 'booksy',
       name: 'BOOKSY',
-      role: 'THE BOOKWORM • PIXEL BUDDY: SHADOW',
-      buddy: 'PIXEL BUDDY: SHADOW 🐈‍⬛',
+      role: 'THE BOOKWORM • SIDEKICK: SHADOW 🐈‍⬛',
+      buddy: 'SIDEKICK: SHADOW 🐈‍⬛',
       color: 'var(--booksy-plum)',
       badgeBg: 'var(--booksy-plum)',
       sprite: 'assets/crew_booksy.png',
       avatar: 'assets/avatar_booksy.png',
       loves: 'Books, tea, and conspiracies.',
       power: 'Lore Keeper — remembers everything.',
-      quote: '“Quiet, wise Lore Keeper here! Browse my cozy library of BookTok & ACOTAR reading counters, LED lightboxes, coasters, wine holders, and holiday decor.”',
+      quote: '“Quiet. Wise. Collects stories and random facts! Browse my cozy library of BookTok & ACOTAR reading counters, LED lightboxes, coasters, wine holders, and holiday decor.”',
       btnLabel: "Open Booksy's Cozy Nook Tab →",
       btnAction: () => switchCrewTab('booksy'),
       bannerTitle: "Booksy’s Cozy Nook: BookTok, Home Decor & Holidays",
@@ -150,15 +186,15 @@
     inky: {
       id: 'inky',
       name: 'INKY',
-      role: 'THE CREATIVE MISFIT • PIXEL BUDDY: SPLAT',
-      buddy: 'PIXEL BUDDY: SPLAT 🎨',
+      role: 'THE CREATIVE MISFIT • SIDEKICK: SPLAT 🎨',
+      buddy: 'SIDEKICK: SPLAT 🎨',
       color: 'var(--inky-blue)',
       badgeBg: 'var(--inky-blue)',
       sprite: 'assets/crew_inky.png',
       avatar: 'assets/avatar_inky.png',
       loves: 'Drawing, comics, music, and caffeine.',
       power: 'Ink Blast — brings ideas to life.',
-      quote: '“Artist. Dreamer. Story maker! Step into my Custom 3D Print Studio to design a personalized print in your favorite colors, or browse our HueForge 3D Wall Art!”',
+      quote: '“Artist. Dreamer. Story maker. Sees magic in the margins! Step into my Custom 3D Print Studio to design a personalized print in your favorite colors, or browse our HueForge 3D Wall Art!”',
       btnLabel: "Open Inky's Custom Studio Tab →",
       btnAction: () => switchCrewTab('inky')
     }
@@ -167,9 +203,13 @@
   // ========================================================================
   // 2. INTERACTIVE CIRCLE SPOTLIGHT & TAB SWITCHING
   // ========================================================================
+  let lastPreviewedCrew = 'glitch';
+
   window.previewCrewMember = function (crewKey) {
+    if (lastPreviewedCrew === crewKey) return;
     const profile = CREW_PROFILES[crewKey];
     if (!profile) return;
+    lastPreviewedCrew = crewKey;
 
     document.getElementById('spotImg').src = profile.sprite;
     document.getElementById('spotImg').alt = profile.name;
@@ -187,7 +227,7 @@
     btn.onclick = profile.btnAction;
   };
 
-  let activeGremlinKey = 'pixel';
+  let activeGremlinKey = 'fokal';
   let activeGremlinSubCat = 'all';
   let gremlinVisibleCount = 20;
 
@@ -205,6 +245,8 @@
     if (tabKey === 'glitch') {
       document.getElementById('view-glitch').classList.add('active');
       previewCrewMember('glitch');
+    } else if (tabKey === 'pixel') {
+      document.getElementById('view-pixel').classList.add('active');
     } else if (tabKey === 'inky') {
       document.getElementById('view-inky').classList.add('active');
     } else if (tabKey === 'markets') {
@@ -515,6 +557,11 @@
     title: 'Custom Articulated Dragon',
     price: 15,
     color: 'Glitch Lime & Obsidian Silk',
+    customColors: '',
+    scale: 'Standard Workshop Scale',
+    finish: 'Dual/Tri-Color Silk PLA',
+    engrave: '',
+    refLink: '',
     note: ''
   };
 
@@ -534,25 +581,69 @@
   };
 
   window.updateStudioPreview = function () {
-    studioState.note = document.getElementById('studioNotesInput').value.trim();
+    const sizeEl = document.getElementById('studioSizeSelect');
+    const finishEl = document.getElementById('studioFinishSelect');
+    const customColorEl = document.getElementById('studioCustomColorsInput');
+    const engraveEl = document.getElementById('studioEngraveInput');
+    const refEl = document.getElementById('studioRefLinkInput');
+    const noteEl = document.getElementById('studioNotesInput');
+
+    studioState.scale = sizeEl ? sizeEl.value : 'Standard Workshop Scale';
+    studioState.finish = finishEl ? finishEl.value : 'Dual/Tri-Color Silk PLA';
+    studioState.customColors = customColorEl ? customColorEl.value.trim() : '';
+    studioState.engrave = engraveEl ? engraveEl.value.trim() : '';
+    studioState.refLink = refEl ? refEl.value.trim() : '';
+    studioState.note = noteEl ? noteEl.value.trim() : '';
+
+    const activeColorText = studioState.customColors
+      ? `${studioState.color} (${studioState.customColors})`
+      : studioState.color;
+
     document.getElementById('previewBuildTitle').textContent = studioState.title;
-    document.getElementById('previewFilamentText').textContent = studioState.color;
-    document.getElementById('previewNoteText').textContent = studioState.note || 'Standard Workshop Finish';
+
+    const scaleFinishNode = document.getElementById('previewScaleFinishText');
+    if (scaleFinishNode) {
+      scaleFinishNode.textContent = `${studioState.scale} • ${studioState.finish}`;
+    }
+
+    document.getElementById('previewFilamentText').textContent = activeColorText;
+
+    const engraveNode = document.getElementById('previewEngraveText');
+    if (engraveNode) {
+      engraveNode.textContent = studioState.engrave || 'None';
+    }
+
+    const refNode = document.getElementById('previewRefText');
+    if (refNode) {
+      refNode.textContent = studioState.refLink || 'None';
+    }
+
+    document.getElementById('previewNoteText').textContent =
+      studioState.note || 'Standard Workshop Finish (Ready for your custom notes above)';
     document.getElementById('previewTotalPrice').textContent = `$${studioState.price.toFixed(2)}`;
   };
 
   window.addCustomStudioBuildToCart = function () {
+    updateStudioPreview();
+    const parts = [
+      `${studioState.scale} (${studioState.finish})`,
+      studioState.customColors ? `${studioState.color} [${studioState.customColors}]` : studioState.color
+    ];
+    if (studioState.engrave) parts.push(`Engrave: "${studioState.engrave}"`);
+    if (studioState.refLink) parts.push(`Ref: ${studioState.refLink}`);
+    if (studioState.note) parts.push(`Notes: ${studioState.note}`);
+
     cart.push({
       uid: 'custom-' + Date.now(),
       name: `Inky Custom: ${studioState.title}`,
       price: studioState.price,
       image: 'assets/avatar_inky.png',
-      meta: `${studioState.color}${studioState.note ? ' • ' + studioState.note : ''}`,
+      meta: parts.join(' • '),
       qty: 1
     });
     renderCart();
     toggleCartDrawer(true);
-    showToast(`🎨 Inky added "${studioState.title}" to your Stash!`);
+    showToast(`🎨 Inky added "${studioState.title}" with your custom specs to your Stash!`);
   };
 
   // Cart State (Starts empty each time visited)
