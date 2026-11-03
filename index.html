@@ -1224,12 +1224,37 @@
         </div>
       </div>
 
-      <div id="cartItemsContainer" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;"></div>
+      <div id="cartItemsContainer" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:10px;min-height:110px;"></div>
 
-      <div style="border-top:2px solid var(--border-warm);padding-top:14px;margin-top:12px;">
+      <!-- Customer Details & Order Notification Info -->
+      <div style="background:rgba(255,255,255,0.03);border:1.5px solid var(--border-warm);border-radius:var(--radius-md);padding:10px 12px;margin-top:10px;">
+        <div style="font-size:0.74rem;font-weight:800;color:var(--glitch-green);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:8px;">
+          📋 Customer &amp; Order Details
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:7px;">
+          <input id="cartCustName" type="text" class="friendly-input" placeholder="Full Name *" style="padding:7px 10px;font-size:0.8rem;" />
+          <input id="cartCustPhone" type="tel" class="friendly-input" placeholder="Phone Number *" style="padding:7px 10px;font-size:0.8rem;" />
+        </div>
+        <div style="margin-bottom:7px;">
+          <input id="cartCustEmail" type="email" class="friendly-input" placeholder="Email Address (for receipt &amp; updates) *" style="width:100%;padding:7px 10px;font-size:0.8rem;" />
+        </div>
+        <div>
+          <input id="cartCustAddress" type="text" class="friendly-input" placeholder="Shipping Address or Booth Pickup Notes" style="width:100%;padding:7px 10px;font-size:0.8rem;" />
+        </div>
+      </div>
+
+      <div style="border-top:2px solid var(--border-warm);padding-top:12px;margin-top:10px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;color:var(--ink-secondary);margin-bottom:4px;">
+          <span>Items Subtotal:</span>
+          <span id="cartSubtotalText" style="font-family:var(--font-mono);font-weight:700;">$0.00</span>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:0.82rem;color:var(--ink-secondary);margin-bottom:8px;">
+          <span id="cartShippingLabel">US Standard Shipping:</span>
+          <span id="cartShippingText" style="font-family:var(--font-mono);font-weight:700;">$0.00</span>
+        </div>
         <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:12px;">
-          <span style="font-weight:800;">Subtotal:</span>
-          <span id="cartSubtotalText" style="font-family:var(--font-mono);font-size:1.5rem;font-weight:900;color:var(--glitch-green);">$0.00</span>
+          <span style="font-weight:900;font-size:0.95rem;">Total Charged:</span>
+          <span id="cartTotalChargedText" style="font-family:var(--font-mono);font-size:1.45rem;font-weight:900;color:var(--glitch-green);">$0.00</span>
         </div>
         <button id="squareCheckoutBtn" class="btn-friendly-primary" style="width:100%;justify-content:center;" onclick="handleSquareCheckout()">
           <span>Checkout with Square →</span>

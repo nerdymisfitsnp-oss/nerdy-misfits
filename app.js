@@ -694,15 +694,41 @@
     renderCart();
   };
 
-  function renderCart() {
+  function getCartTotals() {
     const totalCount = cart.reduce((s, i) => s + i.qty, 0);
     const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const fulfillmentEl = document.getElementById('cartFulfillmentSelect');
+    const fulfillment = fulfillmentEl ? fulfillmentEl.value : '🚚 US Shipping';
+    const isShipping = fulfillment.includes('Shipping');
+    const shipping = cart.length === 0 ? 0 : (isShipping ? 5.99 : 0);
+    const totalCharged = subtotal + shipping;
+    const freeMiniUnlocked = subtotal >= 25;
+    return { totalCount, subtotal, shipping, totalCharged, fulfillment, isShipping, freeMiniUnlocked };
+  }
+
+  function renderCart() {
+    const { totalCount, subtotal, shipping, totalCharged, isShipping, freeMiniUnlocked } = getCartTotals();
 
     document.getElementById('cartCountBadge').textContent = totalCount;
     document.getElementById('cartSubtotalText').textContent = `$${subtotal.toFixed(2)}`;
 
+    const shipEl = document.getElementById('cartShippingText');
+    const shipLabelEl = document.getElementById('cartShippingLabel');
+    if (shipLabelEl) {
+      shipLabelEl.textContent = isShipping ? 'US Standard Shipping:' : 'SWFL Booth Pickup:';
+    }
+    if (shipEl) {
+      shipEl.textContent = !isShipping && cart.length > 0 ? 'Booth Pickup ($0.00)' : `$${shipping.toFixed(2)}`;
+      shipEl.style.color = !isShipping && cart.length > 0 ? 'var(--glitch-green)' : 'inherit';
+    }
+
+    const totalEl = document.getElementById('cartTotalChargedText');
+    if (totalEl) {
+      totalEl.textContent = `$${totalCharged.toFixed(2)}`;
+    }
+
     const bundleText = document.getElementById('bundleMeterText');
-    if (subtotal >= 25) {
+    if (freeMiniUnlocked) {
       bundleText.innerHTML = `🎉 <strong>UNLOCKED!</strong> Free Mystery Pixel Buddy Mini included!`;
     } else {
       bundleText.innerHTML = `Add <strong>$${(25 - subtotal).toFixed(2)}</strong> more for a <strong>FREE Mystery Pixel Buddy Mini!</strong> 🎁`;
@@ -740,7 +766,36 @@
   window.setPickup = function (label) {
     document.getElementById('headerFulfillmentPill').textContent = `📍 ${label}`;
     document.getElementById('cartFulfillmentSelect').value = label;
+    renderCart();
     showToast(`📍 Pickup set to: ${label}`);
+  };
+
+  const ORDER_NOTIFY_EDGE_URL = 'https://axavvrqyzpwsczpiwmua.supabase.co/functions/v1/misfits-order-email';
+
+  window.sendMisfitOrderNotification = async function (orderPayload) {
+    try {
+      const res = await fetch(ORDER_NOTIFY_EDGE_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderPayload)
+      });
+      if (res.ok) {
+        return await res.json();
+      }
+    } catch (_) {
+      // Fallback to local serverless route if edge function is unreachable
+    }
+    try {
+      const res2 = await fetch('/api/order-notify', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderPayload)
+      });
+      if (res2.ok) {
+        return await res2.json();
+      }
+    } catch (_) {}
+    return null;
   };
 
   window.handleSquareCheckout = async function () {
@@ -749,15 +804,67 @@
       return;
     }
 
-    const fulfillment = document.getElementById('cartFulfillmentSelect').value;
+    const custName = (document.getElementById('cartCustName')?.value || '').trim();
+    const custEmail = (document.getElementById('cartCustEmail')?.value || '').trim();
+    const custPhone = (document.getElementById('cartCustPhone')?.value || '').trim();
+    const custAddress = (document.getElementById('cartCustAddress')?.value || '').trim();
+
+    if (!custName || !custEmail || !custPhone) {
+      showToast('📋 Please enter your Name, Email, and Phone Number before checkout!');
+      if (!custName) document.getElementById('cartCustName')?.focus();
+      else if (!custPhone) document.getElementById('cartCustPhone')?.focus();
+      else document.getElementById('cartCustEmail')?.focus();
+      return;
+    }
+
+    const { subtotal, shipping, totalCharged, fulfillment, isShipping, freeMiniUnlocked } = getCartTotals();
+    if (isShipping && !custAddress) {
+      showToast('📦 Please enter your US Shipping Address!');
+      document.getElementById('cartCustAddress')?.focus();
+      return;
+    }
+
+    const orderId = `NM-${Date.now().toString().slice(-6)}`;
+    const customer = {
+      name: custName,
+      email: custEmail,
+      phone: custPhone,
+      address: custAddress || fulfillment
+    };
+
+    const orderPayload = {
+      orderId,
+      notifyEmail: 'nerdymisfitsnp@gmail.com',
+      customer,
+      fulfillment,
+      items: cart,
+      subtotal,
+      shipping,
+      totalCharged,
+      freeMiniUnlocked,
+      paymentStatus: 'Initiated Checkout (Square)'
+    };
+
     const btn = document.getElementById('squareCheckoutBtn');
-    if (btn) btn.innerHTML = '<span>Connecting to Square...</span>';
+    if (btn) btn.innerHTML = '<span>Sending Order Details &amp; Connecting...</span>';
+
+    // Dispatch order email notification to nerdymisfitsnp@gmail.com + log to Supabase
+    await window.sendMisfitOrderNotification(orderPayload);
 
     try {
       const res = await fetch('/api/checkout', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ items: cart, fulfillment })
+        body: JSON.stringify({
+          orderId,
+          items: cart,
+          fulfillment,
+          customer,
+          subtotal,
+          shipping,
+          totalCharged,
+          freeMiniUnlocked
+        })
       });
       if (res.ok) {
         const data = await res.json();
@@ -771,11 +878,11 @@
     }
 
     if (btn) btn.innerHTML = '<span>Checkout with Square →</span>';
+    showToast(`📧 Order ${orderId} ($${totalCharged.toFixed(2)}) emailed to Nerdy Misfits!`);
     // Fallback to opening the first cart item's real Square product page
     const firstWithId = cart.find((c) => c.id);
     const matchedProd = firstWithId ? allProducts.find((p) => p.id === firstWithId.id) : null;
     if (matchedProd && matchedProd.link) {
-      showToast('Opening Square Storefront Checkout...');
       window.open(matchedProd.link, '_blank', 'noopener');
     } else {
       window.open('https://nerdy-misfits.square.site/', '_blank', 'noopener');

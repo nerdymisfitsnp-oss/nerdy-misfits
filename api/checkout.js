@@ -48,23 +48,51 @@ export default async function handler(req, res) {
         error: 'Could not determine Square Location ID.'
       });
     }
-    const { items = [], fulfillment = 'US Shipping' } = req.body || {};
+    const {
+      orderId = `NM-${Date.now().toString().slice(-6)}`,
+      items = [],
+      fulfillment = 'US Shipping',
+      customer = {},
+      subtotal = 0,
+      shipping = 0,
+      totalCharged = 0
+    } = req.body || {};
 
     if (!items.length) {
       return res.status(400).json({ error: 'Cart is empty.' });
     }
 
+    const customerTag = customer.name
+      ? `Customer: ${customer.name} (${customer.phone || ''} / ${customer.email || ''})`
+      : '';
+
     const lineItems = items.map((item) => ({
       name: item.name,
       quantity: String(item.qty || 1),
-      note: `${item.meta || ''} | Fulfillment: ${fulfillment}`.trim(),
+      note: `${item.meta || ''} | Fulfillment: ${fulfillment} ${customerTag}`.trim(),
       base_price_money: {
         amount: Math.round(Number(item.price) * 100), // Square uses cents
         currency: 'USD'
       }
     }));
 
+    if (Number(shipping) > 0) {
+      lineItems.push({
+        name: 'US Standard Shipping (North Port Workshop)',
+        quantity: '1',
+        note: customer.address || fulfillment,
+        base_price_money: {
+          amount: Math.round(Number(shipping) * 100),
+          currency: 'USD'
+        }
+      });
+    }
+
     const idempotencyKey = `nm-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+
+    const prePopulatedData = {};
+    if (customer.email) prePopulatedData.buyer_email = customer.email;
+    if (customer.phone) prePopulatedData.buyer_phone_number = customer.phone;
 
     const squareResponse = await fetch(
       'https://connect.squareup.com/v2/online-checkout/payment-links',
@@ -79,6 +107,7 @@ export default async function handler(req, res) {
           idempotency_key: idempotencyKey,
           order: {
             location_id: locationId,
+            reference_id: orderId,
             line_items: lineItems
           },
           checkout_options: {
@@ -89,7 +118,8 @@ export default async function handler(req, res) {
               cash_app_pay: true,
               afterpay_clearpay: true
             }
-          }
+          },
+          pre_populated_data: Object.keys(prePopulatedData).length ? prePopulatedData : undefined
         })
       }
     );
