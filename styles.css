@@ -432,6 +432,10 @@ img {
   color: var(--text-bright);
 }
 
+.tab-short-label {
+  display: none;
+}
+
 .crew-tab-what {
   font-size: 0.72rem;
   font-weight: 600;
@@ -2072,21 +2076,21 @@ img {
     font-size: 0.82rem;
   }
 
-  /* Centered 2-column compact Crew Tabs grid on mobile with zero overflow */
+  /* Ultra-compact 4x2 centered pill tabs on mobile (2 slim rows instead of 4 tall stacked rows!) */
   .crew-tabs-bar {
-    padding: 6px 0 8px;
+    padding: 5px 0 6px;
     background: #0d1019;
     border-bottom: 1.5px solid rgba(57, 255, 20, 0.35);
   }
 
   .crew-tabs-list {
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 5px;
     width: 100%;
     max-width: 100%;
     margin: 0 auto;
-    padding: 2px 0;
+    padding: 0;
     justify-content: center;
     align-items: stretch;
   }
@@ -2095,29 +2099,38 @@ img {
     width: 100%;
     min-width: 0;
     max-width: 100%;
-    padding: 6px 8px;
-    gap: 6px;
+    padding: 4px 5px;
+    gap: 4px;
+    border-radius: 99px;
+    border-width: 1.5px;
     justify-content: center;
     text-align: center;
   }
 
   .crew-tab-avatar {
-    width: 26px;
-    height: 26px;
+    width: 18px;
+    height: 18px;
+    border-width: 1.5px;
+  }
+
+  .tab-full-label {
+    display: none;
+  }
+
+  .tab-short-label {
+    display: inline;
   }
 
   .crew-tab-who {
-    font-size: 0.72rem;
+    font-size: 0.65rem;
+    line-height: 1;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
   }
 
   .crew-tab-what {
-    font-size: 0.62rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
+    display: none;
   }
 
   /* Tab panels & Hero spacing on mobile */
