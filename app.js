@@ -760,6 +760,13 @@
     item.qty += delta;
     if (item.qty <= 0) {
       cart = cart.filter((c) => c.uid !== uid);
+    } else if (delta > 0 && item.id) {
+      const prod = allProducts.find((p) => p.id === item.id);
+      if (prod && !prod.outOfStock && prod.stock > 0 && item.qty > prod.stock) {
+        showToast(
+          `🎨 Note: ${prod.stock} ready in stock — extra ${item.qty - prod.stock} will be Printed-to-Order (3–5d)!`
+        );
+      }
     }
     renderCart();
   };
@@ -1138,16 +1145,26 @@
 
   window.switchAdminSubTab = function (subKey) {
     activeAdminSubTab = subKey;
-    document.getElementById('adminTabBtnUnfulfilled').classList.toggle('active', subKey === 'unfulfilled');
-    document.getElementById('adminTabBtnFulfilled').classList.toggle('active', subKey === 'fulfilled');
-    document.getElementById('adminTabBtnAnalytics').classList.toggle('active', subKey === 'analytics');
+    document.getElementById('adminTabBtnUnfulfilled')?.classList.toggle('active', subKey === 'unfulfilled');
+    document.getElementById('adminTabBtnFulfilled')?.classList.toggle('active', subKey === 'fulfilled');
+    document.getElementById('adminTabBtnInventory')?.classList.toggle('active', subKey === 'inventory');
+    document.getElementById('adminTabBtnAnalytics')?.classList.toggle('active', subKey === 'analytics');
 
-    document.getElementById('adminPanelUnfulfilled').style.display = subKey === 'unfulfilled' ? 'block' : 'none';
-    document.getElementById('adminPanelFulfilled').style.display = subKey === 'fulfilled' ? 'block' : 'none';
-    document.getElementById('adminPanelAnalytics').style.display = subKey === 'analytics' ? 'block' : 'none';
+    const pUnf = document.getElementById('adminPanelUnfulfilled');
+    const pFul = document.getElementById('adminPanelFulfilled');
+    const pInv = document.getElementById('adminPanelInventory');
+    const pAna = document.getElementById('adminPanelAnalytics');
+    if (pUnf) pUnf.style.display = subKey === 'unfulfilled' ? 'block' : 'none';
+    if (pFul) pFul.style.display = subKey === 'fulfilled' ? 'block' : 'none';
+    if (pInv) pInv.style.display = subKey === 'inventory' ? 'block' : 'none';
+    if (pAna) pAna.style.display = subKey === 'analytics' ? 'block' : 'none';
+
+    if (subKey === 'inventory') {
+      renderAdminInventory();
+    }
   };
 
-  window.refreshAdminData = async function () {
+  window.refreshAdminData = async function (showNotice) {
     try {
       await window.syncPendingSquarePayments();
     } catch (_) {}
@@ -1160,7 +1177,7 @@
             Authorization: `Bearer ${SUPABASE_ANON_KEY}`
           }
         }),
-        fetch(`${SUPABASE_REST_URL}/misfits_analytics_events?select=*&order=created_at.desc&limit=500`, {
+        fetch(`${SUPABASE_REST_URL}/misfits_analytics_events?select=*&order=created_at.desc&limit=5000`, {
           headers: {
             apikey: SUPABASE_ANON_KEY,
             Authorization: `Bearer ${SUPABASE_ANON_KEY}`
@@ -1179,7 +1196,11 @@
     }
 
     renderAdminOrders();
+    renderAdminInventory();
     renderAdminAnalytics();
+    if (showNotice) {
+      showToast('🔄 Refreshed accurate live traffic, conversion rates & month-to-month analytics!');
+    }
   };
 
   window.toggleOrderFulfilled = async function (orderId, isFulfilled) {
@@ -1441,31 +1462,126 @@
     showToast('📥 Exported Nerdy Misfits Order Records to CSV!');
   };
 
-  window.renderAdminAnalytics = function () {
-    const events = adminAnalyticsCache || [];
-    const orders = adminOrdersCache || [];
+  function getMonthKeyFromIso(isoStr) {
+    const d = isoStr ? new Date(isoStr) : new Date();
+    if (isNaN(d.getTime())) return '2026-11';
+    const yr = d.getFullYear();
+    const mo = String(d.getMonth() + 1).padStart(2, '0');
+    return `${yr}-${mo}`;
+  }
 
-    const uniqueSessions = new Set(events.map((e) => e.session_id).filter(Boolean));
-    const totalVisitors = Math.max(uniqueSessions.size, orders.length, 1);
-    const totalPageViews = events.filter((e) => e.event_type === 'page_view' || e.event_type === 'tab_view').length || totalVisitors;
+  function formatMonthLabel(monthKey) {
+    const [yr, mo] = String(monthKey || '2026-11').split('-');
+    const d = new Date(Number(yr), Number(mo || 1) - 1, 1);
+    return d.toLocaleString('en-US', { month: 'long', year: 'numeric' });
+  }
 
+  function computeMetricsForSlice(eventsSlice, ordersSlice) {
+    const uniqueVisitorSet = new Set(eventsSlice.map((e) => e.session_id).filter(Boolean));
+    const visitors = uniqueVisitorSet.size;
+    const pageViews = eventsSlice.filter((e) => e.event_type === 'page_view' || e.event_type === 'tab_view').length;
     const engagedSessions = new Set(
-      events
+      eventsSlice
         .filter((e) => e.event_type === 'tab_view' || e.event_type === 'product_view' || e.event_type === 'add_to_cart')
         .map((e) => e.session_id)
+        .filter(Boolean)
     ).size;
-
     const cartSessions = new Set(
-      events.filter((e) => e.event_type === 'add_to_cart' || e.event_type === 'checkout_started').map((e) => e.session_id)
+      eventsSlice
+        .filter((e) => e.event_type === 'add_to_cart' || e.event_type === 'checkout_started')
+        .map((e) => e.session_id)
+        .filter(Boolean)
     ).size;
 
-    const totalOrdersCount = orders.length;
-    const totalRevenue = orders.reduce((sum, o) => sum + Number(o.total_charged || 0), 0);
-    const aov = totalOrdersCount > 0 ? totalRevenue / totalOrdersCount : 0;
+    const ordersCount = ordersSlice.length;
+    const revenue = ordersSlice.reduce((sum, o) => sum + Number(o.total_charged || 0), 0);
+    const aov = ordersCount > 0 ? revenue / ordersCount : 0;
 
-    const cartRatePct = Math.min(100, (Math.max(cartSessions, totalOrdersCount) / totalVisitors) * 100);
-    const conversionRatePct = Math.min(100, (totalOrdersCount / totalVisitors) * 100);
-    const engagedRatePct = Math.min(100, (Math.max(engagedSessions, cartSessions, totalOrdersCount) / totalVisitors) * 100);
+    const denom = Math.max(visitors, ordersCount, 1);
+    const cartRatePct = visitors > 0 || ordersCount > 0 ? Math.min(100, (cartSessions / denom) * 100) : 0;
+    const conversionRatePct = visitors > 0 || ordersCount > 0 ? Math.min(100, (ordersCount / denom) * 100) : 0;
+    const engagedRatePct = visitors > 0 || ordersCount > 0 ? Math.min(100, (engagedSessions / denom) * 100) : 0;
+
+    return {
+      visitors,
+      pageViews,
+      engagedSessions,
+      cartSessions,
+      ordersCount,
+      revenue,
+      aov,
+      cartRatePct,
+      conversionRatePct,
+      engagedRatePct
+    };
+  }
+
+  window.selectAdminAnalyticsMonth = function (monthKey) {
+    const sel = document.getElementById('adminAnalyticsMonthSelect');
+    if (sel) {
+      sel.value = monthKey;
+      renderAdminAnalytics();
+    }
+  };
+
+  window.renderAdminAnalytics = function () {
+    // 1. Filter to 100% real visitor events (exclude initial seeded demo sessions)
+    const allRealEvents = (adminAnalyticsCache || []).filter(
+      (e) => e && e.session_id && !/^sess-10[1-8]$/.test(String(e.session_id))
+    );
+
+    // 2. Filter to 100% real paid orders (exclude unpaid checkouts & NM-TEST seeded orders)
+    const allRealPaidOrders = (adminOrdersCache || []).filter(
+      (o) =>
+        o &&
+        o.email_sent !== false &&
+        o.status !== 'Awaiting Square Payment' &&
+        !String(o.order_id || '').startsWith('NM-TEST-')
+    );
+
+    // 3. Collect Month Keys (last 6 rolling months + any month with data, sorted newest first)
+    const monthSet = new Set();
+    const now = new Date();
+    for (let i = 0; i < 6; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const mk = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+      monthSet.add(mk);
+    }
+    allRealEvents.forEach((e) => monthSet.add(getMonthKeyFromIso(e.created_at)));
+    allRealPaidOrders.forEach((o) => monthSet.add(getMonthKeyFromIso(o.created_at)));
+
+    const sortedMonths = Array.from(monthSet).sort((a, b) => b.localeCompare(a));
+
+    const monthSelect = document.getElementById('adminAnalyticsMonthSelect');
+    const selectedMonth = monthSelect ? monthSelect.value || 'all' : 'all';
+    if (monthSelect) {
+      const currentVal = selectedMonth;
+      monthSelect.innerHTML =
+        `<option value="all">📅 All Time (Full History)</option>` +
+        sortedMonths
+          .map((mk) => `<option value="${mk}" ${mk === currentVal ? 'selected' : ''}>🗓️ ${formatMonthLabel(mk)}</option>`)
+          .join('');
+    }
+
+    const activeMonth = monthSelect ? monthSelect.value : 'all';
+    const events =
+      activeMonth === 'all'
+        ? allRealEvents
+        : allRealEvents.filter((e) => getMonthKeyFromIso(e.created_at) === activeMonth);
+    const orders =
+      activeMonth === 'all'
+        ? allRealPaidOrders
+        : allRealPaidOrders.filter((o) => getMonthKeyFromIso(o.created_at) === activeMonth);
+
+    const periodSubEl = document.getElementById('adminAnalyticsPeriodSubtitle');
+    if (periodSubEl) {
+      periodSubEl.textContent =
+        activeMonth === 'all'
+          ? 'Showing 100% real-time verified visitor sessions & confirmed paid orders across All Time.'
+          : `Filtered to ${formatMonthLabel(activeMonth)} — real verified visitor sessions & paid orders.`;
+    }
+
+    const stats = computeMetricsForSlice(events, orders);
 
     const kpiVis = document.getElementById('kpiTotalVisitors');
     const kpiViews = document.getElementById('kpiTotalPageViews');
@@ -1476,23 +1592,101 @@
     const kpiRev = document.getElementById('kpiTotalRevenue');
     const kpiAov = document.getElementById('kpiAovSubtext');
 
-    if (kpiVis) kpiVis.textContent = `${totalVisitors} Visitors`;
-    if (kpiViews) kpiViews.textContent = `${totalPageViews} Total Page & Tab Views`;
-    if (kpiCart) kpiCart.textContent = `${cartRatePct.toFixed(1)}%`;
-    if (kpiCartSub) kpiCartSub.textContent = `${Math.max(cartSessions, totalOrdersCount)} of ${totalVisitors} visitors added to Stash`;
-    if (kpiConv) kpiConv.textContent = `${conversionRatePct.toFixed(1)}%`;
-    if (kpiConvSub) kpiConvSub.textContent = `${totalOrdersCount} Orders from ${totalVisitors} Visitors (Industry avg: 2.1%)`;
-    if (kpiRev) kpiRev.textContent = `$${totalRevenue.toFixed(2)}`;
-    if (kpiAov) kpiAov.textContent = `Avg Order Value (AOV): $${aov.toFixed(2)} across ${totalOrdersCount} orders`;
+    if (kpiVis) kpiVis.textContent = `${stats.visitors} Visitors`;
+    if (kpiViews) kpiViews.textContent = `${stats.pageViews} Total Page & Tab Views`;
+    if (kpiCart) kpiCart.textContent = `${stats.cartRatePct.toFixed(1)}%`;
+    if (kpiCartSub) kpiCartSub.textContent = `${stats.cartSessions} of ${stats.visitors} visitors added to Stash`;
+    if (kpiConv) kpiConv.textContent = `${stats.conversionRatePct.toFixed(1)}%`;
+    if (kpiConvSub) kpiConvSub.textContent = `${stats.ordersCount} Paid Orders from ${stats.visitors} Visitors`;
+    if (kpiRev) kpiRev.textContent = `$${stats.revenue.toFixed(2)}`;
+    if (kpiAov) kpiAov.textContent = `Avg Order Value (AOV): $${stats.aov.toFixed(2)} across ${stats.ordersCount} paid orders`;
 
-    // Render Conversion Funnel
+    // 4. Render Month-to-Month Breakdown Table
+    const monthlyTableEl = document.getElementById('adminMonthlyBreakdownTable');
+    if (monthlyTableEl) {
+      const monthlyRowsData = sortedMonths.map((mk) => {
+        const mEvents = allRealEvents.filter((e) => getMonthKeyFromIso(e.created_at) === mk);
+        const mOrders = allRealPaidOrders.filter((o) => getMonthKeyFromIso(o.created_at) === mk);
+        return {
+          monthKey: mk,
+          label: formatMonthLabel(mk),
+          ...computeMetricsForSlice(mEvents, mOrders)
+        };
+      });
+
+      const maxMonthVisitors = Math.max(...monthlyRowsData.map((m) => m.visitors), 1);
+
+      monthlyTableEl.innerHTML = `
+        <table style="width:100%;border-collapse:collapse;font-size:0.84rem;text-align:left;">
+          <thead>
+            <tr style="border-bottom:2px solid rgba(0,229,255,0.3);color:var(--text-secondary);font-family:var(--font-mono);font-size:0.72rem;text-transform:uppercase;">
+              <th style="padding:10px 12px;">Month</th>
+              <th style="padding:10px 12px;">Unique Visitors</th>
+              <th style="padding:10px 12px;">Page / Tab Views</th>
+              <th style="padding:10px 12px;">Stash Adds (Cart %)</th>
+              <th style="padding:10px 12px;">Paid Orders</th>
+              <th style="padding:10px 12px;">Conversion Rate</th>
+              <th style="padding:10px 12px;text-align:right;">Revenue (AOV)</th>
+              <th style="padding:10px 12px;width:140px;">Monthly Activity</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${monthlyRowsData
+              .map((m) => {
+                const isSelected = activeMonth === m.monthKey;
+                const barPct = m.visitors > 0 ? Math.max(Math.round((m.visitors / maxMonthVisitors) * 100), 8) : 0;
+                return `
+                  <tr
+                    onclick="selectAdminAnalyticsMonth('${m.monthKey === activeMonth ? 'all' : m.monthKey}')"
+                    style="border-bottom:1px solid rgba(255,255,255,0.08);cursor:pointer;background:${
+                      isSelected ? 'rgba(0,229,255,0.12)' : 'transparent'
+                    };transition:background 0.15s ease;"
+                    title="Click to filter analytics to ${escapeHtml(m.label)}"
+                  >
+                    <td style="padding:10px 12px;font-weight:900;color:${isSelected ? 'var(--neon-cyan)' : '#fff'};">
+                      🗓️ ${escapeHtml(m.label)} ${isSelected ? '<span style="font-size:0.7rem;color:var(--neon-green);">(Active)</span>' : ''}
+                    </td>
+                    <td style="padding:10px 12px;font-family:var(--font-mono);font-weight:800;color:var(--neon-cyan);">
+                      ${m.visitors}
+                    </td>
+                    <td style="padding:10px 12px;font-family:var(--font-mono);color:#cfd3e2;">
+                      ${m.pageViews}
+                    </td>
+                    <td style="padding:10px 12px;font-family:var(--font-mono);color:#df8eff;">
+                      ${m.cartSessions} <span style="font-size:0.75rem;color:var(--text-secondary);">(${m.cartRatePct.toFixed(1)}%)</span>
+                    </td>
+                    <td style="padding:10px 12px;font-family:var(--font-mono);font-weight:800;color:#fff;">
+                      ${m.ordersCount}
+                    </td>
+                    <td style="padding:10px 12px;font-family:var(--font-mono);font-weight:900;color:var(--neon-green);">
+                      ${m.conversionRatePct.toFixed(1)}%
+                    </td>
+                    <td style="padding:10px 12px;font-family:var(--font-mono);text-align:right;font-weight:900;color:var(--neon-green);">
+                      $${m.revenue.toFixed(2)}
+                      <span style="display:block;font-size:0.7rem;color:var(--text-secondary);font-weight:400;">AOV: $${m.aov.toFixed(2)}</span>
+                    </td>
+                    <td style="padding:10px 12px;">
+                      <div style="width:100%;height:9px;background:#0b0d14;border-radius:99px;overflow:hidden;border:1px solid rgba(255,255,255,0.1);">
+                        <div style="width:${barPct}%;height:100%;background:linear-gradient(90deg, var(--neon-cyan), var(--neon-green));border-radius:99px;"></div>
+                      </div>
+                    </td>
+                  </tr>
+                `;
+              })
+              .join('')}
+          </tbody>
+        </table>
+      `;
+    }
+
+    // 5. Render Conversion Funnel
     const funnelEl = document.getElementById('adminFunnelContainer');
     if (funnelEl) {
       const funnelSteps = [
-        { label: '1. Unique Site Visitors (Landed on Site)', count: totalVisitors, pct: 100, color: 'var(--neon-cyan)' },
-        { label: '2. Explored Misfits Crew Tabs / Products', count: Math.max(engagedSessions, totalOrdersCount), pct: engagedRatePct, color: 'var(--pixel-purple)' },
-        { label: '3. Added 3D Creation to Stash (Cart)', count: Math.max(cartSessions, totalOrdersCount), pct: cartRatePct, color: 'var(--neon-pink)' },
-        { label: '4. Completed Order (Converted Customers)', count: totalOrdersCount, pct: conversionRatePct, color: 'var(--neon-green)' }
+        { label: '1. Unique Site Visitors (Landed on Site)', count: stats.visitors, pct: stats.visitors > 0 ? 100 : 0, color: 'var(--neon-cyan)' },
+        { label: '2. Explored Misfits Crew Tabs / Products', count: stats.engagedSessions, pct: stats.engagedRatePct, color: 'var(--pixel-purple)' },
+        { label: '3. Added 3D Creation to Stash (Cart)', count: stats.cartSessions, pct: stats.cartRatePct, color: 'var(--neon-pink)' },
+        { label: '4. Completed Paid Order (Converted Customers)', count: stats.ordersCount, pct: stats.conversionRatePct, color: 'var(--neon-green)' }
       ];
 
       funnelEl.innerHTML = funnelSteps
@@ -1504,7 +1698,7 @@
               <span style="font-family:var(--font-mono);color:${step.color};">${step.count} (${step.pct.toFixed(1)}%)</span>
             </div>
             <div style="width:100%;height:12px;background:#0b0d14;border-radius:99px;overflow:hidden;border:1px solid rgba(255,255,255,0.12);">
-              <div style="width:${Math.max(step.pct, 4)}%;height:100%;background:${step.color};border-radius:99px;"></div>
+              <div style="width:${step.count > 0 ? Math.max(step.pct, 4) : 0}%;height:100%;background:${step.color};border-radius:99px;"></div>
             </div>
           </div>
         `
@@ -1512,7 +1706,7 @@
         .join('');
     }
 
-    // Render Crew Tab Traffic Breakdown
+    // 6. Render Crew Tab Traffic Breakdown
     const tabLabels = {
       glitch: "🟢 Glitch's Hub (Home)",
       fokal: "💖 Fokal's Sensory & Clickers",
@@ -1538,7 +1732,7 @@
         .sort((a, b) => tabCounts[b[0]] - tabCounts[a[0]])
         .map(([key, label]) => {
           const count = tabCounts[key];
-          const pct = Math.round((count / maxTabCount) * 100);
+          const pct = count > 0 ? Math.round((count / maxTabCount) * 100) : 0;
           return `
             <div>
               <div style="display:flex;justify-content:space-between;font-size:0.8rem;margin-bottom:3px;">
@@ -1546,7 +1740,7 @@
                 <span style="font-family:var(--font-mono);color:var(--neon-cyan);">${count} interactions</span>
               </div>
               <div style="width:100%;height:8px;background:#0b0d14;border-radius:99px;overflow:hidden;">
-                <div style="width:${Math.max(pct, 6)}%;height:100%;background:linear-gradient(90deg, var(--neon-green), var(--neon-cyan));border-radius:99px;"></div>
+                <div style="width:${count > 0 ? Math.max(pct, 6) : 0}%;height:100%;background:linear-gradient(90deg, var(--neon-green), var(--neon-cyan));border-radius:99px;"></div>
               </div>
             </div>
           `;
@@ -1554,22 +1748,22 @@
         .join('');
     }
 
-    // Device Split
+    // 7. Device Split
     const mobileCount = events.filter((e) => e.device_type === 'Mobile').length;
     const desktopCount = events.length - mobileCount;
-    const mobilePct = events.length ? Math.round((mobileCount / events.length) * 100) : 55;
-    const desktopPct = 100 - mobilePct;
+    const mobilePct = events.length ? Math.round((mobileCount / events.length) * 100) : 0;
+    const desktopPct = events.length ? 100 - mobilePct : 0;
     const deviceBox = document.getElementById('adminDeviceSplitBox');
     if (deviceBox) {
       deviceBox.innerHTML = `
-        <div style="display:flex;justify-content:space-between;align-items:center;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px;">
           <span>📱 <strong>Mobile Traffic:</strong> ${mobilePct}% (${mobileCount} events)</span>
           <span>💻 <strong>Desktop Traffic:</strong> ${desktopPct}% (${desktopCount} events)</span>
         </div>
       `;
     }
 
-    // Recent Events Table
+    // 8. Recent Events Table
     const recentEl = document.getElementById('adminRecentEventsTable');
     if (recentEl) {
       const recentSlice = events.slice(0, 15);
@@ -1640,30 +1834,301 @@
     } catch (_) {}
   })();
 
-  // Automatically sync live stock & prices from Square (/api/catalog) in the background
-  fetch('/api/catalog')
-    .then((r) => (r.ok ? r.json() : null))
-    .then((live) => {
-      if (!live || !Array.isArray(live.data)) return;
-      const byId = {};
-      live.data.forEach((item) => {
-        byId[item.site_product_id || item.id] = item;
-      });
-      allProducts.forEach((p) => {
-        const remote = byId[p.id];
-        if (remote) {
-          if (remote.inventory) {
-            p.outOfStock = Boolean(remote.inventory.all_variants_out_of_stock);
-            p.lowStock = Boolean(remote.inventory.lowest_IS_low_stock);
-            p.stock = remote.inventory.total ?? p.stock;
-          }
-          if (remote.price && remote.price.regular_low_with_modifiers_subunits) {
-            p.price = remote.price.regular_low_with_modifiers_subunits / 100;
-            p.priceFormatted = remote.price.regular_low_with_modifiers_formatted || `$${p.price.toFixed(2)}`;
+  let lastSquareSyncTimestamp = null;
+
+  function extractRemoteImageUrl(remote) {
+    if (!remote) return '';
+    const imgArr = remote.images && Array.isArray(remote.images.data) ? remote.images.data : [];
+    if (imgArr.length > 0) {
+      const first = imgArr[0];
+      if (first.urls && first.urls['640']) return first.urls['640'];
+      if (first.absolute_urls && first.absolute_urls['640']) return first.absolute_urls['640'];
+      if (first.absolute_url) return first.absolute_url;
+      if (first.url) return first.url;
+    }
+    if (remote.thumbnail && remote.thumbnail.url) return remote.thumbnail.url;
+    return '';
+  }
+
+  function extractRemoteCategoryIds(remote) {
+    if (!remote) return [];
+    if (Array.isArray(remote.categoryIds) && remote.categoryIds.length > 0) {
+      return remote.categoryIds;
+    }
+    const catData = remote.categories && Array.isArray(remote.categories.data) ? remote.categories.data : [];
+    const set = new Set();
+    catData.forEach((c) => {
+      if (c.site_category_id) set.add(c.site_category_id);
+      if (Array.isArray(c.ancestor_site_category_ids)) {
+        c.ancestor_site_category_ids.forEach((anc) => set.add(anc));
+      }
+    });
+    return Array.from(set);
+  }
+
+  window.renderAdminInventory = function () {
+    const totalProducts = allProducts.length;
+    let inStockCount = 0;
+    let lowStockCount = 0;
+    let outStockCount = 0;
+    let totalPhysicalUnits = 0;
+
+    allProducts.forEach((p) => {
+      const s = Number(p.stock || 0);
+      totalPhysicalUnits += Math.max(0, s);
+      if (p.outOfStock) {
+        outStockCount += 1;
+      } else {
+        inStockCount += 1;
+        if (p.lowStock || (s >= 1 && s <= 3)) {
+          lowStockCount += 1;
+        }
+      }
+    });
+
+    const badgeEl = document.getElementById('adminLowStockCountBadge');
+    if (badgeEl) badgeEl.textContent = totalProducts;
+
+    const kpiTotal = document.getElementById('invKpiTotalProducts');
+    const kpiIn = document.getElementById('invKpiInStock');
+    const kpiUnits = document.getElementById('invKpiTotalUnits');
+    const kpiLow = document.getElementById('invKpiLowStock');
+    const kpiOut = document.getElementById('invKpiOutStock');
+    const syncText = document.getElementById('invLastSyncedText');
+
+    if (kpiTotal) kpiTotal.textContent = String(totalProducts);
+    if (kpiIn) kpiIn.textContent = String(inStockCount);
+    if (kpiUnits) kpiUnits.textContent = `${totalPhysicalUnits} physical units counted in Square`;
+    if (kpiLow) kpiLow.textContent = String(lowStockCount);
+    if (kpiOut) kpiOut.textContent = String(outStockCount);
+    if (syncText && lastSquareSyncTimestamp) {
+      syncText.textContent = `Last live Square sync: ${lastSquareSyncTimestamp}`;
+    }
+
+    const wrap = document.getElementById('adminInventoryTableWrap');
+    if (!wrap) return;
+
+    const q = (document.getElementById('adminInvSearchInput')?.value || '').trim().toLowerCase();
+    const mode = document.getElementById('adminInvFilterSelect')?.value || 'all';
+
+    const filtered = allProducts.filter((p) => {
+      if (q) {
+        const hay = `${p.name} ${p.id} ${p.primaryCategoryName || ''}`.toLowerCase();
+        if (!hay.includes(q)) return false;
+      }
+      const s = Number(p.stock || 0);
+      if (mode === 'low') return !p.outOfStock && (p.lowStock || (s >= 1 && s <= 3));
+      if (mode === 'instock') return !p.outOfStock;
+      if (mode === 'out') return Boolean(p.outOfStock);
+      if (mode === 'onsale') return Boolean(p.onSale || p.priceUpdatedLive);
+      return true;
+    });
+
+    const slice = filtered.slice(0, 200);
+    wrap.innerHTML = `
+      <table style="width:100%;border-collapse:collapse;font-size:0.82rem;text-align:left;">
+        <thead style="position:sticky;top:0;background:#141724;z-index:2;">
+          <tr style="border-bottom:1.5px solid rgba(255,255,255,0.16);color:var(--text-secondary);font-family:var(--font-mono);font-size:0.72rem;">
+            <th style="padding:10px 12px;">PRODUCT</th>
+            <th style="padding:10px 12px;">CATEGORY</th>
+            <th style="padding:10px 12px;">LIVE SQUARE PRICE</th>
+            <th style="padding:10px 12px;">STOCK COUNT</th>
+            <th style="padding:10px 12px;">STATUS</th>
+            <th style="padding:10px 12px;text-align:right;">SQUARE LINK</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${slice
+            .map((p) => {
+              const s = Number(p.stock || 0);
+              const isLow = !p.outOfStock && (p.lowStock || (s >= 1 && s <= 3));
+              let statusBadge = `<span class="host-pill" style="background:rgba(57,255,20,0.15);color:var(--neon-green);border-color:var(--neon-green);">🟢 In Stock</span>`;
+              if (p.outOfStock) {
+                statusBadge = `<span class="host-pill" style="background:rgba(255,0,168,0.15);color:#ff85df;border-color:var(--neon-pink);">🎨 Print-to-Order</span>`;
+              } else if (isLow) {
+                statusBadge = `<span class="host-pill" style="background:rgba(255,209,102,0.18);color:#ffd166;border-color:#ffd166;">⚠️ Low Stock (${s} left)</span>`;
+              }
+              return `
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.07);">
+                  <td style="padding:8px 12px;display:flex;align-items:center;gap:10px;">
+                    <img src="${resolveBestProductImage(p)}" alt="" style="width:38px;height:38px;border-radius:8px;object-fit:cover;background:#0b0d14;" />
+                    <div>
+                      <strong style="color:#fff;display:block;">${escapeHtml(p.name)}</strong>
+                      <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-secondary);">ID: ${escapeHtml(p.id)}</span>
+                    </div>
+                  </td>
+                  <td style="padding:8px 12px;color:var(--text-secondary);">${escapeHtml(p.primaryCategoryName || '3D Creation')}</td>
+                  <td style="padding:8px 12px;font-family:var(--font-mono);font-weight:900;color:var(--neon-green);font-size:0.92rem;">
+                    ${escapeHtml(p.priceFormatted || `$${Number(p.price || 0).toFixed(2)}`)}
+                    ${p.onSale ? `<span style="color:var(--neon-pink);font-size:0.7rem;margin-left:4px;">SALE</span>` : ''}
+                  </td>
+                  <td style="padding:8px 12px;font-family:var(--font-mono);font-weight:800;color:${isLow ? '#ffd166' : '#fff'};">
+                    ${p.outOfStock ? '0 (Print Queue)' : s > 0 ? `${s} units` : 'Available'}
+                  </td>
+                  <td style="padding:8px 12px;">${statusBadge}</td>
+                  <td style="padding:8px 12px;text-align:right;">
+                    <a href="${escapeHtml(p.link || 'https://nerdy-misfits.square.site/')}" target="_blank" rel="noopener" style="color:var(--neon-cyan);font-family:var(--font-mono);font-size:0.75rem;text-decoration:underline;">
+                      View on Square ↗
+                    </a>
+                  </td>
+                </tr>
+              `;
+            })
+            .join('')}
+        </tbody>
+      </table>
+    `;
+  };
+
+  // Automatically sync live stock, prices, photos, descriptions & new items from Square
+  window.syncLiveSquareCatalog = async function (isManualTrigger) {
+    const syncBtn = document.getElementById('forceSquareSyncBtn');
+    if (isManualTrigger && syncBtn) {
+      syncBtn.innerHTML = '<span>⏳ Syncing Live from Square...</span>';
+    }
+
+    const endpoints = [
+      isManualTrigger ? '/api/catalog?fresh=1' : '/api/catalog',
+      'https://www.nerdymisfits.com/api/catalog?fresh=1'
+    ];
+
+    let live = null;
+    for (const url of endpoints) {
+      try {
+        const r = await fetch(url);
+        if (r.ok) {
+          const json = await r.json();
+          if (json && Array.isArray(json.data) && json.data.length > 0) {
+            live = json;
+            break;
           }
         }
-      });
-      initAllViews();
-    })
-    .catch(() => {});
+      } catch (_) {}
+    }
+
+    if (!live || !Array.isArray(live.data)) {
+      if (isManualTrigger) {
+        if (syncBtn) syncBtn.innerHTML = '<span>⚡ Sync Square Inventory &amp; Prices Now</span>';
+        showToast('⚠️ Using cached Square catalog snapshot.');
+      }
+      renderAdminInventory();
+      return;
+    }
+
+    const existingMap = {};
+    allProducts.forEach((p) => {
+      existingMap[p.id] = p;
+    });
+
+    let updatedPricesCount = 0;
+    let newProductsAddedCount = 0;
+
+    live.data.forEach((remote) => {
+      const prodId = remote.site_product_id || remote.id;
+      if (!prodId) return;
+
+      // Determine live active price (supports regular price + sale price)
+      const priceObj = remote.price || {};
+      const activeSubunits =
+        priceObj.low_with_modifiers_subunits ??
+        priceObj.regular_low_with_modifiers_subunits ??
+        priceObj.low_subunits ??
+        priceObj.regular_low_subunits;
+      const livePrice = typeof activeSubunits === 'number' ? activeSubunits / 100 : null;
+      const livePriceFormatted =
+        priceObj.low_formatted_with_modifiers ||
+        priceObj.regular_low_formatted_with_modifiers ||
+        (livePrice !== null ? `$${livePrice.toFixed(2)}` : null);
+
+      const inv = remote.inventory || {};
+      const isSoldOut = Boolean(
+        inv.all_variations_sold_out ??
+          inv.all_variants_out_of_stock ??
+          inv.marked_sold_out_at_all_existing_locations
+      );
+      const totalStock = Number(inv.total ?? inv.all_inventory_total ?? 0);
+      const isLow = Boolean(
+        inv.lowest_IS_low_stock || (!isSoldOut && totalStock >= 1 && totalStock <= 3)
+      );
+
+      const remoteImage = extractRemoteImageUrl(remote);
+      const remoteCats = extractRemoteCategoryIds(remote);
+      const remoteLink = remote.absolute_site_link
+        ? remote.absolute_site_link
+        : remote.site_link
+        ? `https://nerdy-misfits.square.site/${String(remote.site_link).replace(/^\/+/, '')}`
+        : '';
+
+      const existing = existingMap[prodId];
+      if (existing) {
+        if (remote.name && remote.name.trim()) existing.name = remote.name.trim();
+        if (typeof remote.short_description === 'string' && remote.short_description.trim()) {
+          existing.desc = remote.short_description.trim();
+        }
+        if (remoteImage) existing.image = remoteImage;
+        if (remoteCats.length > 0) existing.categoryIds = remoteCats;
+        if (remoteLink) existing.link = remoteLink;
+
+        existing.outOfStock = isSoldOut;
+        existing.lowStock = isLow;
+        existing.stock = totalStock;
+        existing.onSale = Boolean(remote.on_sale);
+
+        if (livePrice !== null && livePrice > 0) {
+          if (Math.abs(Number(existing.price || 0) - livePrice) > 0.001) {
+            existing.priceUpdatedLive = true;
+            updatedPricesCount += 1;
+          }
+          existing.price = livePrice;
+          existing.priceFormatted = livePriceFormatted || `$${livePrice.toFixed(2)}`;
+        }
+      } else if (remote.visibility !== 'hidden' && remote.visibility !== 'private') {
+        // Brand-new product added in Square since last static snapshot!
+        const newProd = {
+          id: prodId,
+          name: (remote.name || 'New Misfit 3D Print').trim(),
+          price: livePrice !== null ? livePrice : 10,
+          priceFormatted: livePriceFormatted || `$${(livePrice !== null ? livePrice : 10).toFixed(2)}`,
+          desc: (remote.short_description || '').trim(),
+          image: remoteImage,
+          outOfStock: isSoldOut,
+          lowStock: isLow,
+          stock: totalStock,
+          onSale: Boolean(remote.on_sale),
+          categoryIds: remoteCats,
+          primaryCategoryName: (remoteCats[0] && catMap[remoteCats[0]]?.name) || 'New Arrival',
+          link: remoteLink || 'https://nerdy-misfits.square.site/'
+        };
+        allProducts.unshift(newProd);
+        existingMap[prodId] = newProd;
+        newProductsAddedCount += 1;
+      }
+    });
+
+    // Also update any items currently inside the customer's cart if their live Square price changed
+    cart.forEach((cItem) => {
+      if (cItem.id && existingMap[cItem.id]) {
+        cItem.price = existingMap[cItem.id].price;
+      }
+    });
+
+    lastSquareSyncTimestamp = new Date().toLocaleTimeString('en-US', {
+      hour: 'numeric',
+      minute: '2-digit',
+      second: '2-digit'
+    });
+
+    initAllViews();
+    renderCart();
+    renderAdminInventory();
+
+    if (isManualTrigger) {
+      if (syncBtn) syncBtn.innerHTML = '<span>⚡ Sync Square Inventory &amp; Prices Now</span>';
+      showToast(
+        `✅ Square Live Sync Complete! ${allProducts.length} items synced (${newProductsAddedCount} new, ${updatedPricesCount} price updates).`
+      );
+    }
+  };
+
+  window.syncLiveSquareCatalog(false);
 })();

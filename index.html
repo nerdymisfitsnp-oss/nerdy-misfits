@@ -957,7 +957,7 @@
         </h3>
         <div class="partners-row">
           <div class="partner-pill"><img src="assets/badge_7.png" alt="Flexi Factory" loading="lazy" decoding="async" /><strong>Flexi Factory</strong></div>
-          <div class="partner-pill"><img src="assets/badge_4.png" alt="Zou3D" loading="lazy" decoding="async" /><strong>Zou3D</strong></div>
+          <div class="partner-pill"><img src="assets/badge_4.png" alt="CinderWing3D" loading="lazy" decoding="async" /><strong>CinderWing3D</strong></div>
           <div class="partner-pill"><img src="assets/badge_1.png" alt="Steven Wolf Studio" loading="lazy" decoding="async" /><strong>Steven Wolf Studio</strong></div>
           <div class="partner-pill"><img src="assets/badge_2.png" alt="Rebel Alicorn" loading="lazy" decoding="async" /><strong>Rebel Alicorn</strong></div>
           <div class="partner-pill"><img src="assets/badge_3.png" alt="RAKI-BOX" loading="lazy" decoding="async" /><strong>RAKI-BOX</strong></div>
@@ -1033,7 +1033,7 @@
         </div>
       </div>
 
-      <!-- 3 Admin Navigation Sub-Tabs -->
+      <!-- 4 Admin Navigation Sub-Tabs -->
       <div class="admin-subtabs-bar" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:26px;">
         <button type="button" id="adminTabBtnUnfulfilled" class="admin-subtab-btn active" onclick="switchAdminSubTab('unfulfilled')">
           <span>📦 Orders Needing Fulfilled</span>
@@ -1042,6 +1042,10 @@
         <button type="button" id="adminTabBtnFulfilled" class="admin-subtab-btn" onclick="switchAdminSubTab('fulfilled')">
           <span>🗂️ Previous Orders (Record)</span>
           <span id="adminFulfilledCountBadge" class="stash-count" style="background:var(--neon-cyan);color:#041014;">0</span>
+        </button>
+        <button type="button" id="adminTabBtnInventory" class="admin-subtab-btn" onclick="switchAdminSubTab('inventory')">
+          <span>🏷️ Live Square Inventory &amp; Prices</span>
+          <span id="adminLowStockCountBadge" class="stash-count" style="background:var(--neon-green);color:#041014;">526</span>
         </button>
         <button type="button" id="adminTabBtnAnalytics" class="admin-subtab-btn" onclick="switchAdminSubTab('analytics')">
           <span>📈 Site Traffic &amp; Conversion Rates</span>
@@ -1108,9 +1112,104 @@
       </div>
 
       <!-- ================================================================
+           ADMIN SUB-PANEL 3: LIVE SQUARE INVENTORY & PRICE TRACKER
+           ================================================================ -->
+      <div id="adminPanelInventory" class="admin-subpanel" style="display:none;">
+        <!-- Inventory Summary KPIs -->
+        <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(210px, 1fr));gap:16px;margin-bottom:22px;">
+          <div class="studio-card" style="padding:18px;border-color:var(--neon-cyan);">
+            <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--neon-cyan);font-weight:800;text-transform:uppercase;">
+              📦 Total Square Products
+            </div>
+            <div id="invKpiTotalProducts" style="font-family:var(--font-display);font-size:2.1rem;font-weight:900;color:#fff;margin:4px 0 2px;">526</div>
+            <div id="invLastSyncedText" style="font-size:0.78rem;color:var(--text-secondary);">Synced live from Square POS</div>
+          </div>
+
+          <div class="studio-card" style="padding:18px;border-color:var(--neon-green);">
+            <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--neon-green);font-weight:800;text-transform:uppercase;">
+              🟢 Ready In-Stock Items
+            </div>
+            <div id="invKpiInStock" style="font-family:var(--font-display);font-size:2.1rem;font-weight:900;color:var(--neon-green);margin:4px 0 2px;">0</div>
+            <div id="invKpiTotalUnits" style="font-size:0.78rem;color:var(--text-secondary);">0 total physical units counted</div>
+          </div>
+
+          <div class="studio-card" style="padding:18px;border-color:#ffd166;">
+            <div style="font-family:var(--font-mono);font-size:0.72rem;color:#ffd166;font-weight:800;text-transform:uppercase;">
+              ⚠️ Low Stock Alert (1–3 Left)
+            </div>
+            <div id="invKpiLowStock" style="font-family:var(--font-display);font-size:2.1rem;font-weight:900;color:#ffd166;margin:4px 0 2px;">0</div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);">Restock before next SWFL market</div>
+          </div>
+
+          <div class="studio-card" style="padding:18px;border-color:var(--neon-pink);">
+            <div style="font-family:var(--font-mono);font-size:0.72rem;color:#ff7be2;font-weight:800;text-transform:uppercase;">
+              🎨 Sold Out / Print-to-Order
+            </div>
+            <div id="invKpiOutStock" style="font-family:var(--font-display);font-size:2.1rem;font-weight:900;color:#ff7be2;margin:4px 0 2px;">0</div>
+            <div style="font-size:0.78rem;color:var(--text-secondary);">Marked Print-to-Order on site</div>
+          </div>
+        </div>
+
+        <div class="toolbar-row" style="margin-bottom:16px;">
+          <div>
+            <h2 style="font-family:var(--font-display);font-size:1.45rem;font-weight:900;">
+              🏷️ Live Square Catalog, Stock Counts &amp; Prices
+            </h2>
+            <p style="font-size:0.84rem;color:var(--text-secondary);">
+              Every price, photo, title, stock count, and brand-new item added in your Square Dashboard syncs here and across the storefront automatically.
+            </p>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <input
+              type="text"
+              id="adminInvSearchInput"
+              class="friendly-input"
+              placeholder="Search 526+ items by name or ID..."
+              oninput="renderAdminInventory()"
+              style="width:230px;"
+            />
+            <select id="adminInvFilterSelect" class="friendly-select" onchange="renderAdminInventory()">
+              <option value="all">All Square Items</option>
+              <option value="low">⚠️ Low Stock Only (1–3 Left)</option>
+              <option value="instock">🟢 In Stock Ready</option>
+              <option value="out">🎨 Out of Stock / Print-to-Order</option>
+              <option value="onsale">🔥 On Sale / Price Updated</option>
+            </select>
+            <button type="button" id="forceSquareSyncBtn" class="btn-friendly-primary" style="padding:8px 16px;font-size:0.82rem;" onclick="syncLiveSquareCatalog(true)">
+              <span>⚡ Sync Square Inventory &amp; Prices Now</span>
+            </button>
+          </div>
+        </div>
+
+        <div class="studio-card" style="padding:0;overflow:hidden;border-color:rgba(255,255,255,0.18);">
+          <div id="adminInventoryTableWrap" style="overflow-x:auto;max-height:620px;overflow-y:auto;"></div>
+        </div>
+      </div>
+
+      <!-- ================================================================
            ADMIN SUB-PANEL 3: SITE TRAFFIC & CUSTOMER CONVERSION ANALYTICS
            ================================================================ -->
       <div id="adminPanelAnalytics" class="admin-subpanel" style="display:none;">
+        <!-- Analytics Toolbar: Month Filter & Live Refresh -->
+        <div class="toolbar-row" style="margin-bottom:18px;">
+          <div>
+            <h2 style="font-family:var(--font-display);font-size:1.45rem;font-weight:900;">
+              📈 Live Site Traffic, Conversion Rates &amp; Monthly Breakdown
+            </h2>
+            <p id="adminAnalyticsPeriodSubtitle" style="font-size:0.84rem;color:var(--text-secondary);">
+              100% real-time verified visitor sessions &amp; confirmed paid orders (test/unpaid sessions excluded).
+            </p>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <select id="adminAnalyticsMonthSelect" class="friendly-select" onchange="renderAdminAnalytics()">
+              <option value="all">📅 All Time (Full History)</option>
+            </select>
+            <button type="button" class="btn-friendly-primary" style="padding:8px 16px;font-size:0.82rem;" onclick="refreshAdminData(true)">
+              <span>🔄 Refresh Accurate Analytics</span>
+            </button>
+          </div>
+        </div>
+
         <!-- Top 4 KPI Summary Cards -->
         <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(230px, 1fr));gap:18px;margin-bottom:28px;">
           <!-- KPI 1: Site Visitors -->
@@ -1164,6 +1263,22 @@
               Avg Order Value: $0.00
             </div>
           </div>
+        </div>
+
+        <!-- Month-to-Month Analytics Breakdown Table & Trend Chart -->
+        <div class="studio-card" style="border-color:var(--neon-cyan);margin-bottom:28px;">
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:14px;">
+            <div>
+              <span class="host-pill" style="background:rgba(0,229,255,0.16);color:var(--neon-cyan);border-color:var(--neon-cyan);">📅 MONTH-TO-MONTH BREAKDOWN</span>
+              <h3 style="font-family:var(--font-display);font-size:1.35rem;font-weight:900;margin-top:4px;">
+                Monthly Traffic, Conversion Rate &amp; Revenue Performance
+              </h3>
+              <p style="font-size:0.83rem;color:var(--text-secondary);">
+                Click any month row below to filter the entire analytics dashboard to that month, or select "All Time" above.
+              </p>
+            </div>
+          </div>
+          <div id="adminMonthlyBreakdownTable" style="overflow-x:auto;"></div>
         </div>
 
         <!-- Funnel + Crew Tab Traffic Grid -->
@@ -1232,9 +1347,30 @@
         </div>
       </div>
 
-      <div style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;font-size:0.8rem;color:#969cb5;">
+      <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;font-size:0.8rem;color:#969cb5;margin-bottom:18px;">
         <span>© 2026 Nerdy Misfits (2385 Mauve Terrace, North Port, FL 34286 • nerdymisfitsnp@gmail.com)</span>
         <span>Apple Pay • Google Pay • Cash App Pay • Visa • Mastercard</span>
+      </div>
+
+      <!-- Site Built by RetroCanopy Credit & Logo -->
+      <div style="border-top:1px solid rgba(255,255,255,0.1);padding-top:16px;display:flex;justify-content:center;align-items:center;">
+        <div style="display:inline-flex;align-items:center;gap:12px;background:rgba(16,19,29,0.85);border:1.5px solid rgba(255,42,133,0.45);border-radius:99px;padding:7px 18px 7px 10px;box-shadow:0 0 20px rgba(255,42,133,0.22);">
+          <img
+            src="assets/retrocanopy_logo.png"
+            alt="RetroCanopy Logo"
+            loading="lazy"
+            decoding="async"
+            style="width:38px;height:38px;object-fit:contain;border-radius:50%;background:#0a0c14;padding:2px;border:1.5px solid #ff9f1c;"
+          />
+          <div style="text-align:left;line-height:1.25;">
+            <span style="font-family:var(--font-mono);font-size:0.68rem;color:#a5adcb;text-transform:uppercase;letter-spacing:0.08em;display:block;">
+              Designed &amp; Engineered
+            </span>
+            <strong style="font-family:var(--font-display);font-size:0.9rem;font-weight:900;background:linear-gradient(90deg, #ffd166, #ff6b6b, #ff2a85);-webkit-background-clip:text;-webkit-text-fill-color:transparent;">
+              Site Built by RetroCanopy
+            </strong>
+          </div>
+        </div>
       </div>
     </div>
   </footer>
