@@ -1845,7 +1845,7 @@ img {
 /* Responsive */
 @media (max-width: 1060px) {
   .crew-tabs-list {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(4, 1fr);
   }
   .hub-hero-grid,
   .inky-studio-grid {
@@ -1859,26 +1859,264 @@ img {
   }
 }
 
-@media (max-width: 680px) {
-  .crew-tabs-list {
-    grid-template-columns: repeat(2, 1fr);
+@media (max-width: 780px) {
+  /* Uncrowd the top header on mobile: don't lock a tall header to sticky */
+  .top-sheet-header {
+    position: relative;
   }
+
+  .container {
+    padding: 0 12px;
+  }
+
+  /* Compact Row 1: Logo on left, Cake + Stash buttons on right */
+  .header-top-row {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 0 6px;
+  }
+
+  .brand-cluster {
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .brand-sheet-logo {
+    height: 44px;
+    padding: 3px 6px;
+    border-radius: 9px;
+  }
+
+  .brand-tagline-box {
+    padding-left: 8px;
+    min-width: 0;
+  }
+
+  .brand-superpower {
+    font-size: 0.72rem;
+    line-height: 1.15;
+  }
+
+  /* Hide verbose subline & pickup pill on mobile header to save space */
+  .brand-subline,
+  .free-ship-pill {
+    display: none !important;
+  }
+
+  .header-right-actions {
+    gap: 6px;
+    flex-shrink: 0;
+  }
+
+  .btn-cake-pill {
+    padding: 6px 10px;
+    font-size: 0.74rem;
+  }
+
+  .stash-cart-btn {
+    padding: 6px 11px;
+    font-size: 0.78rem;
+    gap: 5px;
+  }
+
+  .stash-count {
+    font-size: 0.68rem;
+    padding: 1px 6px;
+  }
+
+  /* Full-width compact search bar on row 2 */
+  .header-search-wrap {
+    grid-column: 1 / -1;
+    max-width: 100%;
+    width: 100%;
+    order: 3;
+  }
+
+  .friendly-search-box {
+    padding: 6px 12px;
+  }
+
+  .friendly-search-box input {
+    font-size: 0.82rem;
+  }
+
+  /* Single-row horizontal swipeable Crew Tab Strip instead of 4 stacked rows! */
+  .crew-tabs-bar {
+    padding: 6px 0 8px;
+    position: sticky;
+    top: 0;
+    z-index: 99;
+    background: #0d1019;
+    border-bottom: 1.5px solid rgba(57, 255, 20, 0.35);
+  }
+
+  .crew-tabs-list {
+    display: flex;
+    overflow-x: auto;
+    gap: 8px;
+    padding: 2px 2px 4px;
+    scroll-snap-type: x proximity;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+
+  .crew-tabs-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .crew-tab-btn {
+    flex: 0 0 auto;
+    width: auto;
+    min-width: 138px;
+    max-width: 165px;
+    padding: 5px 9px;
+    gap: 7px;
+    scroll-snap-align: start;
+  }
+
+  .crew-tab-avatar {
+    width: 30px;
+    height: 30px;
+  }
+
+  .crew-tab-who {
+    font-size: 0.75rem;
+    white-space: nowrap;
+  }
+
+  .crew-tab-what {
+    font-size: 0.65rem;
+  }
+
+  /* Tab panels & Hero spacing on mobile */
+  .tab-view-panel {
+    padding: 16px 0 44px;
+  }
+
+  .hub-hero-grid {
+    gap: 18px;
+    margin-bottom: 26px;
+  }
+
+  /* Uncrowd the Rotating Dial on Mobile! */
+  .logo-circle-stage {
+    max-width: 336px;
+  }
+
+  .center-logo-hub {
+    width: 35%;
+    padding: 8px;
+    border-width: 2.5px;
+    box-shadow:
+      0 0 16px rgba(57, 255, 20, 0.35),
+      0 0 0 3px var(--neon-pink);
+  }
+
+  .center-logo-hub img {
+    width: 90%;
+    margin-bottom: 3px;
+  }
+
+  .center-logo-pill {
+    font-size: 0.5rem;
+    padding: 2px 6px;
+    white-space: nowrap;
+  }
+
+  /* Push 7 nodes slightly outward (Radius ~41.5%) & hide multi-line sub-labels on mobile */
+  .orbit-pos-1 { top:  8.5%; left: 50.0%; }
+  .orbit-pos-2 { top: 24.1%; left: 82.4%; }
+  .orbit-pos-3 { top: 59.2%; left: 90.4%; }
+  .orbit-pos-4 { top: 87.4%; left: 68.0%; }
+  .orbit-pos-5 { top: 87.4%; left: 32.0%; }
+  .orbit-pos-6 { top: 59.2%; left:  9.6%; }
+  .orbit-pos-7 { top: 24.1%; left: 17.6%; }
+
+  .orbit-gremlin-node {
+    width: 74px;
+  }
+
+  .orbit-avatar-ring {
+    width: 48px;
+    height: 48px;
+    border-width: 2.5px;
+  }
+
+  .orbit-name-badge {
+    margin-top: -7px;
+    font-size: 0.58rem;
+    padding: 1px 6px;
+    border-width: 1.5px;
+    white-space: nowrap;
+  }
+
+  /* Hide the 2-3 line department description box inside the mobile dial so nodes never overlap */
+  .orbit-dept-label {
+    display: none;
+  }
+
+  /* Compact Spotlight Card on Mobile */
+  .crew-spotlight-card {
+    padding: 16px;
+    border-radius: 20px;
+  }
+
+  .spotlight-eyebrow {
+    font-size: 0.65rem;
+    padding: 4px 10px;
+    margin-bottom: 10px;
+  }
+
+  .spotlight-flex {
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+
+  .spotlight-character-img {
+    width: 92px;
+    height: 140px;
+    padding: 5px;
+  }
+
+  .spotlight-char-name {
+    font-size: 1.5rem;
+  }
+
+  .spotlight-char-role {
+    font-size: 0.7rem;
+    margin-bottom: 6px;
+  }
+
+  .spotlight-quote-bubble {
+    font-size: 0.8rem;
+    padding: 9px 11px;
+    margin-bottom: 8px;
+  }
+
+  .pixel-arcade-hero-box {
+    padding: 22px 16px !important;
+  }
+
+  .pixel-arcade-hero-grid {
+    grid-template-columns: 1fr !important;
+    gap: 18px !important;
+    text-align: center;
+  }
+
   .crew-roster-grid,
   .quickview-box {
     grid-template-columns: 1fr;
   }
+
   .gremlin-host-banner {
     flex-direction: column;
     text-align: center;
+    padding: 18px 16px;
   }
+
   .host-left {
     flex-direction: column;
-  }
-  .orbit-gremlin-node {
-    width: 96px;
-  }
-  .orbit-avatar-ring {
-    width: 62px;
-    height: 62px;
   }
 }

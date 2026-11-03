@@ -232,9 +232,15 @@
   let gremlinVisibleCount = 20;
 
   window.switchCrewTab = function (tabKey) {
-    // Update Tab Bar active state
+    // Update Tab Bar active state & center active pill on mobile horizontal strip
     document.querySelectorAll('.crew-tab-btn').forEach((btn) => {
-      btn.classList.toggle('active', btn.getAttribute('data-crew') === tabKey);
+      const isMatch = btn.getAttribute('data-crew') === tabKey;
+      btn.classList.toggle('active', isMatch);
+      if (isMatch && btn.scrollIntoView) {
+        try {
+          btn.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+        } catch (_) {}
+      }
     });
 
     // Hide all tab panels
