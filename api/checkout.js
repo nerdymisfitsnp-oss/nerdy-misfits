@@ -118,6 +118,7 @@ export default async function handler(req, res) {
             line_items: lineItems
           },
           checkout_options: {
+            redirect_url: `https://www.nerdymisfits.com/?paid_order=${encodeURIComponent(orderId)}`,
             ask_for_shipping_address: fulfillment.includes('Shipping'),
             accepted_payment_methods: {
               apple_pay: true,
@@ -138,7 +139,11 @@ export default async function handler(req, res) {
       });
     }
 
-    return res.status(200).json({ url: data.payment_link.url });
+    return res.status(200).json({
+      url: data.payment_link.url,
+      squareOrderId: data.payment_link.order_id || null,
+      squarePaymentLinkId: data.payment_link.id || null
+    });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }

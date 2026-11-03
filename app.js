@@ -673,6 +673,61 @@
     document.getElementById('cartDrawerBackdrop').classList.toggle('open', open);
   };
 
+  function resolveBestProductImage(p) {
+    if (!p) return 'https://www.nerdymisfits.com/assets/circle_logo.png';
+    if (p.image && String(p.image).trim()) {
+      const raw = String(p.image).trim();
+      return /^https?:\/\//i.test(raw)
+        ? raw
+        : `https://www.nerdymisfits.com/${raw.replace(/^\/+/, '')}`;
+    }
+    const catName = String(p.primaryCategoryName || '').toLowerCase();
+    const itemName = String(p.name || '').toLowerCase();
+    if (catName.includes('dragon') || catName.includes('dice') || itemName.includes('dragon') || itemName.includes('hatchling')) {
+      return 'https://www.nerdymisfits.com/assets/crew_crit.png';
+    }
+    if (catName.includes('fidget') || catName.includes('clicker') || catName.includes('keychain') || itemName.includes('clicker')) {
+      return 'https://www.nerdymisfits.com/assets/crew_fokal.png';
+    }
+    if (catName.includes('animal') || catName.includes('dino') || catName.includes('creature')) {
+      return 'https://www.nerdymisfits.com/assets/crew_justus.png';
+    }
+    if (catName.includes('book') || catName.includes('lamp') || catName.includes('christmas') || catName.includes('halloween')) {
+      return 'https://www.nerdymisfits.com/assets/crew_booksy.png';
+    }
+    if (catName.includes('wall art') || catName.includes('custom')) {
+      return 'https://www.nerdymisfits.com/assets/crew_inky.png';
+    }
+    return 'https://www.nerdymisfits.com/assets/circle_logo.png';
+  }
+
+  function resolveOrderItemImage(it) {
+    if (!it) return 'https://www.nerdymisfits.com/assets/circle_logo.png';
+    const raw = String(it.image || '').trim();
+    const isGenericLogo = !raw || raw.endsWith('circle_logo.png') || raw.endsWith('icon.png');
+    if (!isGenericLogo) {
+      return /^https?:\/\//i.test(raw)
+        ? raw
+        : `https://www.nerdymisfits.com/${raw.replace(/^\/+/, '')}`;
+    }
+    const matched = allProducts.find(
+      (p) =>
+        (it.id && p.id === it.id) ||
+        (it.name && p.name.toLowerCase() === String(it.name).toLowerCase())
+    );
+    if (matched) {
+      return resolveBestProductImage(matched);
+    }
+    if (String(it.name || '').toLowerCase().includes('inky custom')) {
+      return 'https://www.nerdymisfits.com/assets/crew_inky.png';
+    }
+    return raw
+      ? /^https?:\/\//i.test(raw)
+        ? raw
+        : `https://www.nerdymisfits.com/${raw.replace(/^\/+/, '')}`
+      : 'https://www.nerdymisfits.com/assets/circle_logo.png';
+  }
+
   window.addToCart = function (productId, colorChoice) {
     const p = allProducts.find((item) => item.id === productId);
     if (!p) return;
@@ -687,7 +742,7 @@
         id: p.id,
         name: p.name,
         price: p.price,
-        image: p.image || 'assets/circle_logo.png',
+        image: resolveBestProductImage(p),
         meta,
         qty: 1
       });
@@ -813,6 +868,23 @@
     return null;
   };
 
+  window.syncPendingSquarePayments = async function () {
+    const endpoints = ['/api/order-notify', 'https://www.nerdymisfits.com/api/order-notify'];
+    for (const ep of endpoints) {
+      try {
+        const res = await fetch(ep, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ action: 'sync_square_payments' })
+        });
+        if (res.ok) {
+          return await res.json();
+        }
+      } catch (_) {}
+    }
+    return null;
+  };
+
   window.handleSquareCheckout = async function () {
     if (!cart.length) {
       showToast('Your Stash is empty!');
@@ -847,32 +919,21 @@
       address: custAddress || fulfillment
     };
 
-    const orderPayload = {
-      orderId,
-      notifyEmail: 'nerdymisfitsnp@gmail.com',
-      customer,
-      fulfillment,
-      items: cart,
-      subtotal,
-      shipping,
-      totalCharged,
-      freeMiniUnlocked,
-      paymentStatus: 'Initiated Checkout (Square)'
-    };
+    const itemsWithPhotos = cart.map((item) => ({
+      ...item,
+      image: resolveOrderItemImage(item)
+    }));
 
     const btn = document.getElementById('squareCheckoutBtn');
-    if (btn) btn.innerHTML = '<span>Sending Order Details &amp; Connecting...</span>';
+    if (btn) btn.innerHTML = '<span>Opening Secure Square Checkout...</span>';
 
     if (typeof window.trackAnalyticsEvent === 'function') {
       window.trackAnalyticsEvent('checkout_started', activeGremlinKey || 'glitch', `Order ${orderId}`);
     }
 
-    // Dispatch order email notification to nerdymisfitsnp@gmail.com + log to Supabase
-    await window.sendMisfitOrderNotification(orderPayload);
-
     const checkoutBody = JSON.stringify({
       orderId,
-      items: cart,
+      items: itemsWithPhotos,
       fulfillment,
       customer,
       subtotal,
@@ -892,6 +953,26 @@
         if (res.ok) {
           const data = await res.json();
           if (data.url) {
+            // Stage the order in Supabase with email_sent = false (NO push notification until payment completes!)
+            await window.sendMisfitOrderNotification({
+              action: 'stage_checkout',
+              orderId,
+              notifyEmail: 'nerdymisfitsnp@gmail.com',
+              customer,
+              fulfillment,
+              items: itemsWithPhotos,
+              subtotal,
+              shipping,
+              totalCharged,
+              freeMiniUnlocked,
+              squareOrderId: data.squareOrderId || null,
+              squarePaymentLinkId: data.squarePaymentLinkId || null
+            });
+
+            try {
+              sessionStorage.setItem('nm_pending_order_id', orderId);
+            } catch (_) {}
+
             window.location.href = data.url;
             return;
           }
@@ -902,7 +983,7 @@
     }
 
     if (btn) btn.innerHTML = '<span>Checkout with Square →</span>';
-    showToast(`✅ Order ${orderId} ($${totalCharged.toFixed(2)}) received! We've logged your order and will send your Square invoice shortly.`);
+    showToast('⚠️ Could not reach Square checkout right now. Please try again in a moment.');
   };
 
   // ========================================================================
@@ -1068,6 +1149,10 @@
 
   window.refreshAdminData = async function () {
     try {
+      await window.syncPendingSquarePayments();
+    } catch (_) {}
+
+    try {
       const [ordersRes, analyticsRes] = await Promise.all([
         fetch(`${SUPABASE_REST_URL}/misfits_orders?select=*&order=created_at.desc`, {
           headers: {
@@ -1151,20 +1236,32 @@
   function renderSingleOrderCard(order, isFulfilledTab) {
     const items = Array.isArray(order.items) ? order.items : [];
     const itemsHtml = items
-      .map(
-        (it) => `
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;padding:6px 10px;background:rgba(255,255,255,0.04);border-radius:8px;border:1px solid rgba(255,255,255,0.08);">
-          <div>
-            <strong style="color:#fff;font-size:0.86rem;">${escapeHtml(it.name || '3D Print Item')}</strong>
-            <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--neon-cyan);margin-left:6px;">×${it.qty || 1}</span>
-            <div style="font-size:0.74rem;color:var(--text-secondary);">${escapeHtml(it.meta || 'Standard Workshop Finish')}</div>
+      .map((it) => {
+        const imgUrl = resolveOrderItemImage(it);
+        return `
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:8px 12px;background:rgba(255,255,255,0.04);border-radius:10px;border:1px solid rgba(255,255,255,0.1);">
+          <div style="display:flex;align-items:center;gap:12px;min-width:0;flex:1;">
+            <a href="${escapeHtml(imgUrl)}" target="_blank" rel="noopener" title="Click to view full-size photo of ordered item" style="flex-shrink:0;">
+              <img
+                src="${escapeHtml(imgUrl)}"
+                alt="${escapeHtml(it.name || 'Ordered 3D Print')}"
+                style="width:64px;height:64px;border-radius:10px;object-fit:cover;border:2px solid var(--neon-green);background:#0c0f18;display:block;"
+              />
+            </a>
+            <div style="min-width:0;">
+              <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap;">
+                <strong style="color:#fff;font-size:0.9rem;">${escapeHtml(it.name || '3D Print Item')}</strong>
+                <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--neon-cyan);background:rgba(0,229,255,0.12);padding:1px 7px;border-radius:99px;font-weight:800;">×${it.qty || 1}</span>
+              </div>
+              <div style="font-size:0.75rem;color:var(--text-secondary);margin-top:2px;">${escapeHtml(it.meta || 'Standard Workshop Finish')}</div>
+            </div>
           </div>
-          <strong style="font-family:var(--font-mono);color:var(--neon-green);font-size:0.86rem;">
+          <strong style="font-family:var(--font-mono);color:var(--neon-green);font-size:0.92rem;flex-shrink:0;">
             $${(Number(it.price || 0) * Number(it.qty || 1)).toFixed(2)}
           </strong>
         </div>
-      `
-      )
+      `;
+      })
       .join('');
 
     const totalNum = Number(order.total_charged || 0);
@@ -1188,6 +1285,9 @@
           <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;">
             <span style="font-family:var(--font-mono);font-size:0.95rem;font-weight:900;color:var(--neon-green);background:rgba(57,255,20,0.12);padding:3px 10px;border-radius:8px;border:1px solid var(--neon-green);">
               #${escapeHtml(order.order_id)}
+            </span>
+            <span class="host-pill" style="background:rgba(57,255,20,0.16);color:var(--neon-green);border-color:var(--neon-green);">
+              💳 PAID
             </span>
             <span style="font-size:0.8rem;color:var(--text-secondary);">
               🕒 Ordered: ${formatAdminDate(order.created_at)}
@@ -1257,8 +1357,10 @@
     const qUnfulfilled = (document.getElementById('adminSearchUnfulfilled')?.value || '').trim().toLowerCase();
     const qFulfilled = (document.getElementById('adminSearchFulfilled')?.value || '').trim().toLowerCase();
 
-    const allUnfulfilled = adminOrdersCache.filter((o) => !o.fulfilled);
-    const allFulfilled = adminOrdersCache.filter((o) => Boolean(o.fulfilled));
+    // Only display orders where payment has been confirmed (email_sent === true)
+    const paidOrders = adminOrdersCache.filter((o) => o.email_sent !== false && o.status !== 'Awaiting Square Payment');
+    const allUnfulfilled = paidOrders.filter((o) => !o.fulfilled);
+    const allFulfilled = paidOrders.filter((o) => Boolean(o.fulfilled));
 
     const unfulfilledBadge = document.getElementById('adminUnfulfilledCountBadge');
     const fulfilledBadge = document.getElementById('adminFulfilledCountBadge');
@@ -1512,6 +1614,31 @@
 
   initAllViews();
   renderCart();
+
+  // Check if customer just returned from completing payment on Square (?paid_order=NM-XXXXXX)
+  (async function checkPaidOrderReturn() {
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const paidOrderId = urlParams.get('paid_order');
+      if (paidOrderId) {
+        showToast(`🎉 Payment Confirmed! Sending Order #${paidOrderId} to the Nerdy Misfits Workshop...`);
+        await window.sendMisfitOrderNotification({
+          action: 'confirm_paid',
+          orderId: paidOrderId,
+          paymentStatus: 'PAID (Square Verified)'
+        });
+        showToast(`✅ Order #${paidOrderId} Paid & Confirmed! Check your email for updates.`);
+        // Clean URL query params so refreshing doesn't re-run
+        if (window.history && window.history.replaceState) {
+          const cleanUrl = window.location.pathname + window.location.hash;
+          window.history.replaceState({}, document.title, cleanUrl);
+        }
+      } else {
+        // Also sync any pending Square payments in the background
+        window.syncPendingSquarePayments();
+      }
+    } catch (_) {}
+  })();
 
   // Automatically sync live stock & prices from Square (/api/catalog) in the background
   fetch('/api/catalog')
