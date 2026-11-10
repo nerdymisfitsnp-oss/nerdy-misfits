@@ -649,9 +649,21 @@
     updateStudioPreview();
   };
 
-  window.handleStudioPhotoUpload = function (input) {
-    const file = input && input.files && input.files[0];
-    if (!file) return;
+  window.selectStudioScale = function (btn) {
+    document.querySelectorAll('#studioScaleGrid .duo-scale-card').forEach((b) => b.classList.remove('active'));
+    btn.classList.add('active');
+    const chosenScale = btn.getAttribute('data-scale') || 'Medium / Display Scale (9"–14")';
+    studioState.scale = chosenScale;
+    const sizeInput = document.getElementById('studioSizeSelect');
+    if (sizeInput) sizeInput.value = chosenScale;
+    updateStudioPreview();
+  };
+
+  function processStudioPhotoFile(file) {
+    if (!file || !file.type || !file.type.startsWith('image/')) {
+      if (file) showToast('📸 Please choose an image file (JPG, PNG, WEBP, or HEIC).');
+      return;
+    }
     const reader = new FileReader();
     reader.onload = function (e) {
       const img = new Image();
@@ -678,17 +690,46 @@
 
         const wrap = document.getElementById('studioPhotoPreviewWrap');
         const previewImg = document.getElementById('studioPhotoPreviewImg');
+        const ticketThumb = document.getElementById('previewTicketThumbImg');
         const nameTxt = document.getElementById('studioPhotoNameText');
-        const clearBtn = document.getElementById('studioPhotoClearBtn');
         if (previewImg) previewImg.src = studioState.photoDataUrl;
+        if (ticketThumb) {
+          ticketThumb.src = studioState.photoDataUrl;
+          ticketThumb.style.display = 'inline-block';
+        }
         if (nameTxt) nameTxt.textContent = `📸 Attached: ${studioState.photoName}`;
         if (wrap) wrap.style.display = 'flex';
-        if (clearBtn) clearBtn.style.display = 'inline-block';
         updateStudioPreview();
       };
       img.src = e.target.result;
     };
     reader.readAsDataURL(file);
+  }
+
+  window.handleStudioPhotoUpload = function (input) {
+    const file = input && input.files && input.files[0];
+    if (!file) return;
+    processStudioPhotoFile(file);
+  };
+
+  window.handleStudioDragOver = function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('studioPhotoDropzone')?.classList.add('drag-over');
+  };
+
+  window.handleStudioDragLeave = function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('studioPhotoDropzone')?.classList.remove('drag-over');
+  };
+
+  window.handleStudioDrop = function (e) {
+    e.preventDefault();
+    e.stopPropagation();
+    document.getElementById('studioPhotoDropzone')?.classList.remove('drag-over');
+    const file = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+    if (file) processStudioPhotoFile(file);
   };
 
   window.clearStudioPhoto = function () {
@@ -697,9 +738,12 @@
     const input = document.getElementById('studioPhotoInput');
     if (input) input.value = '';
     const wrap = document.getElementById('studioPhotoPreviewWrap');
-    const clearBtn = document.getElementById('studioPhotoClearBtn');
+    const ticketThumb = document.getElementById('previewTicketThumbImg');
     if (wrap) wrap.style.display = 'none';
-    if (clearBtn) clearBtn.style.display = 'none';
+    if (ticketThumb) {
+      ticketThumb.src = '';
+      ticketThumb.style.display = 'none';
+    }
     updateStudioPreview();
   };
 
@@ -2595,6 +2639,17 @@
       );
     }
   };
+
+  // Support direct links to tabs via ?tab=inky or #inky
+  (function applyInitialTabFromUrl() {
+    const validTabs = ['glitch', 'fokal', 'crit', 'justus', 'booksy', 'inky', 'pixel', 'markets'];
+    const qTab = new URLSearchParams(window.location.search).get('tab');
+    const hTab = (window.location.hash || '').replace(/^#/, '').replace(/^view-/, '').toLowerCase();
+    const target = (qTab || hTab || '').toLowerCase();
+    if (validTabs.includes(target)) {
+      window.switchCrewTab(target);
+    }
+  })();
 
   window.syncLiveSquareCatalog(false);
 })();
