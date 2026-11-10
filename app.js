@@ -1107,9 +1107,9 @@
 
     const bundleText = document.getElementById('bundleMeterText');
     if (freeMiniUnlocked) {
-      bundleText.innerHTML = `🎉 <strong>UNLOCKED!</strong> Free Mystery Pixel Buddy Mini included!`;
+      bundleText.innerHTML = `🎉 <strong>UNLOCKED!</strong> Free Mystery Hatchling included! 🐉`;
     } else {
-      bundleText.innerHTML = `Add <strong>$${(25 - subtotal).toFixed(2)}</strong> more for a <strong>FREE Mystery Pixel Buddy Mini!</strong> 🎁`;
+      bundleText.innerHTML = `Add <strong>$${(25 - subtotal).toFixed(2)}</strong> more for a <strong>FREE Mystery Hatchling!</strong> 🐉`;
     }
 
     const container = document.getElementById('cartItemsContainer');
@@ -1635,7 +1635,7 @@
             </span>
             ${
               order.free_mystery_mini
-                ? `<span class="host-pill" style="background:rgba(255,0,168,0.18);color:#ff85df;border-color:var(--neon-pink);">🎁 Include Free Mystery Mini</span>`
+                ? `<span class="host-pill" style="background:rgba(255,0,168,0.18);color:#ff85df;border-color:var(--neon-pink);">🐉 Include Free Mystery Hatchling</span>`
                 : ''
             }
             ${
