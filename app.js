@@ -835,17 +835,17 @@
     CA: 8, OR: 8, WA: 8, AK: 8, HI: 8, PR: 8, VI: 8
   };
 
-  // USPS Ground Advantage Commercial Rate Table by Zone (1..8) and Weight Tier:
+  // USPS Ground Advantage Commercial Rate Table by Zone (1..8) and Weight Tier (+$2.00 packaging/handling buffer included):
   // Tiers: [<=4oz, <=8oz, <=12oz, <=16oz (1lb), <=32oz (2lb), >32oz base]
   const USPS_GROUND_RATES_BY_ZONE = {
-    1: [4.25, 4.65, 5.15, 5.65, 6.45, 7.45], // Local SWFL (North Port / Sarasota / Fort Myers / Port Charlotte)
-    2: [4.49, 4.95, 5.45, 5.99, 6.85, 7.95], // Rest of Florida
-    3: [4.75, 5.25, 5.79, 6.39, 7.35, 8.55], // Southeast (GA, SC, AL, North FL)
-    4: [4.99, 5.55, 6.15, 6.85, 7.95, 9.25], // Mid-South & Mid-Atlantic
-    5: [5.29, 5.89, 6.55, 7.35, 8.65, 10.15], // Northeast, Midwest & East/Central TX
-    6: [5.59, 6.25, 6.95, 7.85, 9.35, 11.10], // Plains & Rockies
-    7: [5.89, 6.59, 7.39, 8.35, 9.95, 11.95], // Mountain / Inland West
-    8: [6.25, 6.99, 7.85, 8.95, 10.75, 12.95] // West Coast (CA, OR, WA, AK, HI)
+    1: [6.25, 6.65, 7.15, 7.65, 8.45, 9.45],   // Local SWFL (North Port / Sarasota / Fort Myers / Port Charlotte)
+    2: [6.49, 6.95, 7.45, 7.99, 8.85, 9.95],   // Rest of Florida
+    3: [6.75, 7.25, 7.79, 8.39, 9.35, 10.55],  // Southeast (GA, SC, AL, North FL)
+    4: [6.99, 7.55, 8.15, 8.85, 9.95, 11.25],  // Mid-South & Mid-Atlantic
+    5: [7.29, 7.89, 8.55, 9.35, 10.65, 12.15], // Northeast, Midwest & East/Central TX
+    6: [7.59, 8.25, 8.95, 9.85, 11.35, 13.10], // Plains & Rockies
+    7: [7.89, 8.59, 9.39, 10.35, 11.95, 13.95], // Mountain / Inland West
+    8: [8.25, 8.99, 9.85, 10.95, 12.75, 14.95]  // West Coast (CA, OR, WA, AK, HI)
   };
 
   function estimateCartWeightOz() {
