@@ -63,6 +63,7 @@ export default async function handler(req, res) {
       customer = {},
       subtotal = 0,
       shipping = 0,
+      shippingLabel = 'USPS Ground Advantage Shipping (North Port Workshop)',
       totalCharged = 0
     } = req.body || {};
 
@@ -86,7 +87,7 @@ export default async function handler(req, res) {
 
     if (Number(shipping) > 0) {
       lineItems.push({
-        name: 'US Standard Shipping (North Port Workshop)',
+        name: String(shippingLabel || 'USPS Ground Advantage Shipping (North Port Workshop)').slice(0, 250),
         quantity: '1',
         note: String(customer.address || fulfillment).slice(0, 480),
         base_price_money: {
