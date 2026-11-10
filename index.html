@@ -588,94 +588,122 @@
   </section>
 
   <!-- ====================================================================
-       TAB 6: INKY'S ART & EXPANDED CUSTOM 3D PRINT STUDIO
+       TAB 6: INKY'S ART & CUSTOM 3D PRINT QUOTE STUDIO (QUOTES DIRECT FROM CRIT!)
        ==================================================================== -->
   <section id="view-inky" class="tab-view-panel">
     <div class="container">
-      <!-- Inky Host Banner -->
+      <!-- Inky & Crit Custom Print Quote Banner -->
       <div class="gremlin-host-banner" style="border-color:var(--inky-blue);">
         <div class="host-left">
           <img src="assets/crew_inky.png?v=3" alt="Inky — The Creative Misfit" class="host-sprite" />
           <div>
             <div class="host-badge-row">
-              <span class="host-pill" style="background:var(--inky-blue);color:#fff;">INKY • THE CREATIVE MISFIT</span>
-              <span class="host-pill" style="background:var(--inky-bg);color:var(--inky-blue);">SPECIAL POWER: INK BLAST • SIDEKICK: SPLAT 🎨</span>
+              <span class="host-pill" style="background:var(--inky-blue);color:#fff;">INKY • THE CREATIVE MISFIT 🎨</span>
+              <span class="host-pill" style="background:rgba(204,255,0,0.16);color:var(--neon-volt);border-color:var(--neon-volt);">🎲 DIRECT QUOTES BY CRIT (EMAIL OR PHONE)</span>
             </div>
-            <h1 class="host-title">Inky’s Custom 3D Print Studio &amp; Personalization Lab</h1>
+            <h1 class="host-title">Custom 3D Print Studio — Bring Your Idea to Life!</h1>
             <p class="host-speech">
-              “Artist. Dreamer. Story maker! Tell me every detail of what you want printed—from exact dual/tri-color filament combos and eye colors to custom engraved names, sizes, or STL links!”
+              “Have an idea from an existing model on our site, a special 3D print request, or a photo of something you want created? Upload a photo, describe your colors, pick your size, and enter your contact info—<strong>Crit</strong> will personally review your build and send your custom quote directly to your email or over the phone!”
             </p>
           </div>
         </div>
       </div>
 
-      <!-- Expanded Multi-Detail Custom Print Builder -->
+      <!-- Custom Print Quote Builder (No Fixed Prices — Direct Quote from Crit) -->
       <div class="inky-studio-grid">
         <div class="studio-card">
-          <h3 style="font-family:var(--font-display);font-size:1.28rem;font-weight:900;">1. Pick Your Base Project Type</h3>
-          <div id="studioTypeGrid" class="studio-choices">
-            <button type="button" class="choice-card-btn active" data-title="Custom Articulated Dragon" data-price="15" onclick="selectStudioType(this)">
+          <h3 style="font-family:var(--font-display);font-size:1.28rem;font-weight:900;margin-bottom:8px;">
+            1. Your Print Idea, Existing Model, or Photo Upload
+          </h3>
+          <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:10px;">
+            Pick a category below or describe the existing model / custom idea you want us to print:
+          </p>
+
+          <div id="studioTypeGrid" class="studio-choices" style="margin-bottom:14px;">
+            <button type="button" class="choice-card-btn active" data-title="Custom Articulated Dragon" onclick="selectStudioType(this)">
               <strong style="display:block;font-size:0.88rem;">🐉 Custom Dragon</strong>
-              <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--glitch-green);">Base $15.00</span>
+              <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--neon-cyan);">Existing Model or Custom</span>
             </button>
-            <button type="button" class="choice-card-btn" data-title="Custom Beast / Dino / Critter" data-price="14" onclick="selectStudioType(this)">
+            <button type="button" class="choice-card-btn" data-title="Custom Beast / Dino / Critter" onclick="selectStudioType(this)">
               <strong style="display:block;font-size:0.88rem;">🐺 Beast / Critter</strong>
-              <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--glitch-green);">Base $14.00</span>
+              <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--neon-cyan);">Animals, Dinos &amp; Pets</span>
             </button>
-            <button type="button" class="choice-card-btn" data-title="Bookish Counter / ACOTAR Sign" data-price="20" onclick="selectStudioType(this)">
-              <strong style="display:block;font-size:0.88rem;">📚 Bookish / ACOTAR</strong>
-              <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--glitch-green);">Base $20.00</span>
+            <button type="button" class="choice-card-btn" data-title="Bookish Decor / ACOTAR / Lamp" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.88rem;">📚 Bookish / Decor</strong>
+              <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--neon-cyan);">Signs, Counters &amp; Lamps</span>
             </button>
-            <button type="button" class="choice-card-btn" data-title="Custom Name Ornament / Plaque" data-price="10" onclick="selectStudioType(this)">
-              <strong style="display:block;font-size:0.88rem;">🎄 Name Plaque / Orn.</strong>
-              <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--glitch-green);">Base $10.00</span>
+            <button type="button" class="choice-card-btn" data-title="Personalized Name Plaque / Ornament" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.88rem;">🎄 Name Plaque / Gift</strong>
+              <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--neon-cyan);">Custom Text &amp; Names</span>
             </button>
-            <button type="button" class="choice-card-btn" data-title="Custom 5-Pack Sensory Clickers" data-price="12" onclick="selectStudioType(this)">
-              <strong style="display:block;font-size:0.88rem;">💖 5x Sensory Clickers</strong>
-              <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--glitch-green);">Base $12.00</span>
+            <button type="button" class="choice-card-btn" data-title="Custom Sensory Clickers / Fidgets" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.88rem;">💖 Custom Clickers</strong>
+              <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--neon-cyan);">Fidgets &amp; Keychains</span>
             </button>
-            <button type="button" class="choice-card-btn" data-title="Tabletop Dice Tower / RPG Terrain" data-price="22" onclick="selectStudioType(this)">
-              <strong style="display:block;font-size:0.88rem;">🎲 RPG Dice Tower</strong>
-              <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--glitch-green);">Base $22.00</span>
+            <button type="button" class="choice-card-btn" data-title="Tabletop RPG Dice Tower / Mini" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.88rem;">🎲 RPG / Dice Tower</strong>
+              <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--neon-cyan);">Tabletop &amp; D&amp;D Gear</span>
             </button>
-            <button type="button" class="choice-card-btn" data-title="HueForge 3D Multi-Layer Wall Art" data-price="20" onclick="selectStudioType(this)">
-              <strong style="display:block;font-size:0.88rem;">🖼️ HueForge Wall Art</strong>
-              <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--glitch-green);">Base $20.00</span>
+            <button type="button" class="choice-card-btn" data-title="HueForge 3D Wall Art" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.88rem;">🖼️ 3D Wall Art</strong>
+              <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--neon-cyan);">Multi-Layer Artwork</span>
             </button>
-            <button type="button" class="choice-card-btn" data-title="Special Idea / Customer STL File" data-price="18" onclick="selectStudioType(this)">
-              <strong style="display:block;font-size:0.88rem;">✨ Custom STL / Idea</strong>
-              <span style="font-family:var(--font-mono);font-size:0.76rem;color:var(--glitch-green);">Est. $18.00</span>
+            <button type="button" class="choice-card-btn" data-title="Brand New Idea / Photo Reference" onclick="selectStudioType(this)">
+              <strong style="display:block;font-size:0.88rem;">✨ Other / Photo Idea</strong>
+              <span style="font-family:var(--font-mono);font-size:0.72rem;color:var(--neon-cyan);">Any Custom Creation</span>
             </button>
           </div>
 
-          <h3 style="font-family:var(--font-display);font-size:1.28rem;font-weight:900;margin-bottom:10px;">2. Choose Scale, Finish &amp; Color Palette</h3>
+          <div style="margin-bottom:14px;">
+            <label style="font-size:0.78rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">
+              Describe Your Idea or Name an Existing Model *
+            </label>
+            <textarea
+              id="studioNotesInput"
+              rows="3"
+              placeholder="Tell us what you want made! You can name an existing model from our catalog (e.g. 'Crystal Winged Dragon' or 'Omen Owl Dice Tower'), paste a MakerWorld/Printables link, or describe your own custom idea..."
+              oninput="updateStudioPreview()"
+              style="width:100%;padding:10px 14px;border-radius:var(--radius-md);border:1.5px solid rgba(0,229,255,0.45);background:#0f121c;color:#fff;font-size:0.9rem;font-family:var(--font-body);line-height:1.45;resize:vertical;"
+            ></textarea>
+          </div>
 
-          <!-- Scale & Finish Dropdowns -->
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;">
-            <div>
-              <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">Size / Scale:</label>
-              <select id="studioSizeSelect" class="friendly-select" style="width:100%;" onchange="updateStudioPreview()">
-                <option value="Standard Workshop Scale">Standard Workshop Scale</option>
-                <option value="Mini / Pocket Size">Mini / Pocket Size</option>
-                <option value="Large / XL Statement Piece">Large / XL Statement Size</option>
-                <option value="Custom Dimensions (See Notes)">Custom Dimensions (Specify Below)</option>
-              </select>
+          <!-- Photo Upload Box -->
+          <div style="margin-bottom:20px;padding:12px 14px;border-radius:var(--radius-md);border:1.5px dashed rgba(0,229,255,0.5);background:rgba(0,229,255,0.04);">
+            <label style="font-size:0.8rem;font-weight:800;color:var(--neon-cyan);display:block;margin-bottom:4px;">
+              📸 Upload a Photo, Sketch, or Screenshot (Optional):
+            </label>
+            <p style="font-size:0.76rem;color:var(--text-secondary);margin-bottom:8px;">
+              Upload a picture of an existing print, a reference photo, a color inspiration image, or a sketch so Crit &amp; Inky can see exactly what you have in mind!
+            </p>
+            <div style="display:flex;align-items:center;gap:12px;flex-wrap:wrap;">
+              <input
+                type="file"
+                id="studioPhotoInput"
+                accept="image/*"
+                onchange="handleStudioPhotoUpload(this)"
+                style="font-size:0.8rem;color:var(--text-bright);max-width:100%;"
+              />
+              <button
+                type="button"
+                id="studioPhotoClearBtn"
+                onclick="clearStudioPhoto()"
+                style="display:none;background:rgba(255,42,133,0.18);border:1px solid #ff2a85;color:#ff9ebb;padding:4px 10px;border-radius:8px;font-size:0.74rem;font-weight:700;cursor:pointer;"
+              >
+                ✕ Remove Photo
+              </button>
             </div>
-            <div>
-              <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">Filament Finish Type:</label>
-              <select id="studioFinishSelect" class="friendly-select" style="width:100%;" onchange="updateStudioPreview()">
-                <option value="Dual/Tri-Color Silk PLA">Dual / Tri-Color Shiny Silk PLA</option>
-                <option value="Matte / Velvet Textured PLA">Matte / Velvet Textured PLA</option>
-                <option value="Galaxy / Sparkle Shimmer">Galaxy / Sparkle Shimmer</option>
-                <option value="UV / Glow-in-the-Dark">UV / Glow-in-the-Dark</option>
-                <option value="Translucent Crystal / Ice">Translucent Crystal / Ice</option>
-                <option value="Inky's Artist Choice">Inky's Artist Choice</option>
-              </select>
+            <div id="studioPhotoPreviewWrap" style="display:none;margin-top:10px;align-items:center;gap:10px;">
+              <img id="studioPhotoPreviewImg" src="" alt="Uploaded Reference" style="width:68px;height:68px;object-fit:cover;border-radius:10px;border:2px solid var(--neon-cyan);" />
+              <span id="studioPhotoNameText" style="font-family:var(--font-mono);font-size:0.74rem;color:var(--neon-green);">Photo attached!</span>
             </div>
           </div>
 
-          <!-- Preset Color Swatches -->
-          <div id="studioSwatchGrid" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px;">
+          <h3 style="font-family:var(--font-display);font-size:1.28rem;font-weight:900;margin-bottom:8px;">
+            2. Describe Your Colors &amp; Filament Finish
+          </h3>
+
+          <!-- Preset Color Swatches (Optional Quick Starters) -->
+          <div id="studioSwatchGrid" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
             <button type="button" class="swatch-pill-btn active" data-color="Glitch Lime &amp; Obsidian Silk" onclick="selectStudioColor(this)">
               <span class="swatch-circle" style="background:linear-gradient(135deg,#8ce600,#14151d);"></span>
               <span>Glitch Lime / Black</span>
@@ -710,110 +738,187 @@
             </button>
           </div>
 
-          <!-- Exact Custom Color Combo Input -->
-          <div style="margin-bottom:20px;">
-            <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">
-              Or Type Your Exact Primary, Secondary &amp; Eye Colors (Optional):
-            </label>
-            <input
-              type="text"
-              id="studioCustomColorsInput"
-              placeholder="e.g. 'Teal body, metallic gold wings/horns, and amethyst purple eyes'..."
-              oninput="updateStudioPreview()"
-              style="width:100%;padding:10px 14px;border-radius:var(--radius-md);border:1.5px solid rgba(0,229,255,0.35);background:#0f121c;color:#fff;font-size:0.88rem;"
-            />
+          <div style="display:grid;grid-template-columns:1fr;gap:10px;margin-bottom:20px;">
+            <div>
+              <label style="font-size:0.78rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">
+                Color Description (Primary, Secondary, Accents, Eye Colors &amp; Finish) *
+              </label>
+              <input
+                type="text"
+                id="studioCustomColorsInput"
+                placeholder="Describe your colors! e.g. 'Shiny teal/purple silk body, metallic gold horns & wings, and glowing green eyes'..."
+                oninput="updateStudioPreview()"
+                style="width:100%;padding:10px 14px;border-radius:var(--radius-md);border:1.5px solid rgba(0,229,255,0.4);background:#0f121c;color:#fff;font-size:0.88rem;"
+              />
+            </div>
+            <div>
+              <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">Filament Finish Style:</label>
+              <select id="studioFinishSelect" class="friendly-select" style="width:100%;" onchange="updateStudioPreview()">
+                <option value="Dual/Tri-Color Silk PLA">Dual / Tri-Color Shiny Silk PLA</option>
+                <option value="Matte / Velvet Textured PLA">Matte / Velvet Textured PLA</option>
+                <option value="Galaxy / Sparkle Shimmer">Galaxy / Sparkle Shimmer</option>
+                <option value="UV / Glow-in-the-Dark">UV / Glow-in-the-Dark</option>
+                <option value="Translucent Crystal / Ice">Translucent Crystal / Ice</option>
+                <option value="Solid Multi-Color Painted">Solid Multi-Color AMS Print</option>
+              </select>
+            </div>
           </div>
 
-          <h3 style="font-family:var(--font-display);font-size:1.28rem;font-weight:900;margin-bottom:10px;">3. Customer Specifics, Personalization &amp; Detailed Notes</h3>
+          <h3 style="font-family:var(--font-display);font-size:1.28rem;font-weight:900;margin-bottom:8px;">
+            3. Pick a Size &amp; Size Guide
+          </h3>
 
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+          <!-- Visual Size Guide Cards -->
+          <div style="display:grid;grid-template-columns:repeat(auto-fit, minmax(195px, 1fr));gap:8px;margin-bottom:10px;font-size:0.76rem;">
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:8px 10px;">
+              <strong style="color:var(--neon-green);display:block;">🔹 Mini / Pocket (2"–4")</strong>
+              <span style="color:var(--text-secondary);">Pocket fidgets, keychains, hatchlings, tabletop minis &amp; desk buddies.</span>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:8px 10px;">
+              <strong style="color:var(--neon-cyan);display:block;">🔸 Small / Standard (5"–8")</strong>
+              <span style="color:var(--text-secondary);">Medium articulated animals, coasters, ornaments &amp; bookshelf signs.</span>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:8px 10px;">
+              <strong style="color:var(--neon-volt);display:block;">🔶 Medium / Display (9"–14")</strong>
+              <span style="color:var(--text-secondary);">Standard articulated dragons, dice towers, LED lamps &amp; wall art.</span>
+            </div>
+            <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.12);border-radius:10px;padding:8px 10px;">
+              <strong style="color:var(--neon-pink);display:block;">🔥 Large / XL (15"–24"+)</strong>
+              <span style="color:var(--text-secondary);">Giant full-desk articulated dragons, XL boss pieces &amp; statement builds.</span>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px;">
+            <div>
+              <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">Select Size Category:</label>
+              <select id="studioSizeSelect" class="friendly-select" style="width:100%;" onchange="updateStudioPreview()">
+                <option value="Medium / Display Scale (9&quot;–14&quot;)">Medium / Display Scale (9"–14" — Dragons, Towers, Lamps)</option>
+                <option value="Small / Standard Scale (5&quot;–8&quot;)">Small / Standard Scale (5"–8" — Critters, Signs, Decor)</option>
+                <option value="Mini / Pocket Size (2&quot;–4&quot;)">Mini / Pocket Size (2"–4" — Hatchlings, Fidgets, Keychains)</option>
+                <option value="Large / XL Statement Size (15&quot;–24&quot;+)">Large / XL Statement Size (15"–24"+ — Giant Builds)</option>
+                <option value="Custom Exact Dimensions">Custom Exact Dimensions (Specify Right →)</option>
+              </select>
+            </div>
             <div>
               <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">
-                Custom Name / Text to Engrave or Emboss:
+                Size Notes / Exact Dimensions (Optional):
               </label>
               <input
                 type="text"
                 id="studioEngraveInput"
-                placeholder="e.g. 'KAYLA', 'Level 10 DM', 'The Night Court'..."
+                placeholder="e.g. 'About 12 inches long', 'Fits a 6-inch shelf', or engraved name..."
                 oninput="updateStudioPreview()"
                 style="width:100%;padding:10px 14px;border-radius:var(--radius-md);border:1.5px solid rgba(0,229,255,0.35);background:#0f121c;color:#fff;font-size:0.88rem;"
+              />
+            </div>
+          </div>
+
+          <h3 style="font-family:var(--font-display);font-size:1.28rem;font-weight:900;margin-bottom:8px;">
+            4. Your Contact Info (Crit Will Send Your Quote!)
+          </h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;">
+            <div>
+              <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">Your Name *</label>
+              <input
+                type="text"
+                id="studioCustName"
+                placeholder="Full Name *"
+                oninput="updateStudioPreview()"
+                style="width:100%;padding:10px 14px;border-radius:var(--radius-md);border:1.5px solid rgba(57,255,20,0.4);background:#0f121c;color:#fff;font-size:0.88rem;"
               />
             </div>
             <div>
-              <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">
-                Reference / STL Link or Contact Info (Optional):
-              </label>
+              <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">Phone Number (for Call / Text Quote) *</label>
               <input
-                type="text"
-                id="studioRefLinkInput"
-                placeholder="Paste MakerWorld/Printables link, phone, or email..."
+                type="tel"
+                id="studioCustPhone"
+                placeholder="(941) 555-0123 *"
                 oninput="updateStudioPreview()"
-                style="width:100%;padding:10px 14px;border-radius:var(--radius-md);border:1.5px solid rgba(0,229,255,0.35);background:#0f121c;color:#fff;font-size:0.88rem;"
+                style="width:100%;padding:10px 14px;border-radius:var(--radius-md);border:1.5px solid rgba(57,255,20,0.4);background:#0f121c;color:#fff;font-size:0.88rem;"
               />
             </div>
           </div>
-
-          <div>
-            <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">
-              Full Customization Details &amp; Special Instructions for Inky:
-            </label>
-            <textarea
-              id="studioNotesInput"
-              rows="5"
-              placeholder="Write as much detail as you want! Tell Inky exact measurements, character pose, wing style, keycap switch feel (clicky vs. silent), gift notes, or which SWFL weekend market you'd like to pick it up at..."
-              oninput="updateStudioPreview()"
-              style="width:100%;padding:12px 16px;border-radius:var(--radius-md);border:1.5px solid rgba(0,229,255,0.45);background:#0f121c;color:#fff;font-size:0.92rem;font-family:var(--font-body);line-height:1.5;resize:vertical;"
-            ></textarea>
+          <div style="display:grid;grid-template-columns:1.2fr 0.8fr;gap:10px;">
+            <div>
+              <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">Email Address (for Email Quote) *</label>
+              <input
+                type="email"
+                id="studioCustEmail"
+                placeholder="you@example.com *"
+                oninput="updateStudioPreview()"
+                style="width:100%;padding:10px 14px;border-radius:var(--radius-md);border:1.5px solid rgba(57,255,20,0.4);background:#0f121c;color:#fff;font-size:0.88rem;"
+              />
+            </div>
+            <div>
+              <label style="font-size:0.76rem;font-weight:700;color:var(--text-secondary);display:block;margin-bottom:4px;">How Should Crit Reach You?</label>
+              <select id="studioContactPref" class="friendly-select" style="width:100%;" onchange="updateStudioPreview()">
+                <option value="Email or Phone / Text">📧📞 Either Email or Phone/Text</option>
+                <option value="Email Quote Preferred">📧 Email Quote Preferred</option>
+                <option value="Phone Call / Text Preferred">📞 Phone / Text Preferred</option>
+              </select>
+            </div>
           </div>
         </div>
 
-        <!-- Right: Inky's Live Detailed Build Ticket -->
-        <div class="studio-card" style="background:linear-gradient(155deg,#182036 0%,#101422 100%);border-color:var(--neon-cyan);display:flex;flex-direction:column;justify-content:space-between;">
+        <!-- Right: Crit & Inky's Live Custom Quote Request Ticket -->
+        <div class="studio-card" style="background:linear-gradient(155deg,#182036 0%,#101422 100%);border-color:var(--neon-volt);display:flex;flex-direction:column;justify-content:space-between;">
           <div>
-            <span class="host-pill" style="background:var(--neon-cyan);color:#041014;border-color:var(--neon-cyan);">🎨 INKY'S CUSTOM BUILD SPEC</span>
-            <h3 id="previewBuildTitle" style="font-family:var(--font-display);font-size:1.6rem;font-weight:900;margin-top:10px;">
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px;">
+              <img src="assets/avatar_crit.png?v=3" alt="Crit" style="width:58px;height:58px;border-radius:50%;border:2.5px solid var(--neon-volt);background:#10131d;object-fit:cover;" />
+              <div>
+                <span class="host-pill" style="background:var(--neon-volt);color:#041014;border-color:var(--neon-volt);">🎲 CRIT'S CUSTOM QUOTE TICKET</span>
+                <div style="font-size:0.78rem;color:var(--text-secondary);margin-top:3px;">
+                  Direct Personal Quote via Email or Phone
+                </div>
+              </div>
+            </div>
+
+            <h3 id="previewBuildTitle" style="font-family:var(--font-display);font-size:1.55rem;font-weight:900;margin-top:4px;color:#fff;">
               Custom Articulated Dragon
             </h3>
-            <p style="font-size:0.86rem;color:var(--text-secondary);margin-top:4px;">
-              Hand-crafted to your exact specifications in North Port, FL (3–5 business days).
+            <p style="font-size:0.84rem;color:var(--text-secondary);margin-top:4px;">
+              Every custom print is priced fairly based on filament colors, size, and print time. Submit your build below and <strong>Crit</strong> will contact you directly with your custom quote!
             </p>
 
-            <div style="margin:18px 0;padding:16px;background:rgba(0,0,0,0.42);border-radius:var(--radius-md);border:1px solid rgba(0,229,255,0.35);font-size:0.86rem;display:flex;flex-direction:column;gap:9px;">
+            <div style="margin:16px 0;padding:15px;background:rgba(0,0,0,0.42);border-radius:var(--radius-md);border:1px solid rgba(204,255,0,0.35);font-size:0.85rem;display:flex;flex-direction:column;gap:9px;">
               <div style="display:flex;justify-content:space-between;gap:10px;">
-                <span style="color:var(--text-secondary);">Scale &amp; Finish:</span>
-                <strong id="previewScaleFinishText" style="color:#fff;text-align:right;">Standard Workshop Scale • Dual/Tri-Color Silk PLA</strong>
+                <span style="color:var(--text-secondary);">Selected Size:</span>
+                <strong id="previewScaleFinishText" style="color:#fff;text-align:right;">Medium / Display Scale (9"–14") • Dual/Tri-Color Silk PLA</strong>
               </div>
               <div style="display:flex;justify-content:space-between;gap:10px;">
-                <span style="color:var(--text-secondary);">Color Palette:</span>
+                <span style="color:var(--text-secondary);">Colors &amp; Palette:</span>
                 <strong id="previewFilamentText" style="color:var(--neon-cyan);text-align:right;">Glitch Lime &amp; Obsidian Silk</strong>
               </div>
               <div style="display:flex;justify-content:space-between;gap:10px;">
-                <span style="color:var(--text-secondary);">Engraved Name/Text:</span>
-                <strong id="previewEngraveText" style="color:var(--neon-volt);text-align:right;">None</strong>
+                <span style="color:var(--text-secondary);">Size / Text Notes:</span>
+                <strong id="previewEngraveText" style="color:var(--neon-volt);text-align:right;">Standard Dimensions</strong>
               </div>
               <div style="display:flex;justify-content:space-between;gap:10px;">
-                <span style="color:var(--text-secondary);">Ref Link / Contact:</span>
-                <strong id="previewRefText" style="color:#cbd5e1;text-align:right;">None</strong>
+                <span style="color:var(--text-secondary);">Reference Photo:</span>
+                <strong id="previewRefText" style="color:#cbd5e1;text-align:right;">None Attached</strong>
+              </div>
+              <div style="display:flex;justify-content:space-between;gap:10px;">
+                <span style="color:var(--text-secondary);">Quote Contact:</span>
+                <strong id="previewContactText" style="color:var(--neon-green);text-align:right;">Enter Name, Email &amp; Phone</strong>
               </div>
               <div style="border-top:1px solid rgba(255,255,255,0.12);padding-top:8px;">
-                <span style="color:var(--text-secondary);display:block;margin-bottom:4px;">Customer Specifics &amp; Instructions:</span>
-                <div id="previewNoteText" style="color:#ffffff;background:rgba(255,255,255,0.05);padding:8px 10px;border-radius:8px;font-size:0.83rem;white-space:pre-wrap;max-height:140px;overflow-y:auto;">Standard Workshop Finish</div>
-              </div>
-              <div style="display:flex;justify-content:space-between;padding-top:4px;">
-                <span style="color:var(--text-secondary);">Fulfillment:</span>
-                <strong style="color:var(--neon-green);">SWFL Pickup or US Shipping</strong>
+                <span style="color:var(--text-secondary);display:block;margin-bottom:4px;">Your Idea &amp; Model Details:</span>
+                <div id="previewNoteText" style="color:#ffffff;background:rgba(255,255,255,0.05);padding:8px 10px;border-radius:8px;font-size:0.83rem;white-space:pre-wrap;max-height:130px;overflow-y:auto;">Describe your idea or existing model on the left!</div>
               </div>
             </div>
           </div>
 
           <div>
-            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px;">
-              <span style="font-weight:800;">Estimated Price:</span>
-              <span id="previewTotalPrice" style="font-family:var(--font-mono);font-size:1.85rem;font-weight:900;color:var(--neon-green);">$15.00</span>
+            <div style="background:rgba(204,255,0,0.1);border:1.5px solid rgba(204,255,0,0.4);border-radius:12px;padding:10px 14px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center;">
+              <span style="font-size:0.82rem;font-weight:800;color:#e2e8f0;">Custom Print Pricing:</span>
+              <span style="font-family:var(--font-mono);font-size:0.88rem;font-weight:900;color:var(--neon-volt);">🎲 Quoted Directly by Crit</span>
             </div>
-            <button type="button" class="btn-friendly-primary" style="width:100%;justify-content:center;" onclick="addCustomStudioBuildToCart()">
-              <span>✨ Add Custom Print to Stash</span>
+            <button type="button" id="submitCustomQuoteBtn" class="btn-friendly-primary" style="width:100%;justify-content:center;font-size:0.96rem;padding:13px 20px;" onclick="submitCustomQuoteRequest()">
+              <span>🎲 Send to Crit for My Custom Quote →</span>
             </button>
+            <div id="customQuoteSuccessBanner" style="display:none;margin-top:12px;padding:12px 14px;border-radius:12px;background:rgba(57,255,20,0.14);border:1.5px solid var(--neon-green);color:#d9ffe0;font-size:0.84rem;line-height:1.45;text-align:center;">
+              ✅ <strong>Quote Request Sent to Crit!</strong> Check your email or phone soon—Crit has your custom print specs and photo and will reach out with your personal quote!
+            </div>
           </div>
         </div>
       </div>

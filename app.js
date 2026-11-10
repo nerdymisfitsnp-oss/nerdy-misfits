@@ -618,24 +618,27 @@
     document.getElementById('quickViewModalBackdrop').classList.remove('open');
   };
 
-  // Inky Studio Builder
+  // Inky & Crit Custom Print Quote Studio (No Fixed Prices — Direct Quote from Crit)
   let studioState = {
     title: 'Custom Articulated Dragon',
-    price: 15,
     color: 'Glitch Lime & Obsidian Silk',
     customColors: '',
-    scale: 'Standard Workshop Scale',
+    scale: 'Medium / Display Scale (9"–14")',
     finish: 'Dual/Tri-Color Silk PLA',
     engrave: '',
-    refLink: '',
-    note: ''
+    note: '',
+    photoDataUrl: '',
+    photoName: '',
+    custName: '',
+    custEmail: '',
+    custPhone: '',
+    contactPref: 'Email or Phone / Text'
   };
 
   window.selectStudioType = function (btn) {
     document.querySelectorAll('#studioTypeGrid .choice-card-btn').forEach((b) => b.classList.remove('active'));
     btn.classList.add('active');
     studioState.title = btn.getAttribute('data-title');
-    studioState.price = parseFloat(btn.getAttribute('data-price')) || 15;
     updateStudioPreview();
   };
 
@@ -646,72 +649,212 @@
     updateStudioPreview();
   };
 
+  window.handleStudioPhotoUpload = function (input) {
+    const file = input && input.files && input.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+      const img = new Image();
+      img.onload = function () {
+        const maxDim = 560;
+        let w = img.width;
+        let h = img.height;
+        if (w > maxDim || h > maxDim) {
+          if (w > h) {
+            h = Math.round((h * maxDim) / w);
+            w = maxDim;
+          } else {
+            w = Math.round((w * maxDim) / h);
+            h = maxDim;
+          }
+        }
+        const canvas = document.createElement('canvas');
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, w, h);
+        studioState.photoDataUrl = canvas.toDataURL('image/jpeg', 0.82);
+        studioState.photoName = file.name || 'Uploaded Photo';
+
+        const wrap = document.getElementById('studioPhotoPreviewWrap');
+        const previewImg = document.getElementById('studioPhotoPreviewImg');
+        const nameTxt = document.getElementById('studioPhotoNameText');
+        const clearBtn = document.getElementById('studioPhotoClearBtn');
+        if (previewImg) previewImg.src = studioState.photoDataUrl;
+        if (nameTxt) nameTxt.textContent = `📸 Attached: ${studioState.photoName}`;
+        if (wrap) wrap.style.display = 'flex';
+        if (clearBtn) clearBtn.style.display = 'inline-block';
+        updateStudioPreview();
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  };
+
+  window.clearStudioPhoto = function () {
+    studioState.photoDataUrl = '';
+    studioState.photoName = '';
+    const input = document.getElementById('studioPhotoInput');
+    if (input) input.value = '';
+    const wrap = document.getElementById('studioPhotoPreviewWrap');
+    const clearBtn = document.getElementById('studioPhotoClearBtn');
+    if (wrap) wrap.style.display = 'none';
+    if (clearBtn) clearBtn.style.display = 'none';
+    updateStudioPreview();
+  };
+
   window.updateStudioPreview = function () {
     const sizeEl = document.getElementById('studioSizeSelect');
     const finishEl = document.getElementById('studioFinishSelect');
     const customColorEl = document.getElementById('studioCustomColorsInput');
     const engraveEl = document.getElementById('studioEngraveInput');
-    const refEl = document.getElementById('studioRefLinkInput');
     const noteEl = document.getElementById('studioNotesInput');
+    const nameEl = document.getElementById('studioCustName');
+    const emailEl = document.getElementById('studioCustEmail');
+    const phoneEl = document.getElementById('studioCustPhone');
+    const prefEl = document.getElementById('studioContactPref');
 
-    studioState.scale = sizeEl ? sizeEl.value : 'Standard Workshop Scale';
+    studioState.scale = sizeEl ? sizeEl.value : 'Medium / Display Scale (9"–14")';
     studioState.finish = finishEl ? finishEl.value : 'Dual/Tri-Color Silk PLA';
     studioState.customColors = customColorEl ? customColorEl.value.trim() : '';
     studioState.engrave = engraveEl ? engraveEl.value.trim() : '';
-    studioState.refLink = refEl ? refEl.value.trim() : '';
     studioState.note = noteEl ? noteEl.value.trim() : '';
+    studioState.custName = nameEl ? nameEl.value.trim() : '';
+    studioState.custEmail = emailEl ? emailEl.value.trim() : '';
+    studioState.custPhone = phoneEl ? phoneEl.value.trim() : '';
+    studioState.contactPref = prefEl ? prefEl.value : 'Email or Phone / Text';
 
     const activeColorText = studioState.customColors
-      ? `${studioState.color} (${studioState.customColors})`
+      ? `${studioState.customColors} (${studioState.color})`
       : studioState.color;
 
-    document.getElementById('previewBuildTitle').textContent = studioState.title;
+    const titleNode = document.getElementById('previewBuildTitle');
+    if (titleNode) titleNode.textContent = studioState.title;
 
     const scaleFinishNode = document.getElementById('previewScaleFinishText');
     if (scaleFinishNode) {
       scaleFinishNode.textContent = `${studioState.scale} • ${studioState.finish}`;
     }
 
-    document.getElementById('previewFilamentText').textContent = activeColorText;
+    const filamentNode = document.getElementById('previewFilamentText');
+    if (filamentNode) filamentNode.textContent = activeColorText;
 
     const engraveNode = document.getElementById('previewEngraveText');
     if (engraveNode) {
-      engraveNode.textContent = studioState.engrave || 'None';
+      engraveNode.textContent = studioState.engrave || 'Standard Dimensions';
     }
 
     const refNode = document.getElementById('previewRefText');
     if (refNode) {
-      refNode.textContent = studioState.refLink || 'None';
+      refNode.textContent = studioState.photoName ? `📸 ${studioState.photoName}` : 'None Attached';
     }
 
-    document.getElementById('previewNoteText').textContent =
-      studioState.note || 'Standard Workshop Finish (Ready for your custom notes above)';
-    document.getElementById('previewTotalPrice').textContent = `$${studioState.price.toFixed(2)}`;
+    const contactNode = document.getElementById('previewContactText');
+    if (contactNode) {
+      const contactParts = [studioState.custName, studioState.custPhone, studioState.custEmail].filter(Boolean);
+      contactNode.textContent = contactParts.length
+        ? `${contactParts.join(' • ')} (${studioState.contactPref})`
+        : 'Enter Name, Email & Phone';
+    }
+
+    const noteNode = document.getElementById('previewNoteText');
+    if (noteNode) {
+      noteNode.textContent =
+        studioState.note || 'Describe your idea or existing model on the left!';
+    }
   };
 
-  window.addCustomStudioBuildToCart = function () {
+  window.submitCustomQuoteRequest = async function () {
     updateStudioPreview();
-    const parts = [
-      `${studioState.scale} (${studioState.finish})`,
-      studioState.customColors ? `${studioState.color} [${studioState.customColors}]` : studioState.color
-    ];
-    if (studioState.engrave) parts.push(`Engrave: "${studioState.engrave}"`);
-    if (studioState.refLink) parts.push(`Ref: ${studioState.refLink}`);
-    if (studioState.note) parts.push(`Notes: ${studioState.note}`);
 
-    cart.push({
-      uid: 'custom-' + Date.now(),
-      name: `Inky Custom: ${studioState.title}`,
-      price: studioState.price,
-      image: 'assets/avatar_inky.png',
-      meta: parts.join(' • '),
-      qty: 1
-    });
-    renderCart();
-    toggleCartDrawer(true);
-    showToast(`🎨 Inky added "${studioState.title}" with your custom specs to your Stash!`);
+    if (!studioState.note && !studioState.photoDataUrl) {
+      showToast('✨ Please describe your custom print idea (or upload a photo) first!');
+      document.getElementById('studioNotesInput')?.focus();
+      return;
+    }
+    if (!studioState.custName || (!studioState.custEmail && !studioState.custPhone)) {
+      showToast('📋 Please enter your Name and your Email or Phone Number so Crit can send your quote!');
+      if (!studioState.custName) document.getElementById('studioCustName')?.focus();
+      else if (!studioState.custPhone) document.getElementById('studioCustPhone')?.focus();
+      else document.getElementById('studioCustEmail')?.focus();
+      return;
+    }
+
+    const btn = document.getElementById('submitCustomQuoteBtn');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span>🎲 Sending Your Custom Specs to Crit...</span>';
+    }
+
+    const quoteId = `QUOTE-${Date.now().toString().slice(-6)}`;
+    const colorSummary = studioState.customColors
+      ? `${studioState.customColors} (Preset: ${studioState.color})`
+      : studioState.color;
+
+    const specParts = [
+      `Size: ${studioState.scale}`,
+      `Finish: ${studioState.finish}`,
+      `Colors: ${colorSummary}`
+    ];
+    if (studioState.engrave) specParts.push(`Size/Text Notes: ${studioState.engrave}`);
+    if (studioState.note) specParts.push(`Idea: ${studioState.note}`);
+
+    const quoteItem = {
+      id: quoteId,
+      name: `🎲 Custom Print Quote Request: ${studioState.title}`,
+      price: 0,
+      qty: 1,
+      image: studioState.photoDataUrl || 'https://www.nerdymisfits.com/assets/crew_crit.png',
+      meta: specParts.join(' • ')
+    };
+
+    const customer = {
+      name: studioState.custName,
+      email: studioState.custEmail || 'Phone Quote Requested',
+      phone: studioState.custPhone || 'Email Quote Requested',
+      address: `Quote Preference: ${studioState.contactPref} | Size: ${studioState.scale} | Colors: ${colorSummary} | Idea: ${studioState.note || 'See attached photo'}`
+    };
+
+    try {
+      // 1. Stage the quote record in Supabase
+      await window.sendMisfitOrderNotification({
+        action: 'stage_checkout',
+        orderId: quoteId,
+        notifyEmail: 'nerdymisfitsnp@gmail.com',
+        customer,
+        fulfillment: `🎲 Custom Quote (${studioState.contactPref})`,
+        items: [quoteItem],
+        subtotal: 0,
+        shipping: 0,
+        totalCharged: 0,
+        freeMiniUnlocked: false
+      });
+
+      // 2. Immediately trigger the email alert to nerdymisfitsnp@gmail.com so Crit gets the quote request right away!
+      await window.sendMisfitOrderNotification({
+        action: 'confirm_paid',
+        orderId: quoteId,
+        notifyEmail: 'nerdymisfitsnp@gmail.com',
+        paymentStatus: 'CUSTOM QUOTE REQUEST (FOR CRIT)',
+        customer,
+        fulfillment: `🎲 Custom Quote (${studioState.contactPref})`,
+        items: [quoteItem],
+        subtotal: 0,
+        shipping: 0,
+        totalCharged: 0
+      });
+    } catch (_) {}
+
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>✅ Sent! Request Another Custom Quote →</span>';
+    }
+    const successBanner = document.getElementById('customQuoteSuccessBanner');
+    if (successBanner) successBanner.style.display = 'block';
+
+    showToast('🎲 Custom Quote Request sent! Crit will reach out via email or phone with your quote!');
     if (typeof window.trackAnalyticsEvent === 'function') {
-      window.trackAnalyticsEvent('add_to_cart', 'inky', `Inky Custom: ${studioState.title}`);
+      window.trackAnalyticsEvent('custom_quote_request', 'inky', studioState.title);
     }
   };
 
@@ -1595,13 +1738,14 @@
             </div>
           </div>
           <strong style="font-family:var(--font-mono);color:var(--neon-green);font-size:0.92rem;flex-shrink:0;">
-            $${(Number(it.price || 0) * Number(it.qty || 1)).toFixed(2)}
+            ${String(order.order_id || '').startsWith('QUOTE-') ? '🎲 Quote Request' : `$${(Number(it.price || 0) * Number(it.qty || 1)).toFixed(2)}`}
           </strong>
         </div>
       `;
       })
       .join('');
 
+    const isCustomQuoteOrder = String(order.order_id || '').startsWith('QUOTE-');
     const totalNum = Number(order.total_charged || 0);
     const subNum = Number(order.subtotal || totalNum);
     const shipNum = Number(order.shipping_cost || 0);
@@ -1624,9 +1768,11 @@
             <span style="font-family:var(--font-mono);font-size:0.95rem;font-weight:900;color:var(--neon-green);background:rgba(57,255,20,0.12);padding:3px 10px;border-radius:8px;border:1px solid var(--neon-green);">
               #${escapeHtml(order.order_id)}
             </span>
-            <span class="host-pill" style="background:rgba(57,255,20,0.16);color:var(--neon-green);border-color:var(--neon-green);">
-              💳 PAID
-            </span>
+            ${
+              isCustomQuoteOrder
+                ? `<span class="host-pill" style="background:rgba(204,255,0,0.2);color:var(--neon-volt);border-color:var(--neon-volt);">🎲 CUSTOM QUOTE REQUEST (FOR CRIT)</span>`
+                : `<span class="host-pill" style="background:rgba(57,255,20,0.16);color:var(--neon-green);border-color:var(--neon-green);">💳 PAID</span>`
+            }
             <span style="font-size:0.8rem;color:var(--text-secondary);">
               🕒 Ordered: ${formatAdminDate(order.created_at)}
             </span>
@@ -1677,14 +1823,17 @@
         <!-- Right Column: Financial Breakdown -->
         <div style="min-width:165px;text-align:right;background:rgba(0,0,0,0.35);padding:12px 14px;border-radius:12px;border:1px solid rgba(57,255,20,0.28);">
           <div style="font-family:var(--font-mono);font-size:0.7rem;color:var(--text-secondary);text-transform:uppercase;">
-            Total Charged
+            ${isCustomQuoteOrder ? 'Quote Status' : 'Total Charged'}
           </div>
-          <div style="font-family:var(--font-mono);font-size:1.55rem;font-weight:900;color:var(--neon-green);margin:2px 0 6px;">
-            $${totalNum.toFixed(2)}
+          <div style="font-family:var(--font-mono);font-size:${isCustomQuoteOrder ? '1.1rem' : '1.55rem'};font-weight:900;color:${isCustomQuoteOrder ? 'var(--neon-volt)' : 'var(--neon-green)'};margin:2px 0 6px;">
+            ${isCustomQuoteOrder ? '🎲 Quote Needed' : `$${totalNum.toFixed(2)}`}
           </div>
           <div style="font-size:0.75rem;color:var(--text-secondary);border-top:1px solid rgba(255,255,255,0.1);padding-top:6px;">
-            <div>Subtotal: $${subNum.toFixed(2)}</div>
-            <div>Shipping: $${shipNum.toFixed(2)}</div>
+            ${
+              isCustomQuoteOrder
+                ? `<div>Send quote via Email or Phone</div>`
+                : `<div>Subtotal: $${subNum.toFixed(2)}</div><div>Shipping: $${shipNum.toFixed(2)}</div>`
+            }
           </div>
         </div>
       </div>
