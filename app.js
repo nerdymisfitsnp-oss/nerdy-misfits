@@ -1647,6 +1647,28 @@
     refreshAdminData();
   }
 
+  window.sendAdminTestPhonePush = async function () {
+    const btn = document.getElementById('adminTestPushBtn');
+    if (btn) {
+      btn.disabled = true;
+      btn.innerHTML = '<span>📡 Sending Test Alert...</span>';
+    }
+    try {
+      const res = await window.sendMisfitOrderNotification({ action: 'test_phone_push' });
+      if (res && res.ok) {
+        showToast('📱 Test Push Alert sent! Check the ntfy app (nm-misfits-hq-941x7).');
+      } else {
+        showToast('⚠️ Could not trigger test push alert.');
+      }
+    } catch (_) {
+      showToast('⚠️ Network error sending test push alert.');
+    }
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<span>🔔 Send Test Phone Push</span>';
+    }
+  };
+
   window.switchAdminSubTab = function (subKey) {
     activeAdminSubTab = subKey;
     document.getElementById('adminTabBtnUnfulfilled')?.classList.toggle('active', subKey === 'unfulfilled');

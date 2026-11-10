@@ -1206,6 +1206,22 @@
         </div>
       </div>
 
+      <!-- Phone Push & SMS Alerts Status Bar (941-266-1801 & 941-266-0475) -->
+      <div style="background:linear-gradient(135deg,#141a2b 0%,#101522 100%);border:1.5px solid var(--neon-volt);border-radius:18px;padding:15px 20px;margin-bottom:22px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:14px;">
+        <div style="flex:1;min-width:260px;">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px;">
+            <span class="host-pill" style="background:var(--neon-volt);color:#050805;border-color:var(--neon-volt);">📱 LIVE PHONE PUSH ALERTS ACTIVE</span>
+            <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--neon-cyan);font-weight:800;">Targets: (941) 266-1801 • (941) 266-0475</span>
+          </div>
+          <p style="font-size:0.81rem;color:#cbd5e1;line-height:1.45;">
+            <strong>Free AT&amp;T / Cricket Lock-Screen Push:</strong> Install the free <strong>ntfy</strong> app (App Store / Google Play) on both phones &rarr; tap <strong>+</strong> &rarr; subscribe to topic <code style="background:#0a0d16;color:var(--neon-green);padding:2px 7px;border-radius:6px;border:1px solid rgba(57,255,20,0.4);font-weight:800;">nm-misfits-hq-941x7</code> for instant Custom Quote &amp; Paid Order alerts!
+          </p>
+        </div>
+        <button type="button" id="adminTestPushBtn" class="btn-friendly-secondary" style="border-color:var(--neon-volt);color:var(--neon-volt);background:rgba(204,255,0,0.1);" onclick="sendAdminTestPhonePush()">
+          <span>🔔 Send Test Phone Push</span>
+        </button>
+      </div>
+
       <!-- 4 Admin Navigation Sub-Tabs -->
       <div class="admin-subtabs-bar" style="display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin-bottom:26px;">
         <button type="button" id="adminTabBtnUnfulfilled" class="admin-subtab-btn active" onclick="switchAdminSubTab('unfulfilled')">
