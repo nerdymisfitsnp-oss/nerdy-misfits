@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nerdy Misfits Coloring Book — 5 Website Showcase Concept Arts</title>
+  <link rel="icon" type="image/png" href="assets/icon.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Cinzel+Decorative:wght@700;900&family=JetBrains+Mono:wght@600;700;800&family=Outfit:wght@600;700;800;900&family=Permanent+Marker&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-deep: #0b0d15;
+      --bg-card: #131726;
+      --neon-green: #39ff14;
+      --neon-cyan: #00e5ff;
+      --neon-pink: #ff00a8;
+      --neon-volt: #ccff00;
+      --pixel-purple: #c042ff;
+      --amber: #ff9f1c;
+      --text-bright: #f8fafc;
+      --text-muted: #94a3b8;
+      --font-display: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg-deep);
+      color: var(--text-bright);
+      font-family: var(--font-body);
+      padding: 24px 20px 80px;
+    }
+    .top-nav {
+      max-width: 1320px;
+      margin: 0 auto 28px;
+      background: rgba(19, 23, 38, 0.95);
+      border: 2px solid var(--neon-green);
+      border-radius: 20px;
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.6), 0 0 24px rgba(57,255,20,0.2);
+      position: sticky;
+      top: 12px;
+      z-index: 100;
+      backdrop-filter: blur(12px);
+    }
+    .nav-tabs { display: flex; gap: 8px; flex-wrap: wrap; }
+    .nav-tab {
+      background: #0f121e;
+      border: 1.5px solid rgba(255,255,255,0.18);
+      color: #cbd5e1;
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.82rem;
+      padding: 8px 14px;
+      border-radius: 99px;
+      text-decoration: none;
+    }
+    .nav-tab:hover, .nav-tab.active {
+      background: var(--neon-green);
+      color: #050805;
+      border-color: #fff;
+    }
+    .concept-board {
+      max-width: 1320px;
+      margin: 0 auto 52px;
+      background: #0e111b;
+      border: 2.5px solid rgba(255,255,255,0.16);
+      border-radius: 28px;
+      overflow: hidden;
+      box-shadow: 0 25px 65px rgba(0,0,0,0.75);
+    }
+    .concept-header-strip {
+      background: linear-gradient(90deg, #161b2e 0%, #101424 100%);
+      padding: 15px 28px;
+      border-bottom: 2px solid rgba(255,255,255,0.1);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .concept-tag {
+      font-family: var(--font-mono);
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 5px 14px;
+      border-radius: 99px;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+    .concept-body { padding: 28px; }
+
+    /* 3D Book Mockup Styling */
+    .book-3d-stage {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      perspective: 1100px;
+    }
+    .book-3d-front {
+      width: 225px;
+      border-radius: 6px 14px 14px 6px;
+      transform: rotateY(-14deg) rotateZ(-1.5deg);
+      box-shadow:
+        -10px 12px 0 #1e1b38,
+        -12px 13px 0 rgba(255,255,255,0.75),
+        0 24px 48px rgba(0,0,0,0.85),
+        0 0 36px rgba(192,66,255,0.45);
+      border: 2px solid rgba(255,255,255,0.28);
+      display: block;
+    }
+    .book-3d-back {
+      width: 170px;
+      border-radius: 12px;
+      transform: rotateY(10deg) rotateZ(2deg);
+      box-shadow: 0 18px 36px rgba(0,0,0,0.75), 0 0 22px rgba(57,255,20,0.28);
+      border: 2px solid rgba(57,255,20,0.55);
+      display: block;
+    }
+    .amz-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      background: linear-gradient(90deg, #ff9900, #ffbe2e);
+      color: #090b10;
+      font-family: var(--font-display);
+      font-weight: 900;
+      font-size: 0.98rem;
+      padding: 13px 24px;
+      border-radius: 99px;
+      text-decoration: none;
+      box-shadow: 0 0 26px rgba(255,153,0,0.48);
+    }
+    .neon-sec-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(0,229,255,0.12);
+      border: 1.5px solid var(--neon-cyan);
+      color: var(--neon-cyan);
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 0.9rem;
+      padding: 12px 20px;
+      border-radius: 99px;
+      text-decoration: none;
+    }
+    .feat-chip {
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.15);
+      border-radius: 12px;
+      padding: 9px 12px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="top-nav">
+    <div>
+      <div style="font-family:var(--font-mono);font-size:0.74rem;color:var(--neon-green);font-weight:800;">🖍️ OFFICIAL AMAZON LAUNCH SHOWCASE</div>
+      <h1 style="font-family:var(--font-display);font-size:1.42rem;font-weight:900;">5 Concept Arts: Showing Off the Nerdy Misfits Coloring Book</h1>
+    </div>
+    <div class="nav-tabs">
+      <a href="#concept-1" class="nav-tab active">1. 3D Flip-Book Hub Banner</a>
+      <a href="#concept-2" class="nav-tab">2. Booksy × Inky Spotlight</a>
+      <a href="#concept-3" class="nav-tab">3. Header Pill + Quick Modal</a>
+      <a href="#concept-4" class="nav-tab">4. Interactive Color-a-Misfit</a>
+      <a href="#concept-5" class="nav-tab">5. Stash Cart Gift Add-On</a>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       CONCEPT 1: 3D FLIP-BOOK SHOWCASE BANNER ON GLITCH'S MAIN HUB
+       ==================================================================== -->
+  <section id="concept-1" class="concept-board" style="border-color:var(--neon-green);">
+    <div class="concept-header-strip">
+      <div>
+        <span class="concept-tag" style="background:rgba(57,255,20,0.18);color:var(--neon-green);border:1px solid var(--neon-green);">CONCEPT ART #1</span>
+        <strong style="font-family:var(--font-display);font-size:1.22rem;margin-left:10px;">“3D Flip-Book Showcase Banner” on Glitch’s Main Hub</strong>
+      </div>
+      <span style="font-size:0.82rem;color:var(--text-muted);">Lives Right Below the Crew Turntable • Interactive Front/Back Cover Flip • Direct $6.99 Amazon CTA</span>
+    </div>
+
+    <div class="concept-body">
+      <div style="background:radial-gradient(circle at 22% 50%, rgba(192,66,255,0.28), transparent 55%), radial-gradient(circle at 82% 50%, rgba(57,255,20,0.2), transparent 55%), linear-gradient(135deg, #17122b 0%, #101626 55%, #132019 100%); border:2.5px solid var(--neon-green); border-radius:24px; padding:28px 34px; display:grid; grid-template-columns:0.9fr 1.1fr; align-items:center; gap:32px; box-shadow:0 20px 55px rgba(0,0,0,0.65), 0 0 32px rgba(57,255,20,0.18);">
+        <!-- Left: 3D Front + Back Cover Stage -->
+        <div class="book-3d-stage">
+          <img src="assets/coloring_book_cover.jpg" alt="Nerdy Misfits Coloring Book Cover" class="book-3d-front" />
+          <div style="display:flex;flex-direction:column;align-items:center;gap:8px;">
+            <img src="assets/coloring_book_back.jpg" alt="Back Cover" class="book-3d-back" />
+            <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--neon-cyan);background:rgba(0,229,255,0.12);border:1px solid rgba(0,229,255,0.4);padding:3px 10px;border-radius:99px;">🔄 Click to Flip Cover</span>
+          </div>
+        </div>
+
+        <!-- Right: Copy, Highlights & Amazon CTA -->
+        <div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">
+            <span style="background:var(--neon-green);color:#050805;font-family:var(--font-mono);font-size:0.75rem;font-weight:900;padding:4px 12px;border-radius:99px;">🖍️ NEW OFFICIAL RELEASE!</span>
+            <span style="background:rgba(255,153,0,0.18);color:#ffbe2e;border:1px solid #ff9900;font-family:var(--font-mono);font-size:0.75rem;font-weight:800;padding:4px 12px;border-radius:99px;">📦 AVAILABLE ON AMAZON • $6.99</span>
+          </div>
+
+          <h2 style="font-family:var(--font-display);font-size:2.05rem;font-weight:900;line-height:1.12;margin-bottom:10px;">
+            The Official <span style="color:var(--neon-green);">Nerdy Misfits</span> Coloring Book!
+          </h2>
+
+          <p style="font-size:0.94rem;color:#cbd5e1;line-height:1.55;margin-bottom:16px;">
+            Bring the whole Misfits crew to life with color! Packed with <strong>20 whimsical full-page illustrations</strong> filled with magical friends, articulated dragons, cozy reading nooks, enchanted forests, and tabletop gaming adventures.
+          </p>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:9px;margin-bottom:20px;">
+            <div class="feat-chip">🐉 <strong>20 Fantasy Scenes</strong> — Dragons, beasts &amp; forests</div>
+            <div class="feat-chip">🎨 <strong>All 7 Misfits</strong> — Glitch, Crit, Booksy, Inky &amp; crew</div>
+            <div class="feat-chip">📚 <strong>Cozy &amp; All-Ages</strong> — Kids, teens &amp; adult colorists</div>
+            <div class="feat-chip">⚡ <strong>Only $6.99</strong> — Ships fast with Amazon Prime</div>
+          </div>
+
+          <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+            <a href="https://a.co/d/06aS3bZN" target="_blank" rel="noopener" class="amz-btn">
+              <span>🛒 Grab Yours on Amazon ($6.99) ↗</span>
+            </a>
+            <span class="neon-sec-btn">👀 Peek Back Cover &amp; Details</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       CONCEPT 2: BOOKSY x INKY CO-HOSTED SPOTLIGHT + LIVE SEARCH RESULT
+       ==================================================================== -->
+  <section id="concept-2" class="concept-board" style="border-color:var(--pixel-purple);">
+    <div class="concept-header-strip">
+      <div>
+        <span class="concept-tag" style="background:rgba(192,66,255,0.2);color:#e59eff;border:1px solid var(--pixel-purple);">CONCEPT ART #2</span>
+        <strong style="font-family:var(--font-display);font-size:1.22rem;margin-left:10px;">“Booksy × Inky Official Book Pick” in Booksy's Nook, Inky's Studio &amp; Search</strong>
+      </div>
+      <span style="font-size:0.82rem;color:var(--text-muted);">Co-Hosted by Your Bookworm + Artist • Also Appears in Top Search Bar</span>
+    </div>
+
+    <div class="concept-body">
+      <div style="display:grid;grid-template-columns:1.35fr 0.65fr;gap:22px;align-items:stretch;">
+        <!-- Left: Booksy x Inky Banner Card -->
+        <div style="background:linear-gradient(145deg,#1d1433 0%,#11192c 100%);border:2px solid var(--pixel-purple);border-radius:22px;padding:22px;display:grid;grid-template-columns:auto 165px 1fr auto;align-items:center;gap:16px;">
+          <div style="text-align:center;">
+            <img src="assets/crew_booksy.png?v=3" alt="Booksy" style="height:115px;object-fit:contain;filter:drop-shadow(0 6px 14px rgba(0,0,0,0.6));" />
+            <div style="font-family:'Berkshire Swash',cursive;color:#e59eff;font-size:0.95rem;">Booksy</div>
+          </div>
+
+          <img src="assets/coloring_book_cover.jpg" alt="Coloring Book" style="width:155px;border-radius:12px;border:2px solid var(--neon-green);box-shadow:0 12px 30px rgba(0,0,0,0.7);" />
+
+          <div>
+            <span style="font-family:var(--font-mono);font-size:0.7rem;color:var(--neon-cyan);font-weight:800;">📚🎨 BOOKSY × INKY COLLABORATION</span>
+            <h3 style="font-family:var(--font-display);font-size:1.45rem;font-weight:900;margin:4px 0 6px;">Nerdy Misfits Coloring Book</h3>
+            <p style="font-size:0.82rem;color:#cbd5e1;line-height:1.45;margin-bottom:12px;">
+              “Cozy reading spots, enchanted forests, and 20 hand-crafted Misfit scenes waiting for your markers &amp; colored pencils!”
+            </p>
+            <a href="https://a.co/d/06aS3bZN" target="_blank" rel="noopener" class="amz-btn" style="padding:9px 18px;font-size:0.84rem;">
+              <span>🖍️ Buy on Amazon — $6.99 ↗</span>
+            </a>
+          </div>
+
+          <div style="text-align:center;">
+            <img src="assets/crew_inky.png?v=3" alt="Inky" style="height:115px;object-fit:contain;filter:drop-shadow(0 6px 14px rgba(0,0,0,0.6));" />
+            <div style="font-family:'Permanent Marker',cursive;color:var(--neon-cyan);font-size:0.95rem;">Inky</div>
+          </div>
+        </div>
+
+        <!-- Right: Search Dropdown Preview -->
+        <div style="background:#131726;border:2px solid rgba(0,229,255,0.4);border-radius:22px;padding:18px;display:flex;flex-direction:column;justify-content:center;">
+          <div style="font-family:var(--font-mono);font-size:0.72rem;color:var(--neon-green);font-weight:800;margin-bottom:8px;">🔍 INSTANT CATALOG SEARCH INTEGRATION</div>
+          <div style="background:#0a0d16;border:1.5px solid var(--neon-green);border-radius:99px;padding:9px 14px;font-size:0.84rem;color:#fff;margin-bottom:10px;">
+            🔎 coloring book
+          </div>
+          <div style="background:#0f1320;border:1.5px solid rgba(255,153,0,0.6);border-radius:14px;padding:10px 12px;display:flex;align-items:center;gap:12px;">
+            <img src="assets/coloring_book_cover.jpg" alt="Cover" style="width:48px;height:62px;object-fit:cover;border-radius:6px;border:1px solid var(--neon-green);" />
+            <div style="flex:1;">
+              <strong style="font-size:0.86rem;display:block;color:#fff;">🖍️ Nerdy Misfits Coloring Book</strong>
+              <span style="font-size:0.73rem;color:#ffbe2e;">20 Fantasy Illustrations • Amazon Prime</span>
+            </div>
+            <strong style="font-family:var(--font-mono);color:var(--neon-green);font-size:0.9rem;">$6.99 ↗</strong>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       CONCEPT 3: TOP HEADER "🖍️ COLORING BOOK" PILL + QUICK-PEEK MODAL
+       ==================================================================== -->
+  <section id="concept-3" class="concept-board" style="border-color:#ff9900;">
+    <div class="concept-header-strip">
+      <div>
+        <span class="concept-tag" style="background:rgba(255,153,0,0.18);color:#ffbe2e;border:1px solid #ff9900;">CONCEPT ART #3</span>
+        <strong style="font-family:var(--font-display);font-size:1.22rem;margin-left:10px;">Top Header “🖍️ Coloring Book!” Pill + Popup Preview Modal</strong>
+      </div>
+      <span style="font-size:0.82rem;color:var(--text-muted);">Always Visible Across Every Tab Right Next to “🎂 Cake?”</span>
+    </div>
+
+    <div class="concept-body">
+      <!-- Simulated Site Header Row -->
+      <div style="background:#090b12;border:1.5px solid rgba(57,255,20,0.35);border-radius:16px;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <img src="assets/official_logo.png" alt="Logo" style="height:42px;background:#000;padding:3px 7px;border-radius:8px;border:1.5px solid var(--neon-green);" />
+          <strong style="font-family:var(--font-display);color:var(--neon-green);font-size:0.92rem;">THERE'S ONE IN ALL OF US!</strong>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;">
+          <!-- NEW PILL -->
+          <span style="background:linear-gradient(90deg,rgba(192,66,255,0.28),rgba(255,153,0,0.28));border:2px solid #ffbe2e;color:#fff;font-family:var(--font-display);font-weight:900;font-size:0.82rem;padding:7px 15px;border-radius:99px;box-shadow:0 0 18px rgba(255,190,46,0.5);">
+            🖍️ Coloring Book! <span style="background:#ff9900;color:#000;padding:1px 6px;border-radius:99px;font-size:0.68rem;margin-left:4px;">NEW</span>
+          </span>
+          <span style="background:rgba(255,159,28,0.14);border:1.5px solid #ff9f1c;color:#ffc168;font-weight:800;font-size:0.8rem;padding:7px 14px;border-radius:99px;">🎂 Cake?</span>
+          <span style="background:var(--neon-green);color:#050805;font-weight:900;font-size:0.82rem;padding:7px 15px;border-radius:99px;">🎒 My Stash (0)</span>
+        </div>
+      </div>
+
+      <!-- Simulated Quick-Peek Popup Modal -->
+      <div style="max-width:860px;margin:0 auto;background:linear-gradient(155deg,#191e33 0%,#0f1320 100%);border:2.5px solid #ffbe2e;border-radius:22px;padding:22px 26px;display:grid;grid-template-columns:auto 1fr;gap:24px;align-items:center;box-shadow:0 24px 60px rgba(0,0,0,0.8), 0 0 30px rgba(255,190,46,0.2);">
+        <div style="display:flex;gap:10px;align-items:center;">
+          <img src="assets/coloring_book_cover.jpg" alt="Front" style="width:138px;border-radius:10px;border:2px solid var(--neon-green);" />
+          <img src="assets/coloring_book_back.jpg" alt="Back" style="width:124px;border-radius:10px;border:1.5px solid rgba(255,255,255,0.25);" />
+        </div>
+        <div>
+          <span style="font-family:var(--font-mono);font-size:0.72rem;color:#ffbe2e;font-weight:800;">✨ OFFICIAL NERDY MISFITS MERCH • $6.99 ON AMAZON</span>
+          <h3 style="font-family:var(--font-display);font-size:1.5rem;font-weight:900;margin:4px 0 8px;">Color All 7 Misfits, Dragons &amp; Magical Realms!</h3>
+          <p style="font-size:0.84rem;color:#cbd5e1;line-height:1.48;margin-bottom:14px;">
+            20 whimsical illustrations featuring cozy reading nooks, enchanted forests, tabletop adventures, and our entire Misfit crew.
+          </p>
+          <a href="https://a.co/d/06aS3bZN" target="_blank" rel="noopener" class="amz-btn" style="padding:10px 20px;font-size:0.88rem;">
+            <span>🛒 Order on Amazon ($6.99) ↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       CONCEPT 4: INTERACTIVE "COLOR-A-MISFIT" BROWSER MINI-ACTIVITY
+       ==================================================================== -->
+  <section id="concept-4" class="concept-board" style="border-color:var(--neon-cyan);">
+    <div class="concept-header-strip">
+      <div>
+        <span class="concept-tag" style="background:rgba(0,229,255,0.18);color:var(--neon-cyan);border:1px solid var(--neon-cyan);">CONCEPT ART #4</span>
+        <strong style="font-family:var(--font-display);font-size:1.22rem;margin-left:10px;">Interactive “Color-a-Misfit” Digital Coloring Sampler + Amazon CTA</strong>
+      </div>
+      <span style="font-size:0.82rem;color:var(--text-muted);">Visitors Test Neon Markers Right on the Site • Drives Kids &amp; Parents to Buy the Full 20-Page Book!</span>
+    </div>
+
+    <div class="concept-body">
+      <div style="display:grid;grid-template-columns:0.32fr 0.88fr 0.8fr;gap:20px;align-items:center;background:#131829;border:2px solid rgba(0,229,255,0.4);border-radius:22px;padding:22px;">
+        <!-- Marker Palette -->
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <strong style="font-family:var(--font-mono);font-size:0.74rem;color:var(--neon-cyan);">🖍️ PICK A NEON MARKER</strong>
+          <div style="display:flex;align-items:center;gap:8px;background:rgba(57,255,20,0.16);border:2px solid var(--neon-green);padding:8px 12px;border-radius:99px;font-size:0.8rem;font-weight:800;"><span style="width:16px;height:16px;border-radius:50%;background:#39ff14;display:inline-block;"></span>Glitch Lime</div>
+          <div style="display:flex;align-items:center;gap:8px;background:#0c101c;border:1px solid rgba(255,255,255,0.15);padding:8px 12px;border-radius:99px;font-size:0.8rem;font-weight:700;"><span style="width:16px;height:16px;border-radius:50%;background:#ff00a8;display:inline-block;"></span>Fokal Berry Pink</div>
+          <div style="display:flex;align-items:center;gap:8px;background:#0c101c;border:1px solid rgba(255,255,255,0.15);padding:8px 12px;border-radius:99px;font-size:0.8rem;font-weight:700;"><span style="width:16px;height:16px;border-radius:50%;background:#00e5ff;display:inline-block;"></span>Inky Sky Cyan</div>
+          <div style="display:flex;align-items:center;gap:8px;background:#0c101c;border:1px solid rgba(255,255,255,0.15);padding:8px 12px;border-radius:99px;font-size:0.8rem;font-weight:700;"><span style="width:16px;height:16px;border-radius:50%;background:#c042ff;display:inline-block;"></span>Pixel Grape</div>
+          <div style="display:flex;align-items:center;gap:8px;background:#0c101c;border:1px solid rgba(255,255,255,0.15);padding:8px 12px;border-radius:99px;font-size:0.8rem;font-weight:700;"><span style="width:16px;height:16px;border-radius:50%;background:#ffbe2e;display:inline-block;"></span>Dragonfire Gold</div>
+        </div>
+
+        <!-- Sample Coloring Canvas -->
+        <div style="background:#ffffff;border-radius:18px;padding:16px;text-align:center;border:4px solid var(--neon-cyan);box-shadow:0 14px 35px rgba(0,0,0,0.6);">
+          <div style="font-family:var(--font-mono);font-size:0.72rem;color:#334155;font-weight:800;margin-bottom:6px;">SAMPLE DIGITAL PAGE — TAP &amp; PAINT!</div>
+          <img src="assets/coloring_sample_crit.png" alt="Sample Coloring Sketch" style="height:195px;object-fit:contain;" />
+        </div>
+
+        <!-- Book Upsell Card -->
+        <div style="background:linear-gradient(155deg,#1d1632 0%,#101422 100%);border:2px solid #ffbe2e;border-radius:18px;padding:18px;text-align:center;">
+          <img src="assets/coloring_book_cover.jpg" alt="Coloring Book" style="width:108px;border-radius:8px;border:2px solid var(--neon-green);margin-bottom:10px;" />
+          <h4 style="font-family:var(--font-display);font-size:1.18rem;font-weight:900;margin-bottom:6px;">Want All 20 Full Pages in Print?</h4>
+          <p style="font-size:0.78rem;color:#cbd5e1;line-height:1.42;margin-bottom:12px;">
+            Grab the paperback <strong>Nerdy Misfits Coloring Book</strong> on Amazon for cozy offline coloring!
+          </p>
+          <a href="https://a.co/d/06aS3bZN" target="_blank" rel="noopener" class="amz-btn" style="padding:10px 18px;font-size:0.84rem;width:100%;justify-content:center;">
+            <span>🛒 Get Full Book ($6.99) ↗</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ====================================================================
+       CONCEPT 5: MY STASH CART DRAWER GIFT PAIRING CARD
+       ==================================================================== -->
+  <section id="concept-5" class="concept-board" style="border-color:var(--neon-pink);">
+    <div class="concept-header-strip">
+      <div>
+        <span class="concept-tag" style="background:rgba(255,0,168,0.18);color:#ff7be2;border:1px solid var(--neon-pink);">CONCEPT ART #5</span>
+        <strong style="font-family:var(--font-display);font-size:1.22rem;margin-left:10px;">“My Stash” Cart Drawer Gift Pairing Card</strong>
+      </div>
+      <span style="font-size:0.82rem;color:var(--text-muted);">Subtle Bonus Add-On Inside the Shopping Cart Drawer (“Pair a Dragon + Coloring Book!”)</span>
+    </div>
+
+    <div class="concept-body">
+      <div style="max-width:540px;margin:0 auto;background:#111524;border:2px solid rgba(255,255,255,0.18);border-radius:22px;padding:20px;box-shadow:0 20px 50px rgba(0,0,0,0.75);">
+        <div style="display:flex;justify-content:space-between;align-items:center;padding-bottom:12px;border-bottom:1px solid rgba(255,255,255,0.1);margin-bottom:14px;">
+          <strong style="font-family:var(--font-display);font-size:1.15rem;">🎒 My Misfit Stash (1 Item)</strong>
+          <span style="font-family:var(--font-mono);font-size:0.78rem;color:var(--neon-green);">🐉 Free Hatchling at $25+</span>
+        </div>
+
+        <!-- Sample Cart Item -->
+        <div style="background:#181d31;border-radius:12px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;font-size:0.85rem;">
+          <span>🐉 Crystal Winged Articulated Dragon × 1</span>
+          <strong style="color:var(--neon-green);font-family:var(--font-mono);">$20.00</strong>
+        </div>
+
+        <!-- Coloring Book Gift Pairing Box -->
+        <div style="background:linear-gradient(135deg,rgba(192,66,255,0.2),rgba(255,153,0,0.16));border:2px solid #ffbe2e;border-radius:16px;padding:12px 14px;display:flex;align-items:center;gap:14px;">
+          <img src="assets/coloring_book_cover.jpg" alt="Coloring Book" style="width:62px;height:82px;object-fit:cover;border-radius:8px;border:1.5px solid var(--neon-green);flex-shrink:0;" />
+          <div style="flex:1;">
+            <span style="font-family:var(--font-mono);font-size:0.68rem;color:#ffbe2e;font-weight:900;">🎁 PERFECT GIFT PAIRING • $6.99 ON AMAZON</span>
+            <strong style="display:block;font-size:0.9rem;color:#fff;margin:2px 0;">Official Nerdy Misfits Coloring Book!</strong>
+            <span style="font-size:0.75rem;color:#cbd5e1;display:block;margin-bottom:7px;">20 dragon, reading &amp; gaming scenes — pairs great with any 3D print!</span>
+            <a href="https://a.co/d/06aS3bZN" target="_blank" rel="noopener" style="display:inline-block;background:#ff9900;color:#050805;font-weight:900;font-size:0.75rem;padding:5px 12px;border-radius:99px;text-decoration:none;">
+              🛒 View on Amazon ($6.99) ↗
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <script>
+    (function() {
+      const only = new URLSearchParams(window.location.search).get('only');
+      if (only) {
+        const nav = document.querySelector('.top-nav');
+        if (nav) nav.style.display = 'none';
+        document.body.style.padding = '16px 20px';
+        document.querySelectorAll('.concept-board').forEach(el => {
+          if (el.id !== 'concept-' + only) {
+            el.style.display = 'none';
+          } else {
+            el.style.margin = '0 auto';
+          }
+        });
+      }
+    })();
+  </script>
+</body>
+</html>
