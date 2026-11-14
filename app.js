@@ -342,6 +342,11 @@
     document.getElementById('hostBannerTitle').textContent = profile.bannerTitle;
     document.getElementById('hostBannerSpeech').textContent = profile.quote;
 
+    const booksyBookWrap = document.getElementById('booksyColoringBookWrap');
+    if (booksyBookWrap) {
+      booksyBookWrap.style.display = crewKey === 'booksy' ? 'block' : 'none';
+    }
+
     renderGremlinSubcatPills(profile);
     renderActiveGremlinProducts();
   }
@@ -546,20 +551,37 @@
     }
 
     const q = val.toLowerCase();
+    const bookTerms = ['color', 'coloring', 'book', 'booksy', 'inky', 'amazon', 'page', 'pages', 'draw'];
+    const showColoringBook = bookTerms.some((t) => t.includes(q) || q.includes(t));
+    const coloringBookHtml = showColoringBook
+      ? `
+        <a href="https://a.co/d/06aS3bZN" target="_blank" rel="noopener" class="search-result-item" style="text-decoration:none;color:inherit;border-bottom:1px solid rgba(255,190,46,0.3);background:rgba(192,66,255,0.12);" onclick="document.getElementById('searchDropdown').classList.remove('active');if(window.trackAnalyticsEvent)window.trackAnalyticsEvent('coloring_book_click','search','Nerdy Misfits Coloring Book');">
+          <img class="search-result-thumb" src="assets/coloring_book_cover.jpg" alt="Nerdy Misfits Coloring Book" />
+          <div style="flex:1;min-width:0;">
+            <div style="font-weight:800;font-size:0.88rem;color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">🖍️ Nerdy Misfits Coloring Book</div>
+            <div style="font-size:0.74rem;color:#ffbe2e;">20 Exclusive Pages • Official Amazon Release</div>
+          </div>
+          <strong style="font-family:var(--font-mono);color:var(--glitch-green);font-size:0.88rem;">$6.99 ↗</strong>
+        </a>
+      `
+      : '';
+
     const matches = allProducts
       .filter((p) => `${p.name} ${p.primaryCategoryName} ${p.smartDesc}`.toLowerCase().includes(q))
       .slice(0, 8);
 
-    if (matches.length === 0) {
+    if (matches.length === 0 && !showColoringBook) {
       searchDropdown.innerHTML = `
         <div style="padding:12px 14px;font-size:0.85rem;color:var(--ink-secondary);">
           No match for "<strong>${escapeHtml(val)}</strong>" — <a href="javascript:void(0)" onclick="switchCrewTab('inky');document.getElementById('searchDropdown').classList.remove('active');" style="color:var(--inky-blue);font-weight:700;text-decoration:underline;">ask Inky to custom print it!</a>
         </div>
       `;
     } else {
-      searchDropdown.innerHTML = matches
-        .map(
-          (m) => `
+      searchDropdown.innerHTML =
+        coloringBookHtml +
+        matches
+          .map(
+            (m) => `
           <div class="search-result-item" onclick="openQuickView('${m.id}');document.getElementById('searchDropdown').classList.remove('active');">
             <img class="search-result-thumb" src="${m.image || 'assets/circle_logo.png'}" alt="${escapeHtml(m.name)}" />
             <div style="flex:1;min-width:0;">
@@ -569,8 +591,8 @@
             <strong style="font-family:var(--font-mono);color:var(--glitch-green);font-size:0.88rem;">${m.priceFormatted}</strong>
           </div>
         `
-        )
-        .join('');
+          )
+          .join('');
     }
     searchDropdown.classList.add('active');
   });
