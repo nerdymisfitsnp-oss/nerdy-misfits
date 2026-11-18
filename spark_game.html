@@ -1,0 +1,3716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <title>SPARK'S ARROW STORM — Nerdy Misfits 3D Mobile Arcade</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Fredoka:wght@600;700&family=JetBrains+Mono:wght@700;800&family=Plus+Jakarta+Sans:wght@600;700;800&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --neon-green: #39ff14;
+      --neon-lime: #a3e635;
+      --neon-pink: #ff2a85;
+      --neon-cyan: #00f0ff;
+      --neon-amber: #ff9f1c;
+      --neon-purple: #c042ff;
+      --bg-dark: #06070c;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      user-select: none;
+      -webkit-user-select: none;
+      -webkit-touch-callout: none;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: radial-gradient(circle at 50% 25%, #161029 0%, #07080e 70%);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Desktop Phone Bezel Wrapper (auto-fills 100% on actual mobile screens) */
+    .phone-stage-wrap {
+      position: relative;
+      width: 100vw;
+      height: 100dvh;
+      max-width: 440px;
+      max-height: 900px;
+      background: #080912;
+      border-radius: 38px;
+      border: 3px solid rgba(163, 230, 53, 0.55);
+      box-shadow:
+        0 26px 80px rgba(0, 0, 0, 0.85),
+        0 0 42px rgba(57, 255, 20, 0.22),
+        inset 0 0 22px rgba(0, 0, 0, 0.8);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      touch-action: none;
+    }
+    @media (max-width: 520px) {
+      .phone-stage-wrap {
+        max-width: 100vw;
+        max-height: 100dvh;
+        border-radius: 0;
+        border: none;
+      }
+    }
+
+    .phone-notch {
+      position: absolute;
+      top: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 18px;
+      background: #04050a;
+      border-radius: 99px;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      z-index: 30;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .phone-notch::after {
+      content: '';
+      width: 36px;
+      height: 4px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.16);
+    }
+
+    #gameCanvasContainer {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 1;
+      cursor: crosshair;
+    }
+    #gameCanvasContainer canvas {
+      width: 100% !important;
+      height: 100% !important;
+      display: block;
+    }
+
+    /* Top Arcade HUD Overlay */
+    .hud-top {
+      position: relative;
+      z-index: 15;
+      padding: 32px 14px 10px;
+      background: linear-gradient(180deg, rgba(6, 8, 15, 0.9) 0%, rgba(6, 8, 15, 0.45) 75%, transparent 100%);
+      pointer-events: none;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .hud-row-1 {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .brand-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      background: rgba(14, 17, 28, 0.85);
+      border: 1.5px solid var(--neon-green);
+      border-radius: 99px;
+      padding: 4px 11px 4px 5px;
+      box-shadow: 0 0 14px rgba(57, 255, 20, 0.25);
+    }
+    .brand-chip img {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      object-fit: contain;
+    }
+    .brand-chip span {
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      font-size: 0.72rem;
+      letter-spacing: 0.05em;
+      color: var(--neon-green);
+    }
+
+    .hud-controls-right {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      pointer-events: auto;
+    }
+    .hud-icon-btn {
+      background: rgba(15, 19, 32, 0.85);
+      border: 1.5px solid rgba(255, 255, 255, 0.22);
+      color: #fff;
+      width: 34px;
+      height: 34px;
+      border-radius: 10px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .hud-icon-btn:hover {
+      border-color: var(--neon-green);
+      transform: scale(1.06);
+    }
+
+    .hud-stats-bar {
+      display: grid;
+      grid-template-columns: 1.1fr 0.95fr 0.95fr;
+      gap: 7px;
+    }
+    .stat-box {
+      background: rgba(11, 14, 24, 0.82);
+      border: 1.5px solid rgba(163, 230, 53, 0.38);
+      border-radius: 12px;
+      padding: 5px 10px;
+      backdrop-filter: blur(6px);
+    }
+    .stat-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.6rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      display: block;
+    }
+    .stat-val {
+      font-family: 'JetBrains Mono', monospace;
+      font-weight: 800;
+      font-size: 1.02rem;
+      color: #fff;
+    }
+    .stat-val.lime { color: var(--neon-green); }
+    .stat-val.amber { color: var(--neon-amber); }
+    .stat-val.cyan { color: var(--neon-cyan); }
+
+    /* Level Progress & Checkpoint Bar */
+    .level-progress-wrap {
+      background: rgba(11, 14, 24, 0.88);
+      border: 1.5px solid rgba(57, 255, 20, 0.45);
+      border-radius: 10px;
+      padding: 4px 9px;
+    }
+    .level-progress-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.62rem;
+      font-weight: 800;
+      color: #d9f99d;
+      margin-bottom: 3px;
+    }
+    .level-progress-track {
+      width: 100%;
+      height: 7px;
+      background: #090d16;
+      border-radius: 99px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .level-progress-fill {
+      width: 0%;
+      height: 100%;
+      background: linear-gradient(90deg, #39ff14, #00f0ff);
+      transition: width 0.2s ease;
+    }
+
+    /* Full-Screen Checkpoint Reached / Level Banner */
+    .checkpoint-banner {
+      position: absolute;
+      top: 42%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0.8);
+      z-index: 20;
+      background: linear-gradient(135deg, rgba(10, 18, 16, 0.95) 0%, rgba(18, 12, 34, 0.95) 100%);
+      border: 2.5px solid var(--neon-green);
+      border-radius: 22px;
+      padding: 14px 22px;
+      text-align: center;
+      box-shadow: 0 0 45px rgba(57, 255, 20, 0.55), 0 16px 40px rgba(0, 0, 0, 0.85);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.28s ease, transform 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      width: 88%;
+      max-width: 360px;
+    }
+    .checkpoint-banner.show {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+    .cp-eyebrow {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--neon-cyan);
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+    .cp-title {
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      font-size: 1.55rem;
+      color: var(--neon-green);
+      text-shadow: 0 0 18px rgba(57, 255, 20, 0.6);
+      margin: 3px 0;
+    }
+    .cp-sub {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #e2e8f0;
+    }
+
+    /* Checkpoint Selector Pills on Start Screen */
+    .checkpoint-select-box {
+      width: 100%;
+      max-width: 360px;
+      background: rgba(12, 16, 28, 0.9);
+      border: 1.5px solid rgba(0, 240, 255, 0.45);
+      border-radius: 16px;
+      padding: 9px 12px;
+      margin-bottom: 14px;
+    }
+    .cp-select-lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.65rem;
+      font-weight: 800;
+      color: var(--neon-cyan);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .cp-pills-row {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .cp-lvl-btn {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 5px 10px;
+      border-radius: 9px;
+      border: 1.5px solid rgba(255, 255, 255, 0.2);
+      background: rgba(20, 25, 42, 0.9);
+      color: #cbd5e1;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .cp-lvl-btn.active {
+      border-color: var(--neon-green);
+      background: rgba(57, 255, 20, 0.22);
+      color: var(--neon-green);
+      box-shadow: 0 0 12px rgba(57, 255, 20, 0.35);
+    }
+    .cp-lvl-btn.locked {
+      opacity: 0.38;
+      cursor: not-allowed;
+    }
+
+    /* Boss HP Bar (shown when Siege Boss enters) */
+    .boss-bar-wrap {
+      display: none;
+      background: rgba(18, 10, 18, 0.92);
+      border: 1.5px solid #ff2a55;
+      border-radius: 10px;
+      padding: 5px 9px;
+      box-shadow: 0 0 18px rgba(255, 42, 85, 0.4);
+    }
+    .boss-bar-wrap.active {
+      display: block;
+    }
+    .boss-bar-header {
+      display: flex;
+      justify-content: space-between;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.64rem;
+      font-weight: 800;
+      color: #fda4af;
+      margin-bottom: 3px;
+    }
+    .boss-bar-track {
+      width: 100%;
+      height: 8px;
+      background: #1f121d;
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .boss-bar-fill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #ff2a55, #ff9f1c);
+      transition: width 0.12s ease;
+    }
+
+    /* Active Power-Up Timers Strip */
+    .active-powerups-strip {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      min-height: 24px;
+    }
+    .pw-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 9px;
+      border-radius: 99px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      font-weight: 800;
+      background: rgba(12, 16, 28, 0.9);
+      border: 1.5px solid var(--neon-green);
+      box-shadow: 0 0 12px rgba(57, 255, 20, 0.35);
+      animation: pulsePill 0.9s infinite alternate;
+    }
+    @keyframes pulsePill {
+      from { transform: scale(1); }
+      to { transform: scale(1.04); }
+    }
+
+    /* Crit's Live DM Callout Toast */
+    .crit-toast {
+      position: absolute;
+      top: 162px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-10px);
+      z-index: 16;
+      background: rgba(14, 18, 30, 0.92);
+      border: 1.5px solid var(--neon-lime);
+      border-radius: 14px;
+      padding: 6px 12px 6px 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.7), 0 0 18px rgba(163, 230, 53, 0.3);
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.25s ease, transform 0.25s ease;
+      white-space: nowrap;
+    }
+    .crit-toast.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+    .crit-toast img {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1.5px solid var(--neon-lime);
+      object-fit: cover;
+    }
+    .crit-toast-text {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #ecfccb;
+    }
+
+    /* Floating Score / Graze Popups Container */
+    #floatingPopups {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 18;
+      overflow: hidden;
+    }
+    .float-pop {
+      position: absolute;
+      transform: translate(-50%, -50%);
+      font-family: 'Fredoka', sans-serif;
+      font-weight: 800;
+      font-size: 0.95rem;
+      text-shadow: 0 2px 6px rgba(0,0,0,0.95);
+      pointer-events: none;
+      animation: floatUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+    @keyframes floatUpFade {
+      0% { opacity: 1; transform: translate(-50%, -50%) scale(0.7); }
+      35% { opacity: 1; transform: translate(-50%, -95%) scale(1.14); }
+      100% { opacity: 0; transform: translate(-50%, -145%) scale(0.95); }
+    }
+
+    /* Bottom Touch Hint Bar */
+    .hud-bottom {
+      position: absolute;
+      bottom: 12px;
+      left: 14px;
+      right: 14px;
+      z-index: 15;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.66rem;
+      color: rgba(226, 232, 240, 0.78);
+      background: rgba(8, 10, 18, 0.74);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 6px 12px;
+      border-radius: 99px;
+      backdrop-filter: blur(4px);
+    }
+
+    /* Start & Game Over Modal Overlays */
+    .overlay-screen {
+      position: absolute;
+      inset: 0;
+      z-index: 25;
+      background: radial-gradient(circle at 50% 30%, rgba(20, 26, 46, 0.86) 0%, rgba(6, 8, 14, 0.95) 85%);
+      backdrop-filter: blur(8px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px;
+      text-align: center;
+      transition: opacity 0.25s ease;
+    }
+    .overlay-screen.hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(57, 255, 20, 0.14);
+      border: 1.5px solid var(--neon-green);
+      color: var(--neon-green);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 99px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .game-title {
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      font-size: 2.05rem;
+      line-height: 1.04;
+      color: #fff;
+      text-shadow: 0 0 24px rgba(57, 255, 20, 0.55), 0 4px 12px rgba(0, 0, 0, 0.9);
+      margin-bottom: 6px;
+    }
+    .game-title span {
+      color: var(--neon-green);
+      display: block;
+      font-size: 1.45rem;
+    }
+    .game-subtitle {
+      font-size: 0.83rem;
+      color: #cbd5e1;
+      max-width: 345px;
+      line-height: 1.45;
+      margin-bottom: 14px;
+    }
+
+    .powerups-legend {
+      width: 100%;
+      max-width: 360px;
+      background: rgba(12, 15, 26, 0.88);
+      border: 1.5px solid rgba(163, 230, 53, 0.35);
+      border-radius: 18px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      text-align: left;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.76rem;
+      line-height: 1.3;
+      color: #e2e8f0;
+    }
+    .legend-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+    }
+
+    .play-cta-btn {
+      width: 100%;
+      max-width: 320px;
+      padding: 15px 24px;
+      border-radius: 99px;
+      border: 2px solid #fff;
+      background: linear-gradient(135deg, #39ff14 0%, #84cc16 55%, #ff9f1c 100%);
+      color: #050805;
+      font-family: 'Fredoka', sans-serif;
+      font-size: 1.16rem;
+      font-weight: 800;
+      letter-spacing: 0.03em;
+      cursor: pointer;
+      box-shadow: 0 0 32px rgba(57, 255, 20, 0.55), 0 10px 24px rgba(0, 0, 0, 0.7);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+    .play-cta-btn:hover {
+      transform: translateY(-2px) scale(1.03);
+      box-shadow: 0 0 42px rgba(57, 255, 20, 0.8), 0 12px 28px rgba(0, 0, 0, 0.8);
+    }
+    .play-cta-btn:active {
+      transform: scale(0.98);
+    }
+
+    .gameover-banner {
+      background: rgba(239, 68, 68, 0.18);
+      border: 2px solid #ef4444;
+      color: #fca5a5;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 5px 14px;
+      border-radius: 99px;
+      margin-bottom: 8px;
+      letter-spacing: 0.08em;
+    }
+    .gameover-title {
+      font-family: 'Cinzel', serif;
+      font-weight: 900;
+      font-size: 2.35rem;
+      color: #ff4d6d;
+      text-shadow: 0 0 28px rgba(255, 42, 133, 0.75);
+      margin-bottom: 4px;
+    }
+    .score-summary-grid {
+      width: 100%;
+      max-width: 340px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin: 14px 0 20px;
+    }
+    .score-card {
+      background: rgba(14, 18, 30, 0.9);
+      border: 1.5px solid rgba(255, 255, 255, 0.16);
+      border-radius: 14px;
+      padding: 10px;
+    }
+    .score-card .lbl {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 0.64rem;
+      color: #94a3b8;
+      text-transform: uppercase;
+    }
+    .score-card .val {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.32rem;
+      font-weight: 800;
+      color: #fff;
+      margin-top: 2px;
+    }
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+</head>
+<body>
+
+  <div class="phone-stage-wrap" id="phoneStage">
+    <div class="phone-notch"></div>
+
+    <!-- 3D WebGL Viewport -->
+    <div id="gameCanvasContainer"></div>
+
+    <!-- Floating 3D-to-2D Combat Popups -->
+    <div id="floatingPopups"></div>
+
+    <!-- Top Arcade HUD -->
+    <div class="hud-top">
+      <div class="hud-row-1">
+        <div class="brand-chip">
+          <img src="assets/smiley_hub.png" alt="Nerdy Misfits" onerror="this.style.display='none'" />
+          <span>SPARK'S ARROW STORM 3D</span>
+        </div>
+        <div class="hud-controls-right">
+          <button type="button" class="hud-icon-btn" id="btnToggleMute" title="Toggle Sound">🔊</button>
+          <button type="button" class="hud-icon-btn" id="btnFullscreen" title="Fullscreen Mode">⛶</button>
+        </div>
+      </div>
+
+      <div class="hud-stats-bar">
+        <div class="stat-box">
+          <span class="stat-lbl">SCORE / HOARD</span>
+          <span class="stat-val lime" id="hudScore">0</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-lbl">LEVEL / CHECKPOINT</span>
+          <span class="stat-val amber" id="hudWave">LVL 1 🏁</span>
+        </div>
+        <div class="stat-box">
+          <span class="stat-lbl">BEST SCORE</span>
+          <span class="stat-val cyan" id="hudBest">0</span>
+        </div>
+      </div>
+
+      <!-- Level & Checkpoint Progress Bar -->
+      <div class="level-progress-wrap">
+        <div class="level-progress-header">
+          <span id="lvlTitleText">LVL 1: OUTER COURTYARD</span>
+          <span id="lvlGoalText">0 / 6 TO CHECKPOINT 🏁</span>
+        </div>
+        <div class="level-progress-track">
+          <div class="level-progress-fill" id="lvlProgressFill"></div>
+        </div>
+      </div>
+
+      <!-- Siege Boss Health Bar -->
+      <div class="boss-bar-wrap" id="bossBarWrap">
+        <div class="boss-bar-header">
+          <span id="bossNameText">👑 IRON BALLISTA WARLORD</span>
+          <span id="bossHpText">100%</span>
+        </div>
+        <div class="boss-bar-track">
+          <div class="boss-bar-fill" id="bossBarFill"></div>
+        </div>
+      </div>
+
+      <div class="active-powerups-strip" id="activePowerupsStrip"></div>
+    </div>
+
+    <!-- Crit's DM Callout Toast -->
+    <div class="crit-toast" id="critToast">
+      <img src="assets/avatar_crit.png" alt="Crit" onerror="this.src='assets/smiley_hub.png'" />
+      <div class="crit-toast-text" id="critToastText">🎲 CRIT: "Roast those archers before they draw their bows!"</div>
+    </div>
+
+    <!-- Center-Screen Level Cleared & Checkpoint Reached Banner -->
+    <div class="checkpoint-banner" id="checkpointBanner">
+      <div class="cp-eyebrow" id="cpBannerEyebrow">🏁 CHECKPOINT SAVED!</div>
+      <div class="cp-title" id="cpBannerTitle">LEVEL 2 UNLOCKED</div>
+      <div class="cp-sub" id="cpBannerSub">Crossbow Battlements • Difficulty Increased!</div>
+    </div>
+
+    <!-- Bottom Controls Bar -->
+    <div class="hud-bottom">
+      <span>👆 DRAG / MOUSE TO AIM &amp; FLY</span>
+      <span>🔥 ROAST ARCHERS • 1 ARROW = GAME OVER</span>
+    </div>
+
+    <!-- ==================================================================
+         START SCREEN OVERLAY
+         ================================================================== -->
+    <div class="overlay-screen" id="startOverlay">
+      <div class="hero-badge">🐉 NERDY MISFITS 3D MOBILE ARCADE</div>
+      <h1 class="game-title">
+        SPARK'S
+        <span>ARROW STORM 3D</span>
+      </h1>
+      <p class="game-subtitle">
+        Fly <strong>Spark the Mischievous Dragon</strong> across the dungeon bridge! Roast <strong>3D Archers, Crossbow Elites, Siege Ballistas &amp; Bosses</strong> before they shoot, grab D20 power-ups, and evade their arrows. <strong>One arrow hit = GAME OVER!</strong>
+      </p>
+
+      <div class="powerups-legend">
+        <div class="legend-item">
+          <div class="legend-icon" style="border-color:#ef4444;color:#ef4444;">🏹</div>
+          <div><strong style="color:#fca5a5;">Archers &amp; Siege Ballistas:</strong> Shoot them with fireballs to roast them &amp; drop loot before they fire arrows!</div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-icon" style="border-color:#39ff14;color:#39ff14;">🎲</div>
+          <div><strong style="color:#39ff14;">Nat-20 Crit D20:</strong> Unleashes <strong>3-Way Tri-Flame Spread</strong> + 2× Crit Score!</div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-icon" style="border-color:#ff9f1c;color:#ff9f1c;">🌶️</div>
+          <div><strong style="color:#ff9f1c;">Dragon Pepper Snack:</strong> <strong>Inferno Breath</strong> melts arrows right out of the sky!</div>
+        </div>
+        <div class="legend-item">
+          <div class="legend-icon" style="border-color:#00f0ff;color:#00f0ff;">🛡️</div>
+          <div><strong style="color:#00f0ff;">Arcane Ward Shield:</strong> Blocks <strong>1 fatal arrow hit</strong> &amp; blasts all nearby arrows!</div>
+        </div>
+      </div>
+
+      <!-- Checkpoint Level Selector -->
+      <div class="checkpoint-select-box">
+        <span class="cp-select-lbl">🏁 SELECT STARTING CHECKPOINT LEVEL:</span>
+        <div class="cp-pills-row" id="checkpointPillsRow"></div>
+      </div>
+
+      <button type="button" class="play-cta-btn" id="btnStartGame">
+        🔥 UNLEASH SPARK (START 3D)
+      </button>
+    </div>
+
+    <!-- ==================================================================
+         GAME OVER SCREEN OVERLAY
+         ================================================================== -->
+    <div class="overlay-screen hidden" id="gameOverOverlay">
+      <div class="gameover-banner" id="gameOverCauseBanner">🏹 STRUCK BY AN ARCHER'S ARROW!</div>
+      <h2 class="gameover-title">GAME OVER</h2>
+      <p class="game-subtitle" id="gameOverQuote">
+        Crit says: "Oof, rolled a Nat 1 on that dodge! Respawn right at your last Checkpoint and roast 'em, Spark!"
+      </p>
+
+      <div class="score-summary-grid">
+        <div class="score-card" style="border-color:rgba(57,255,20,0.45);">
+          <div class="lbl">FINAL SCORE</div>
+          <div class="val" style="color:var(--neon-green);" id="goFinalScore">0</div>
+        </div>
+        <div class="score-card" style="border-color:rgba(0,240,255,0.45);">
+          <div class="lbl">CHECKPOINT SAVED</div>
+          <div class="val" style="color:var(--neon-cyan);" id="goBestScore">LVL 1</div>
+        </div>
+        <div class="score-card">
+          <div class="lbl">ENEMIES ROASTED</div>
+          <div class="val" style="color:var(--neon-amber);" id="goEnemiesRoasted">0</div>
+        </div>
+        <div class="score-card">
+          <div class="lbl">POWER-UPS &amp; LOOT</div>
+          <div class="val" style="color:#f472b6;" id="goPowerups">0</div>
+        </div>
+      </div>
+
+      <button type="button" class="play-cta-btn" id="btnContinueCheckpoint" style="margin-bottom:10px;">
+        🏁 CONTINUE FROM CHECKPOINT (LVL 1)
+      </button>
+      <button type="button" class="play-cta-btn" id="btnRestartGame" style="background:rgba(20,25,40,0.92);color:#e2e8f0;border-color:rgba(255,255,255,0.3);box-shadow:none;padding:11px 20px;font-size:0.92rem;">
+        🔄 Restart Fresh from Level 1
+      </button>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // 1. WEBAUDIO ARCADE SOUND SYNTHESIZER & MUSIC ENGINE
+    // =========================================================================
+    class SoundEngine {
+      constructor() {
+        this.ctx = null;
+        this.muted = false;
+        this.bgm = new Audio('assets/still_alive.mp3');
+        this.bgm.loop = true;
+        this.bgm.volume = 0.22;
+      }
+      init() {
+        if (!this.ctx) {
+          const AudioCtx = window.AudioContext || window.webkitAudioContext;
+          if (AudioCtx) this.ctx = new AudioCtx();
+        }
+        if (this.ctx && this.ctx.state === 'suspended') {
+          this.ctx.resume();
+        }
+      }
+      playBgm() {
+        if (this.muted) return;
+        this.bgm.play().catch(() => {});
+      }
+      toggleMute() {
+        this.muted = !this.muted;
+        if (this.muted) this.bgm.pause();
+        else if (gameState === 'PLAYING') this.playBgm();
+        return this.muted;
+      }
+      tone(f0, f1, dur = 0.1, type = 'sine', vol = 0.15) {
+        if (this.muted || !this.ctx) return;
+        const now = this.ctx.currentTime;
+        const osc = this.ctx.createOscillator();
+        const gain = this.ctx.createGain();
+        osc.type = type;
+        osc.frequency.setValueAtTime(f0, now);
+        if (f1 !== f0) osc.frequency.exponentialRampToValueAtTime(Math.max(20, f1), now + dur);
+        gain.gain.setValueAtTime(vol, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + dur);
+        osc.connect(gain);
+        gain.connect(this.ctx.destination);
+        osc.start(now);
+        osc.stop(now + dur);
+      }
+      sfxFireball() {
+        this.tone(340, 120, 0.065, 'sawtooth', 0.06);
+      }
+      sfxHitEnemy() {
+        this.tone(520, 260, 0.055, 'triangle', 0.11);
+      }
+      sfxKillEnemy() {
+        this.tone(280, 95, 0.14, 'square', 0.15);
+        setTimeout(() => this.tone(587.33, 880, 0.09, 'triangle', 0.13), 40);
+      }
+      sfxBowRelease() {
+        this.tone(720, 210, 0.08, 'sine', 0.09);
+      }
+      sfxPowerup() {
+        [523.25, 659.25, 783.99, 1046.5].forEach((f, i) => {
+          setTimeout(() => this.tone(f, f * 1.04, 0.11, 'triangle', 0.16), i * 50);
+        });
+      }
+      sfxGem() {
+        this.tone(880, 1320, 0.09, 'sine', 0.13);
+      }
+      sfxGraze() {
+        this.tone(1200, 1760, 0.07, 'sine', 0.12);
+      }
+      sfxShieldBreak() {
+        this.tone(620, 90, 0.35, 'sawtooth', 0.25);
+      }
+      sfxBossAlert() {
+        [140, 110, 92].forEach((f, i) => {
+          setTimeout(() => this.tone(f, f * 0.92, 0.28, 'sawtooth', 0.24), i * 160);
+        });
+      }
+      sfxGameOver() {
+        [340, 290, 240, 140].forEach((f, i) => {
+          setTimeout(() => this.tone(f, f * 0.85, 0.24, 'sawtooth', 0.22), i * 115);
+        });
+      }
+    }
+    const sfx = new SoundEngine();
+
+    // =========================================================================
+    // 2. PROCEDURAL 3D DRAGON SCALE BUMP / NORMAL TEXTURE GENERATOR
+    // =========================================================================
+    function createDragonScaleBumpTexture() {
+      const c = document.createElement('canvas');
+      c.width = 256;
+      c.height = 256;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#404040';
+      ctx.fillRect(0, 0, 256, 256);
+
+      const rows = 12;
+      const cols = 12;
+      const rw = 256 / cols;
+      const rh = 256 / rows;
+      for (let r = -1; r <= rows; r++) {
+        for (let col = -1; col <= cols; col++) {
+          const x = col * rw + (r % 2 === 0 ? rw * 0.5 : 0);
+          const y = r * rh;
+          const grad = ctx.createRadialGradient(x, y - rh * 0.15, 2, x, y, rw * 0.65);
+          grad.addColorStop(0, '#ffffff');
+          grad.addColorStop(0.65, '#8a8a8a');
+          grad.addColorStop(1, '#181818');
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.arc(x, y, rw * 0.58, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      const tex = new THREE.CanvasTexture(c);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(4, 4);
+      return tex;
+    }
+
+    // =========================================================================
+    // 3. THREE.JS 3D SCENE, LIGHTING & ARTICULATED SPARK (HALF SIZE: 0.5x!)
+    // =========================================================================
+    const container = document.getElementById('gameCanvasContainer');
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x070810);
+    scene.fog = new THREE.FogExp2(0x070810, 0.017);
+
+    const camera = new THREE.PerspectiveCamera(42, container.clientWidth / container.clientHeight, 0.1, 140);
+    camera.position.set(0, 28.0, 11.8);
+    camera.lookAt(0, 0, -2.2);
+
+    const renderer = new THREE.WebGLRenderer({ antialias: true, powerPreference: 'high-performance' });
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+    renderer.shadowMap.enabled = true;
+    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.24;
+    container.appendChild(renderer.domElement);
+
+    const ambientLight = new THREE.AmbientLight(0x3a2f5c, 1.4);
+    scene.add(ambientLight);
+
+    const dirLight = new THREE.DirectionalLight(0xfff7ed, 1.85);
+    dirLight.position.set(12, 32, 16);
+    dirLight.castShadow = true;
+    dirLight.shadow.mapSize.width = 1024;
+    dirLight.shadow.mapSize.height = 1024;
+    dirLight.shadow.camera.near = 5;
+    dirLight.shadow.camera.far = 65;
+    const d = 16;
+    dirLight.shadow.camera.left = -d;
+    dirLight.shadow.camera.right = d;
+    dirLight.shadow.camera.top = d * 1.4;
+    dirLight.shadow.camera.bottom = -d * 1.4;
+    scene.add(dirLight);
+
+    const greenRimLight = new THREE.PointLight(0x39ff14, 2.2, 35);
+    greenRimLight.position.set(-10, 12, -6);
+    scene.add(greenRimLight);
+
+    const magentaRimLight = new THREE.PointLight(0xff2a85, 1.8, 35);
+    magentaRimLight.position.set(10, 10, 4);
+    scene.add(magentaRimLight);
+
+    const sparkMouthLight = new THREE.PointLight(0xa3e635, 1.5, 12);
+    scene.add(sparkMouthLight);
+
+    // =========================================================================
+    // 4. BUILD HIGH-END 3D ARTICULATED SPARK THE DRAGON (SCALED TO 0.5x!)
+    // =========================================================================
+    const scaleBumpTex = createDragonScaleBumpTexture();
+
+    const matObsidianScale = new THREE.MeshStandardMaterial({
+      color: 0x281b3d,
+      roughness: 0.32,
+      metalness: 0.28,
+      bumpMap: scaleBumpTex,
+      bumpScale: 0.08
+    });
+    const matDarkHorn = new THREE.MeshStandardMaterial({
+      color: 0x140d20,
+      roughness: 0.25,
+      metalness: 0.45,
+      bumpMap: scaleBumpTex,
+      bumpScale: 0.04
+    });
+    const matGoldBelly = new THREE.MeshStandardMaterial({
+      color: 0xd99b38,
+      roughness: 0.28,
+      metalness: 0.62
+    });
+    const matWingMembrane = new THREE.MeshStandardMaterial({
+      color: 0x9d174d,
+      emissive: 0x3b071e,
+      roughness: 0.42,
+      metalness: 0.15,
+      side: THREE.DoubleSide
+    });
+    const matNeonEye = new THREE.MeshStandardMaterial({
+      color: 0x84cc16,
+      emissive: 0x39ff14,
+      emissiveIntensity: 1.4,
+      roughness: 0.1
+    });
+    const matPupil = new THREE.MeshBasicMaterial({ color: 0x050805 });
+    const matCollarLeather = new THREE.MeshStandardMaterial({
+      color: 0x3b2314,
+      roughness: 0.6,
+      metalness: 0.2
+    });
+    const matSkullCharm = new THREE.MeshStandardMaterial({
+      color: 0x39ff14,
+      emissive: 0x39ff14,
+      emissiveIntensity: 1.25,
+      roughness: 0.2
+    });
+
+    function buildSparkDragon3D() {
+      const root = new THREE.Group();
+      // Scale Spark to HALF SIZE (0.5x) per user request!
+      root.scale.setScalar(0.5);
+
+      const torsoGeo = new THREE.SphereGeometry(0.95, 28, 24);
+      torsoGeo.scale(0.92, 0.85, 1.25);
+      const torso = new THREE.Mesh(torsoGeo, matObsidianScale);
+      torso.castShadow = true;
+      torso.receiveShadow = true;
+      root.add(torso);
+
+      for (let i = 0; i < 4; i++) {
+        const plateGeo = new THREE.SphereGeometry(0.68 - i * 0.06, 20, 14);
+        plateGeo.scale(0.85, 0.35, 0.55);
+        const plate = new THREE.Mesh(plateGeo, matGoldBelly);
+        plate.position.set(0, -0.58 + i * 0.03, -0.45 + i * 0.34);
+        root.add(plate);
+      }
+
+      for (let i = 0; i < 4; i++) {
+        const spGeo = new THREE.ConeGeometry(0.14 - i * 0.015, 0.42 - i * 0.04, 8);
+        const sp = new THREE.Mesh(spGeo, matGoldBelly);
+        sp.position.set(0, 0.82 - i * 0.05, -0.35 + i * 0.35);
+        sp.rotation.x = -0.38;
+        root.add(sp);
+      }
+
+      const collarGeo = new THREE.TorusGeometry(0.64, 0.13, 14, 28);
+      const collar = new THREE.Mesh(collarGeo, matCollarLeather);
+      collar.position.set(0, 0.18, -0.82);
+      collar.rotation.x = Math.PI * 0.38;
+      root.add(collar);
+
+      for (let a = 0; a < 8; a++) {
+        const ang = (a / 8) * Math.PI * 2;
+        const stud = new THREE.Mesh(new THREE.SphereGeometry(0.065, 8, 8), matGoldBelly);
+        stud.position.set(Math.cos(ang) * 0.68, 0.18 + Math.sin(ang) * 0.25, -0.82 + Math.sin(ang) * 0.62);
+        root.add(stud);
+      }
+
+      const skullGroup = new THREE.Group();
+      const skullHead = new THREE.Mesh(new THREE.SphereGeometry(0.22, 16, 16), matSkullCharm);
+      skullGroup.add(skullHead);
+      const skullEyeL = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 8), matPupil);
+      skullEyeL.position.set(-0.08, 0.04, -0.18);
+      const skullEyeR = skullEyeL.clone();
+      skullEyeR.position.x = 0.08;
+      skullGroup.add(skullEyeL, skullEyeR);
+      skullGroup.position.set(0, -0.12, -1.28);
+      root.add(skullGroup);
+
+      const headGroup = new THREE.Group();
+      headGroup.position.set(0, 0.52, -1.05);
+      root.add(headGroup);
+
+      const craniumGeo = new THREE.SphereGeometry(0.82, 28, 24);
+      craniumGeo.scale(1.02, 0.92, 1.08);
+      const cranium = new THREE.Mesh(craniumGeo, matObsidianScale);
+      cranium.castShadow = true;
+      headGroup.add(cranium);
+
+      const snoutGeo = new THREE.SphereGeometry(0.54, 22, 18);
+      snoutGeo.scale(0.95, 0.68, 1.15);
+      const snout = new THREE.Mesh(snoutGeo, matObsidianScale);
+      snout.position.set(0, -0.1, -0.68);
+      headGroup.add(snout);
+
+      [-0.18, 0.18].forEach((nx) => {
+        const nostril = new THREE.Mesh(new THREE.SphereGeometry(0.08, 10, 10), matDarkHorn);
+        nostril.position.set(nx, 0.06, -1.16);
+        headGroup.add(nostril);
+
+        const fang = new THREE.Mesh(new THREE.ConeGeometry(0.055, 0.18, 8), new THREE.MeshStandardMaterial({ color: 0xffffff }));
+        fang.position.set(nx * 1.3, -0.32, -0.95);
+        fang.rotation.x = Math.PI;
+        headGroup.add(fang);
+      });
+
+      const jawGroup = new THREE.Group();
+      jawGroup.position.set(0, -0.26, -0.35);
+      const lowerJawGeo = new THREE.SphereGeometry(0.42, 18, 14);
+      lowerJawGeo.scale(0.88, 0.45, 1.15);
+      const lowerJaw = new THREE.Mesh(lowerJawGeo, matObsidianScale);
+      lowerJaw.position.set(0, -0.05, -0.38);
+      jawGroup.add(lowerJaw);
+
+      const throatGlow = new THREE.Mesh(
+        new THREE.SphereGeometry(0.28, 12, 12),
+        new THREE.MeshBasicMaterial({ color: 0x39ff14 })
+      );
+      throatGlow.position.set(0, 0.06, -0.35);
+      jawGroup.add(throatGlow);
+      headGroup.add(jawGroup);
+
+      [-1, 1].forEach((side) => {
+        const eyeGeo = new THREE.SphereGeometry(0.27, 20, 20);
+        eyeGeo.scale(0.85, 1.05, 0.75);
+        const eye = new THREE.Mesh(eyeGeo, matNeonEye);
+        eye.position.set(side * 0.46, 0.16, -0.58);
+        eye.rotation.y = side * -0.38;
+        headGroup.add(eye);
+
+        const pupilGeo = new THREE.SphereGeometry(0.13, 12, 12);
+        pupilGeo.scale(0.38, 1.15, 0.5);
+        const pupil = new THREE.Mesh(pupilGeo, matPupil);
+        pupil.position.set(side * 0.52, 0.17, -0.74);
+        pupil.rotation.y = side * -0.38;
+        headGroup.add(pupil);
+
+        const glint = new THREE.Mesh(new THREE.SphereGeometry(0.055, 8, 8), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+        glint.position.set(side * 0.48, 0.28, -0.77);
+        headGroup.add(glint);
+
+        const browGeo = new THREE.CylinderGeometry(0.08, 0.11, 0.58, 10);
+        const brow = new THREE.Mesh(browGeo, matDarkHorn);
+        brow.position.set(side * 0.46, 0.42, -0.58);
+        brow.rotation.z = side * 1.18;
+        brow.rotation.y = side * -0.35;
+        headGroup.add(brow);
+      });
+
+      [-1, 1].forEach((side) => {
+        const hornPivot = new THREE.Group();
+        hornPivot.position.set(side * 0.34, 0.58, -0.1);
+        hornPivot.rotation.set(-0.72, side * -0.32, side * -0.25);
+        for (let s = 0; s < 6; s++) {
+          const r = 0.21 * (1 - s * 0.13);
+          const seg = new THREE.Mesh(new THREE.CylinderGeometry(r * 0.8, r, 0.28, 12), matDarkHorn);
+          seg.position.set(0, s * 0.24, s * 0.05);
+          seg.rotation.x = -s * 0.08;
+          hornPivot.add(seg);
+        }
+        headGroup.add(hornPivot);
+
+        const subHorn = hornPivot.clone();
+        subHorn.scale.setScalar(0.72);
+        subHorn.position.set(side * 0.58, 0.36, 0.05);
+        subHorn.rotation.set(-0.55, side * -0.55, side * -0.48);
+        headGroup.add(subHorn);
+
+        const earGeo = new THREE.ConeGeometry(0.22, 0.58, 5);
+        const ear = new THREE.Mesh(earGeo, matObsidianScale);
+        ear.position.set(side * 0.78, 0.08, -0.05);
+        ear.rotation.set(-0.4, 0, side * -1.15);
+        headGroup.add(ear);
+      });
+
+      function createWing(side) {
+        const wingPivot = new THREE.Group();
+        wingPivot.position.set(side * 0.65, 0.38, -0.25);
+
+        const armBone = new THREE.Mesh(new THREE.CylinderGeometry(0.09, 0.12, 1.35, 10), matDarkHorn);
+        armBone.position.set(side * 0.62, 0.15, -0.15);
+        armBone.rotation.z = side * -1.35;
+        armBone.rotation.y = side * -0.2;
+        wingPivot.add(armBone);
+
+        const claw = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.26, 8), matGoldBelly);
+        claw.position.set(side * 1.25, 0.28, -0.35);
+        claw.rotation.x = -Math.PI * 0.5;
+        wingPivot.add(claw);
+
+        const outerPivot = new THREE.Group();
+        outerPivot.position.set(side * 1.22, 0.22, -0.22);
+        wingPivot.add(outerPivot);
+
+        const fingerAngles = [-0.15, -0.55, -0.98];
+        const fingerLengths = [1.55, 1.35, 1.05];
+        fingerAngles.forEach((fa, idx) => {
+          const fLen = fingerLengths[idx];
+          const fBone = new THREE.Mesh(new THREE.CylinderGeometry(0.035, 0.07, fLen, 8), matDarkHorn);
+          fBone.position.set(side * Math.cos(fa) * fLen * 0.5, 0, -Math.sin(fa) * fLen * 0.5);
+          fBone.rotation.z = side * -Math.PI * 0.5;
+          fBone.rotation.y = side * fa;
+          outerPivot.add(fBone);
+        });
+
+        const memShape = new THREE.Shape();
+        memShape.moveTo(0, 0);
+        memShape.lineTo(side * 1.52, -0.22);
+        memShape.quadraticCurveTo(side * 1.15, 0.42, side * 1.12, 0.78);
+        memShape.quadraticCurveTo(side * 0.65, 0.72, side * 0.58, 1.15);
+        memShape.quadraticCurveTo(side * 0.1, 0.95, -side * 0.55, 0.95);
+        memShape.lineTo(-side * 0.55, 0.1);
+        memShape.closePath();
+
+        const memGeo = new THREE.ShapeGeometry(memShape);
+        memGeo.rotateX(Math.PI * 0.5);
+        const memMesh = new THREE.Mesh(memGeo, matWingMembrane);
+        memMesh.castShadow = true;
+        outerPivot.add(memMesh);
+
+        return { wingPivot, outerPivot };
+      }
+
+      const leftWing = createWing(-1);
+      const rightWing = createWing(1);
+      root.add(leftWing.wingPivot, rightWing.wingPivot);
+
+      [-1, 1].forEach((side) => {
+        const leg = new THREE.Mesh(new THREE.SphereGeometry(0.36, 14, 14), matObsidianScale);
+        leg.scale.set(0.8, 1.1, 1.2);
+        leg.position.set(side * 0.68, -0.45, 0.35);
+        root.add(leg);
+
+        for (let c = -1; c <= 1; c++) {
+          const toe = new THREE.Mesh(new THREE.ConeGeometry(0.065, 0.22, 8), matGoldBelly);
+          toe.position.set(side * 0.68 + c * 0.1, -0.72, 0.12);
+          toe.rotation.x = -Math.PI * 0.4;
+          root.add(toe);
+        }
+      });
+
+      const tailSegments = [];
+      let parentTail = root;
+      for (let i = 0; i < 7; i++) {
+        const segPivot = new THREE.Group();
+        segPivot.position.set(0, i === 0 ? -0.15 : 0, i === 0 ? 0.95 : 0.42);
+        const rad = 0.44 * Math.pow(0.81, i);
+        const segMesh = new THREE.Mesh(new THREE.SphereGeometry(rad, 16, 14), matObsidianScale);
+        segMesh.scale.set(0.9, 0.85, 1.35);
+        segMesh.castShadow = true;
+        segPivot.add(segMesh);
+
+        if (i < 6) {
+          const spine = new THREE.Mesh(new THREE.ConeGeometry(rad * 0.35, rad * 1.1, 6), matGoldBelly);
+          spine.position.set(0, rad * 0.85, 0);
+          spine.rotation.x = -0.35;
+          segPivot.add(spine);
+        } else {
+          const spade = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.55, 4), matNeonEye);
+          spade.rotation.x = Math.PI * 0.5;
+          spade.scale.set(1.4, 0.35, 1.0);
+          spade.position.set(0, 0, 0.24);
+          segPivot.add(spade);
+        }
+
+        parentTail.add(segPivot);
+        tailSegments.push(segPivot);
+        parentTail = segPivot;
+      }
+
+      const shieldGeo = new THREE.IcosahedronGeometry(2.4, 1);
+      const shieldMat = new THREE.MeshStandardMaterial({
+        color: 0x00f0ff,
+        emissive: 0x00f0ff,
+        emissiveIntensity: 0.75,
+        transparent: true,
+        opacity: 0.28,
+        wireframe: true
+      });
+      const shieldMesh = new THREE.Mesh(shieldGeo, shieldMat);
+      shieldMesh.visible = false;
+      root.add(shieldMesh);
+
+      return {
+        root,
+        headGroup,
+        jawGroup,
+        leftWing,
+        rightWing,
+        tailSegments,
+        shieldMesh,
+        skullGroup
+      };
+    }
+
+    const spark = buildSparkDragon3D();
+    scene.add(spark.root);
+
+    // =========================================================================
+    // 5. RICH 3D CASTLE COURTYARD BRIDGE & MOLTEN LAVA CANYON BACKDROP
+    // =========================================================================
+    const envGroup = new THREE.Group();
+    scene.add(envGroup);
+
+    // 5A. Procedural Cobblestone & Glowing D20 Arcane Mosaic Texture for the Bridge
+    function createCastleBridgeTexture() {
+      const c = document.createElement('canvas');
+      c.width = 512;
+      c.height = 512;
+      const ctx = c.getContext('2d');
+
+      // Deep mortar base
+      ctx.fillStyle = '#0d101b';
+      ctx.fillRect(0, 0, 512, 512);
+
+      // Draw interlocking stone flagstones
+      const rows = 8;
+      const cols = 6;
+      const rw = 512 / cols;
+      const rh = 512 / rows;
+      for (let r = 0; r < rows; r++) {
+        for (let col = -1; col <= cols; col++) {
+          const offset = (r % 2) * (rw * 0.5);
+          const x = col * rw + offset + 3;
+          const y = r * rh + 3;
+          const w = rw - 6;
+          const h = rh - 6;
+
+          const shade = 28 + ((r * 7 + col * 13) % 18);
+          const grad = ctx.createLinearGradient(x, y, x + w, y + h);
+          grad.addColorStop(0, `rgb(${shade + 12}, ${shade + 16}, ${shade + 32})`);
+          grad.addColorStop(1, `rgb(${shade}, ${shade + 4}, ${shade + 18})`);
+          ctx.fillStyle = grad;
+          ctx.beginPath();
+          ctx.roundRect(x, y, w, h, 8);
+          ctx.fill();
+
+          // Stone highlight bevel
+          ctx.strokeStyle = 'rgba(148, 163, 184, 0.16)';
+          ctx.lineWidth = 2;
+          ctx.stroke();
+        }
+      }
+
+      // Center Royal Carpet / Arcane Dragon Runway Runner
+      const runnerGrad = ctx.createLinearGradient(170, 0, 342, 0);
+      runnerGrad.addColorStop(0, 'rgba(88, 28, 135, 0.55)');
+      runnerGrad.addColorStop(0.5, 'rgba(126, 34, 206, 0.72)');
+      runnerGrad.addColorStop(1, 'rgba(88, 28, 135, 0.55)');
+      ctx.fillStyle = runnerGrad;
+      ctx.fillRect(172, 0, 168, 512);
+
+      // Gold & Neon-Lime Runic Borders along the center runner
+      ctx.fillStyle = '#d99b38';
+      ctx.fillRect(168, 0, 5, 512);
+      ctx.fillRect(339, 0, 5, 512);
+
+      // Glowing D20 Hexagonal Arcane Medallion in the center of the tile
+      ctx.save();
+      ctx.translate(256, 256);
+      ctx.strokeStyle = 'rgba(57, 255, 20, 0.55)';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      for (let i = 0; i < 6; i++) {
+        const a = (i / 6) * Math.PI * 2;
+        const px = Math.cos(a) * 62;
+        const py = Math.sin(a) * 62;
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+      ctx.closePath();
+      ctx.stroke();
+
+      ctx.strokeStyle = 'rgba(250, 204, 21, 0.45)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(0, 0, 42, 0, Math.PI * 2);
+      ctx.stroke();
+      ctx.restore();
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(2, 1);
+      return tex;
+    }
+
+    // 5B. Procedural Molten Lava & Arcane Magma Abyss Texture Below the Bridge
+    function createLavaAbyssTexture() {
+      const c = document.createElement('canvas');
+      c.width = 512;
+      c.height = 512;
+      const ctx = c.getContext('2d');
+
+      // Dark volcanic crust base
+      ctx.fillStyle = '#12060c';
+      ctx.fillRect(0, 0, 512, 512);
+
+      // Glowing magma rivers & veins
+      for (let i = 0; i < 28; i++) {
+        const x = (i * 73) % 512;
+        const y = (i * 119) % 512;
+        const r = 45 + (i % 4) * 28;
+        const g = ctx.createRadialGradient(x, y, 4, x, y, r);
+        if (i % 5 === 0) {
+          // Green dragon-fire mana pocket
+          g.addColorStop(0, 'rgba(163, 230, 53, 0.85)');
+          g.addColorStop(0.4, 'rgba(57, 255, 20, 0.35)');
+          g.addColorStop(1, 'rgba(18, 6, 12, 0)');
+        } else {
+          // Molten orange/red lava pocket
+          g.addColorStop(0, 'rgba(255, 204, 0, 0.9)');
+          g.addColorStop(0.35, 'rgba(255, 69, 0, 0.65)');
+          g.addColorStop(0.7, 'rgba(153, 27, 27, 0.25)');
+          g.addColorStop(1, 'rgba(18, 6, 12, 0)');
+        }
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      const tex = new THREE.CanvasTexture(c);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(4, 6);
+      return tex;
+    }
+
+    const bridgeCobbleTex = createCastleBridgeTexture();
+    const lavaAbyssTex = createLavaAbyssTexture();
+
+    // Deep Scrolling Molten Lava Canyon Plane far below the bridge (Y = -6.8)
+    const lavaPlaneGeo = new THREE.PlaneGeometry(52, 90);
+    lavaPlaneGeo.rotateX(-Math.PI * 0.5);
+    const lavaPlaneMat = new THREE.MeshBasicMaterial({ map: lavaAbyssTex });
+    const lavaPlane = new THREE.Mesh(lavaPlaneGeo, lavaPlaneMat);
+    lavaPlane.position.set(0, -6.8, -10);
+    scene.add(lavaPlane);
+
+    // Bridge Materials
+    const bridgeRoadMat = new THREE.MeshStandardMaterial({
+      map: bridgeCobbleTex,
+      bumpMap: bridgeCobbleTex,
+      bumpScale: 0.06,
+      roughness: 0.62,
+      metalness: 0.18
+    });
+    const runeLineMat = new THREE.MeshBasicMaterial({ color: 0x39ff14, transparent: true, opacity: 0.35 });
+    const pillMat = new THREE.MeshStandardMaterial({ color: 0x262b40, roughness: 0.55, metalness: 0.3 });
+    const wallMat = new THREE.MeshStandardMaterial({ color: 0x1a1e2e, roughness: 0.7, metalness: 0.2 });
+    const brazierFireMat = new THREE.MeshBasicMaterial({ color: 0xff8800 });
+    const crystalMat = new THREE.MeshStandardMaterial({
+      color: 0x39ff14,
+      emissive: 0x15803d,
+      emissiveIntensity: 0.85,
+      roughness: 0.15
+    });
+    const rockMat = new THREE.MeshStandardMaterial({ color: 0x1c1226, roughness: 0.85, metalness: 0.1 });
+
+    const bridgeTiles = [];
+    const NUM_ROWS = 14;
+    const ROW_DEPTH = 4.5;
+    for (let r = 0; r < NUM_ROWS; r++) {
+      const rowGroup = new THREE.Group();
+      rowGroup.position.z = -34 + r * ROW_DEPTH;
+      rowGroup.position.y = -2.2;
+
+      // 1. Textured Cobblestone & Royal Carpet Castle Bridge Road
+      const slab = new THREE.Mesh(new THREE.BoxGeometry(15.2, 0.75, ROW_DEPTH - 0.06), bridgeRoadMat);
+      slab.receiveShadow = true;
+      rowGroup.add(slab);
+
+      // 2. Low Castle Parapet Side Walls & Glowing Rune Curbs
+      [-7.4, 7.4].forEach((bx) => {
+        const trim = new THREE.Mesh(new THREE.BoxGeometry(0.22, 0.82, ROW_DEPTH), runeLineMat);
+        trim.position.x = bx;
+        rowGroup.add(trim);
+      });
+      [-8.0, 8.0].forEach((wx) => {
+        const parapet = new THREE.Mesh(new THREE.BoxGeometry(0.85, 1.25, ROW_DEPTH - 0.2), wallMat);
+        parapet.position.set(wx, 0.45, 0);
+        parapet.castShadow = true;
+        parapet.receiveShadow = true;
+        rowGroup.add(parapet);
+      });
+
+      // 3. Stone Arch Pillars, Flaming Torch Braziers & Glowing Arcane Crystals along the bridge sides
+      if (r % 2 === 0) {
+        [-8.3, 8.3].forEach((px) => {
+          const pillar = new THREE.Mesh(new THREE.BoxGeometry(1.25, 2.35, 1.25), pillMat);
+          pillar.position.set(px, 1.15, 0);
+          pillar.castShadow = true;
+          rowGroup.add(pillar);
+
+          // Golden Brazier Bowl + Glowing Flame
+          const bowl = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.28, 0.3, 10), matGoldBelly);
+          bowl.position.set(px, 2.4, 0);
+          rowGroup.add(bowl);
+
+          const flame = new THREE.Mesh(new THREE.OctahedronGeometry(0.42, 1), brazierFireMat);
+          flame.position.set(px, 2.75, 0);
+          rowGroup.add(flame);
+        });
+      } else {
+        // Glowing Emerald Dragon-Crystals & Jagged Canyon Rock Spires rising from the lava abyss outside the bridge!
+        [-7.8, 7.8].forEach((cx, sIdx) => {
+          const crys = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.95, 6), crystalMat);
+          crys.position.set(cx, 1.15, 0);
+          crys.rotation.z = (sIdx === 0 ? 0.22 : -0.22);
+          rowGroup.add(crys);
+        });
+
+        [-11.8, 11.8].forEach((rx) => {
+          const spire = new THREE.Mesh(new THREE.ConeGeometry(2.2, 6.5, 7), rockMat);
+          spire.position.set(rx, -1.6, 0);
+          rowGroup.add(spire);
+        });
+      }
+
+      envGroup.add(rowGroup);
+      bridgeTiles.push(rowGroup);
+    }
+
+    // =========================================================================
+    // 6. MULTI-LEVEL CAMPAIGN, END-OF-LEVEL 3D BOSSES & CHECKPOINT SYSTEM
+    // =========================================================================
+    const LEVEL_THEMES = [
+      {
+        name: 'OUTER COURTYARD',
+        quota: 5,
+        hasBoss: true,
+        bossType: 'LONGBOW_CAPTAIN',
+        bossName: 'CAPTAIN VANE, ROYAL LONGBOW COMMANDER',
+        bossSub: '3-Way Royal Fan Volley + Laser Sniper Arrow!',
+        bossHp: 30,
+        rim1: 0x39ff14,
+        rim2: 0xff2a85,
+        arrowSpd: 10.5,
+        cdScale: 1.0,
+        maxEn: 3
+      },
+      {
+        name: 'CROSSBOW BATTLEMENTS',
+        quota: 7,
+        hasBoss: true,
+        bossType: 'ARBALEST_GOLIATH',
+        bossName: 'IRON ARBALEST GOLIATH',
+        bossSub: 'Twin Heavy Crossbow Mech + Dual Laser Bolts!',
+        bossHp: 44,
+        rim1: 0x00f0ff,
+        rim2: 0xa855f7,
+        arrowSpd: 12.2,
+        cdScale: 0.88,
+        maxEn: 4
+      },
+      {
+        name: 'MOLTEN LAVA CAUSEWAY',
+        quota: 9,
+        hasBoss: true,
+        bossType: 'DREAD_BALLISTA',
+        bossName: 'INFERNAL DREAD BALLISTA WARLORD',
+        bossSub: 'Twin Siege Turrets + Molten Center Harpoon!',
+        bossHp: 58,
+        rim1: 0xff7b00,
+        rim2: 0xff2a55,
+        arrowSpd: 13.8,
+        cdScale: 0.78,
+        maxEn: 5
+      },
+      {
+        name: 'ARCANE SHADOW KEEP',
+        quota: 11,
+        hasBoss: true,
+        bossType: 'LICH_SOVEREIGN',
+        bossName: 'HEX-BOW LICH SOVEREIGN',
+        bossSub: '5-Arrow Arcane Starburst + Crossing Laser Volleys!',
+        bossHp: 74,
+        rim1: 0xc042ff,
+        rim2: 0x00f0ff,
+        arrowSpd: 15.5,
+        cdScale: 0.70,
+        maxEn: 6
+      },
+      {
+        name: 'DRAGON SLAYER CITADEL',
+        quota: 13,
+        hasBoss: true,
+        bossType: 'SLAYER_TITAN',
+        bossName: 'DRAGON-SLAYER TITAN CATAPULT',
+        bossSub: '6-Arrow Sweeping Fortress Barrage + Triple Harpoons!',
+        bossHp: 92,
+        rim1: 0xff2a55,
+        rim2: 0xfacc15,
+        arrowSpd: 17.2,
+        cdScale: 0.62,
+        maxEn: 7
+      },
+      {
+        name: 'INFERNAL THRONE BRIDGE',
+        quota: 15,
+        hasBoss: true,
+        bossType: 'THRONE_EMPEROR',
+        bossName: 'EMPEROR MALakor, THRONE OVERLORD',
+        bossSub: '7-Arrow Spiral Curtain + Triple Laser Harpoons!',
+        bossHp: 112,
+        rim1: 0x39ff14,
+        rim2: 0xff5500,
+        arrowSpd: 19.0,
+        cdScale: 0.55,
+        maxEn: 8
+      }
+    ];
+
+    function getLevelConfig(lvl) {
+      const idx = Math.min(lvl - 1, LEVEL_THEMES.length - 1);
+      const base = LEVEL_THEMES[idx];
+      const extra = Math.max(0, lvl - LEVEL_THEMES.length);
+      return {
+        level: lvl,
+        name: extra > 0 ? `NIGHTMARE CITADEL ${extra + 1}` : base.name,
+        quota: base.quota + extra * 3,
+        hasBoss: true, // EVERY level ends with an epic 3D Boss!
+        bossType: base.bossType,
+        bossName: extra > 0 ? `NIGHTMARE OVERLORD MK-${extra + 1}` : base.bossName,
+        bossSub: base.bossSub,
+        bossHp: base.bossHp + extra * 22,
+        rim1: base.rim1,
+        rim2: base.rim2,
+        arrowSpd: Math.min(25, base.arrowSpd + extra * 1.4),
+        cdScale: Math.max(0.42, base.cdScale * Math.pow(0.94, extra)),
+        maxEn: Math.min(9, base.maxEn + Math.floor(extra * 0.5))
+      };
+    }
+
+    let gameState = 'START';
+    let score = 0;
+    let bestScore = parseInt(localStorage.getItem('nm_spark_3d_best') || '0', 10);
+    document.getElementById('hudBest').textContent = bestScore.toLocaleString();
+
+    let unlockedCheckpoint = parseInt(localStorage.getItem('nm_spark_3d_cp_lvl') || '1', 10);
+    let savedCheckpointScore = parseInt(localStorage.getItem('nm_spark_3d_cp_score') || '0', 10);
+    let selectedStartLevel = unlockedCheckpoint;
+
+    let wave = 1; // Current Level Number
+    let levelKills = 0;
+    let levelQuota = 6;
+    let levelBossDefeated = false;
+    let checkpointGateActive = false;
+
+    let gameTime = 0;
+    let enemiesRoasted = 0;
+    let powerupsCollected = 0;
+    let screenShake = 0;
+    let activeBoss = null;
+
+    const BOUNDS_X = 6.6;
+    const BOUNDS_Z_MIN = -11.5;
+    const BOUNDS_Z_MAX = 7.4;
+
+    const sparkState = {
+      x: 0,
+      z: 4.5,
+      targetX: 0,
+      targetZ: 4.5,
+      vx: 0,
+      vz: 0,
+      fireTimer: 0,
+      jawOpen: 0,
+      triFlame: 0,
+      infernoBreath: 0,
+      shield: false,
+      zoomies: 0
+    };
+
+    const fireballs = [];
+    const arrows = [];
+    const enemies = [];
+    const powerups = [];
+    const particles = [];
+    const laserWarnings = [];
+    const checkpointGates = []; // Physical 3D Glowing Checkpoint Archways on the Bridge!
+
+    function renderCheckpointSelector() {
+      const row = document.getElementById('checkpointPillsRow');
+      if (!row) return;
+      const maxDisplay = Math.max(5, unlockedCheckpoint + 1);
+      let html = '';
+      for (let l = 1; l <= maxDisplay; l++) {
+        const isUnlocked = l <= unlockedCheckpoint;
+        const isActive = l === selectedStartLevel;
+        html += `<button type="button" class="cp-lvl-btn ${isActive ? 'active' : ''} ${!isUnlocked ? 'locked' : ''}" data-lvl="${l}">
+          ${isUnlocked ? '🏁' : '🔒'} LVL ${l}
+        </button>`;
+      }
+      row.innerHTML = html;
+      row.querySelectorAll('.cp-lvl-btn').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const l = parseInt(btn.getAttribute('data-lvl'), 10);
+          if (l <= unlockedCheckpoint) {
+            selectedStartLevel = l;
+            renderCheckpointSelector();
+            document.getElementById('btnStartGame').textContent = `🔥 START AT CHECKPOINT LVL ${l}`;
+          }
+        });
+      });
+      document.getElementById('btnStartGame').textContent =
+        selectedStartLevel > 1 ? `🔥 START AT CHECKPOINT LVL ${selectedStartLevel}` : `🔥 UNLEASH SPARK (START LVL 1)`;
+    }
+    renderCheckpointSelector();
+
+    function applyLevelTheme(lvl) {
+      const cfg = getLevelConfig(lvl);
+      levelQuota = cfg.quota;
+      levelKills = 0;
+      levelBossDefeated = !cfg.hasBoss;
+      checkpointGateActive = false;
+
+      greenRimLight.color.setHex(cfg.rim1);
+      magentaRimLight.color.setHex(cfg.rim2);
+      runeLineMat.color.setHex(cfg.rim1);
+      crystalMat.color.setHex(cfg.rim1);
+      crystalMat.emissive.setHex(cfg.rim1);
+
+      updateLevelProgressHUD();
+    }
+
+    function updateLevelProgressHUD() {
+      const cfg = getLevelConfig(wave);
+      document.getElementById('hudWave').textContent = `LVL ${wave} 🏁`;
+      document.getElementById('lvlTitleText').textContent = `LVL ${wave}: ${cfg.name}`;
+
+      if (checkpointGateActive) {
+        document.getElementById('lvlGoalText').textContent = `FLY THROUGH CHECKPOINT GATE! 🏁`;
+        document.getElementById('lvlProgressFill').style.width = `100%`;
+      } else if (levelKills >= levelQuota && !levelBossDefeated) {
+        document.getElementById('lvlGoalText').textContent = `👑 BOSS FIGHT -> CHECKPOINT 🏁`;
+        document.getElementById('lvlProgressFill').style.width = `90%`;
+      } else {
+        const pct = Math.min(82, Math.round((levelKills / levelQuota) * 82));
+        document.getElementById('lvlGoalText').textContent = `${levelKills} / ${levelQuota} TO LEVEL BOSS 👑`;
+        document.getElementById('lvlProgressFill').style.width = `${pct}%`;
+      }
+    }
+
+    let cpBannerTimer = null;
+    function showCheckpointBanner(eyebrow, title, sub) {
+      const el = document.getElementById('checkpointBanner');
+      document.getElementById('cpBannerEyebrow').textContent = eyebrow;
+      document.getElementById('cpBannerTitle').textContent = title;
+      document.getElementById('cpBannerSub').textContent = sub;
+      el.classList.add('show');
+      if (cpBannerTimer) clearTimeout(cpBannerTimer);
+      cpBannerTimer = setTimeout(() => el.classList.remove('show'), 2700);
+    }
+
+    // Build a Giant 3D Glowing Checkpoint Archway Gate that scrolls down the Castle Bridge!
+    function spawnCheckpointGate(nextLevel) {
+      checkpointGateActive = true;
+      updateLevelProgressHUD();
+
+      // Clear any remaining enemy arrows so the player can celebrate flying through the gate!
+      for (let i = arrows.length - 1; i >= 0; i--) {
+        spawnExplosion(arrows[i].mesh.position.x, -0.8, arrows[i].mesh.position.z, 0x39ff14, 4);
+        scene.remove(arrows[i].mesh);
+      }
+      arrows.length = 0;
+
+      const grp = new THREE.Group();
+      const pillarMat = new THREE.MeshStandardMaterial({ color: 0x39ff14, emissive: 0x15803d, emissiveIntensity: 0.9, metalness: 0.6, roughness: 0.2 });
+      const goldMat = new THREE.MeshStandardMaterial({ color: 0xfacc15, emissive: 0xb45309, emissiveIntensity: 0.5, metalness: 0.85, roughness: 0.2 });
+
+      // Left & Right Glowing Checkpoint Towers spanning the bridge
+      [-6.2, 6.2].forEach((px) => {
+        const col = new THREE.Mesh(new THREE.CylinderGeometry(0.45, 0.58, 4.2, 12), pillarMat);
+        col.position.set(px, 1.8, 0);
+        grp.add(col);
+
+        const cap = new THREE.Mesh(new THREE.OctahedronGeometry(0.65, 0), goldMat);
+        cap.position.set(px, 4.2, 0);
+        grp.add(cap);
+      });
+
+      // Overhead Golden Checkpoint Arch Beam + Spinning Center D20 Keystone
+      const archBeam = new THREE.Mesh(new THREE.BoxGeometry(13.2, 0.48, 0.55), goldMat);
+      archBeam.position.set(0, 3.8, 0);
+      grp.add(archBeam);
+
+      const d20Keystone = new THREE.Mesh(new THREE.IcosahedronGeometry(0.85, 0), pillarMat);
+      d20Keystone.position.set(0, 4.2, 0);
+      grp.add(d20Keystone);
+
+      // Shimmering Energy Portal Curtain across the bridge floor
+      const curtain = new THREE.Mesh(
+        new THREE.PlaneGeometry(12.2, 3.6),
+        new THREE.MeshBasicMaterial({ color: 0x39ff14, transparent: true, opacity: 0.22, side: THREE.DoubleSide })
+      );
+      curtain.position.set(0, 1.6, 0);
+      grp.add(curtain);
+
+      const floorStrip = new THREE.Mesh(
+        new THREE.PlaneGeometry(13.0, 1.2),
+        new THREE.MeshBasicMaterial({ color: 0x00f0ff, transparent: true, opacity: 0.55, side: THREE.DoubleSide })
+      );
+      floorStrip.rotation.x = -Math.PI * 0.5;
+      floorStrip.position.set(0, 0.05, 0);
+      grp.add(floorStrip);
+
+      grp.position.set(0, -1.9, -22);
+      scene.add(grp);
+
+      checkpointGates.push({
+        mesh: grp,
+        keystone: d20Keystone,
+        nextLevel,
+        vz: 7.5
+      });
+
+      showCritToast(`🏁 CRIT: "Level ${wave} Cleared! Fly through the 3D Checkpoint Gate!"`);
+    }
+
+    // Proportionally sized fireballs for 0.5x Spark
+    const geoFireCore = new THREE.SphereGeometry(0.21, 12, 12);
+    const geoFireOuter = new THREE.SphereGeometry(0.35, 12, 12);
+    const matFireCore = new THREE.MeshBasicMaterial({ color: 0xccff00 });
+    const matFireOuter = new THREE.MeshBasicMaterial({ color: 0xff5500, transparent: true, opacity: 0.68 });
+
+    function spawnFireballs() {
+      const isInferno = sparkState.infernoBreath > 0;
+      const isTri = sparkState.triFlame > 0;
+
+      const angles = isTri ? [-0.22, 0, 0.22] : [0];
+      if (isInferno && !isTri) angles.push(-0.09, 0.09);
+
+      angles.forEach((ang) => {
+        const grp = new THREE.Group();
+        const core = new THREE.Mesh(geoFireCore, matFireCore);
+        const outer = new THREE.Mesh(geoFireOuter, matFireOuter);
+        if (isInferno) grp.scale.setScalar(1.38);
+        grp.add(core, outer);
+
+        grp.position.set(sparkState.x + Math.sin(ang) * 0.25, 0.35, sparkState.z - 0.9);
+        scene.add(grp);
+
+        const speed = isInferno ? 29 : 24;
+        fireballs.push({
+          mesh: grp,
+          vx: Math.sin(ang) * speed,
+          vz: -Math.cos(ang) * speed,
+          inferno: isInferno,
+          life: 1.35
+        });
+      });
+
+      sparkState.jawOpen = 1.0;
+      sfx.sfxFireball();
+    }
+
+    // Build 3D Health Bar Mesh attached above every enemy
+    function createHealthBar3D(width = 1.3) {
+      const grp = new THREE.Group();
+      const bg = new THREE.Mesh(
+        new THREE.PlaneGeometry(width + 0.1, 0.22),
+        new THREE.MeshBasicMaterial({ color: 0x090b12, side: THREE.DoubleSide })
+      );
+      bg.rotation.x = -0.75;
+      grp.add(bg);
+
+      const fillGeo = new THREE.PlaneGeometry(width, 0.14);
+      const fillMat = new THREE.MeshBasicMaterial({ color: 0x39ff14, side: THREE.DoubleSide });
+      const fill = new THREE.Mesh(fillGeo, fillMat);
+      fill.rotation.x = -0.75;
+      fill.position.y = 0.01;
+      fill.position.z = 0.01;
+      grp.add(fill);
+
+      return { grp, fill, width };
+    }
+
+    // Procedural Hammered Dark-Steel & Riveted Armor Bump Map for Menacing 3D Minions
+    function createDarkArmorBumpTexture() {
+      const c = document.createElement('canvas');
+      c.width = 256;
+      c.height = 256;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#555555';
+      ctx.fillRect(0, 0, 256, 256);
+
+      // Hammered metal dents & battle scratches
+      for (let i = 0; i < 140; i++) {
+        const x = (i * 47) % 256;
+        const y = (i * 83) % 256;
+        const r = 6 + (i % 5) * 3;
+        const g = ctx.createRadialGradient(x, y, 1, x, y, r);
+        g.addColorStop(0, i % 2 === 0 ? '#999999' : '#2a2a2a');
+        g.addColorStop(1, 'rgba(85,85,85,0)');
+        ctx.fillStyle = g;
+        ctx.beginPath();
+        ctx.arc(x, y, r, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      // Diagonal battle slash marks
+      ctx.strokeStyle = '#181818';
+      ctx.lineWidth = 2.5;
+      for (let s = 0; s < 18; s++) {
+        const sx = (s * 61) % 240;
+        const sy = (s * 37) % 240;
+        ctx.beginPath();
+        ctx.moveTo(sx, sy);
+        ctx.lineTo(sx + 18, sy + 12);
+        ctx.stroke();
+      }
+      const tex = new THREE.CanvasTexture(c);
+      tex.wrapS = THREE.RepeatWrapping;
+      tex.wrapT = THREE.RepeatWrapping;
+      tex.repeat.set(2, 2);
+      return tex;
+    }
+    const armorBumpTex = createDarkArmorBumpTexture();
+
+    // Build High-Detail, Menacing Dark-Fantasy 3D Enemies: ARCHER, CROSSBOW, BALLISTA, or BOSS
+    function createEnemyMesh(type) {
+      const root = new THREE.Group();
+      const aimGroup = new THREE.Group(); // Rotates to aim directly at Spark!
+      root.add(aimGroup);
+
+      const matBlackIron = new THREE.MeshStandardMaterial({
+        color: 0x1e2430,
+        metalness: 0.85,
+        roughness: 0.28,
+        bumpMap: armorBumpTex,
+        bumpScale: 0.05
+      });
+      const matGunmetal = new THREE.MeshStandardMaterial({
+        color: 0x333c4d,
+        metalness: 0.8,
+        roughness: 0.32,
+        bumpMap: armorBumpTex,
+        bumpScale: 0.04
+      });
+      const matDarkBronze = new THREE.MeshStandardMaterial({
+        color: 0x9a6b26,
+        metalness: 0.82,
+        roughness: 0.26,
+        bumpMap: armorBumpTex,
+        bumpScale: 0.03
+      });
+      const matBloodCloak = new THREE.MeshStandardMaterial({
+        color: 0x6b0f1a,
+        roughness: 0.65,
+        metalness: 0.15
+      });
+      const matBoneHorn = new THREE.MeshStandardMaterial({
+        color: 0xd6ccb8,
+        roughness: 0.38,
+        metalness: 0.18
+      });
+      const matCharredWood = new THREE.MeshStandardMaterial({
+        color: 0x3b1d0e,
+        roughness: 0.72,
+        metalness: 0.15
+      });
+      const matIron = matGunmetal;
+      const matCrimson = new THREE.MeshStandardMaterial({ color: 0x991b1b, roughness: 0.4, metalness: 0.3 });
+      const matWood = matCharredWood;
+      const matGold = new THREE.MeshStandardMaterial({ color: 0xeab308, metalness: 0.85, roughness: 0.22 });
+      const matRedEye = new THREE.MeshBasicMaterial({ color: 0xff1e42 });
+      const matMoltenGlow = new THREE.MeshBasicMaterial({ color: 0xff6600 });
+      const matString = new THREE.MeshBasicMaterial({ color: 0xfef08a });
+
+      let leftLeg = null;
+      let rightLeg = null;
+      let weaponRig = null;
+      let nockedArrow = null;
+      let bowStringL = null;
+      let bowStringR = null;
+      const wheels = [];
+
+      if (type === 'ARCHER' || type === 'CROSSBOW') {
+        const isElite = type === 'CROSSBOW';
+        const sc = isElite ? 1.22 : 1.04;
+
+        // 1. ARTICULATED ARMORED LEGS & SPIKED KNEE GREAVES (march & plant in combat stance)
+        leftLeg = new THREE.Group();
+        leftLeg.position.set(-0.24 * sc, 0.52 * sc, 0);
+        rightLeg = new THREE.Group();
+        rightLeg.position.set(0.24 * sc, 0.52 * sc, 0);
+        [leftLeg, rightLeg].forEach((legGrp) => {
+          const thigh = new THREE.Mesh(new THREE.CylinderGeometry(0.14 * sc, 0.12 * sc, 0.52 * sc, 10), matBlackIron);
+          thigh.position.y = -0.22 * sc;
+          thigh.castShadow = true;
+          legGrp.add(thigh);
+
+          const kneeSpike = new THREE.Mesh(new THREE.ConeGeometry(0.09 * sc, 0.24 * sc, 6), isElite ? matDarkBronze : matGunmetal);
+          kneeSpike.rotation.x = Math.PI * 0.45;
+          kneeSpike.position.set(0, -0.22 * sc, 0.14 * sc);
+          legGrp.add(kneeSpike);
+
+          const boot = new THREE.Mesh(new THREE.BoxGeometry(0.22 * sc, 0.16 * sc, 0.34 * sc), matBlackIron);
+          boot.position.set(0, -0.46 * sc, 0.06 * sc);
+          legGrp.add(boot);
+          aimGroup.add(legGrp);
+        });
+
+        // 2. V-TAPERED HAMMERED BLACK-IRON BREASTPLATE & GLOWING FURNACE RUNE CORE
+        const waist = new THREE.Mesh(new THREE.CylinderGeometry(0.34 * sc, 0.38 * sc, 0.42 * sc, 12), matBlackIron);
+        waist.position.y = 0.65 * sc;
+        aimGroup.add(waist);
+
+        const chest = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.52 * sc, 0.35 * sc, 0.68 * sc, 12),
+          isElite ? matBlackIron : matGunmetal
+        );
+        chest.scale.set(1.15, 1.0, 0.82);
+        chest.position.y = 1.08 * sc;
+        chest.castShadow = true;
+        aimGroup.add(chest);
+
+        // Glowing Hellfire Chest Sigil on breastplate
+        const chestCore = new THREE.Mesh(
+          new THREE.OctahedronGeometry(0.16 * sc, 0),
+          isElite ? matMoltenGlow : matRedEye
+        );
+        chestCore.scale.set(0.85, 1.35, 0.45);
+        chestCore.position.set(0, 1.12 * sc, 0.36 * sc);
+        aimGroup.add(chestCore);
+
+        // Tattered Blood-Crimson War Cloak on Back + Spiked Quiver of Arrows
+        const cloak = new THREE.Mesh(new THREE.ConeGeometry(0.56 * sc, 1.25 * sc, 7), matBloodCloak);
+        cloak.scale.set(1.1, 1.0, 0.42);
+        cloak.rotation.x = 0.22;
+        cloak.position.set(0, 0.85 * sc, -0.32 * sc);
+        aimGroup.add(cloak);
+
+        if (!isElite) {
+          // Back Quiver bristling with feathered arrows
+          const quiver = new THREE.Mesh(new THREE.CylinderGeometry(0.14 * sc, 0.11 * sc, 0.72 * sc, 10), matCharredWood);
+          quiver.position.set(0.26 * sc, 1.28 * sc, -0.34 * sc);
+          quiver.rotation.z = -0.28;
+          quiver.rotation.x = -0.18;
+          for (let q = 0; q < 3; q++) {
+            const qShaft = new THREE.Mesh(new THREE.CylinderGeometry(0.025, 0.025, 0.38, 6), matBoneHorn);
+            qShaft.position.set((q - 1) * 0.05, 0.42 * sc, 0);
+            const qFletch = new THREE.Mesh(new THREE.ConeGeometry(0.065, 0.14, 4), matRedEye);
+            qFletch.position.set((q - 1) * 0.05, 0.56 * sc, 0);
+            quiver.add(qShaft, qFletch);
+          }
+          aimGroup.add(quiver);
+        } else {
+          // Elite Juggernaut Iron Pavise Siege Shield & Twin Back Spikes
+          const backShield = new THREE.Mesh(new THREE.BoxGeometry(0.95 * sc, 1.15 * sc, 0.12 * sc), matBlackIron);
+          backShield.position.set(0, 1.18 * sc, -0.38 * sc);
+          backShield.rotation.x = 0.15;
+          aimGroup.add(backShield);
+        }
+
+        // 3. BROAD SPIKED PAULDRONS (SHOULDER ARMOR) — Huge menacing silhouette from top-down!
+        [-1, 1].forEach((side) => {
+          const pauldronGrp = new THREE.Group();
+          pauldronGrp.position.set(side * 0.62 * sc, 1.32 * sc, 0.02 * sc);
+
+          const dome = new THREE.Mesh(
+            new THREE.SphereGeometry(0.32 * sc, 12, 10, 0, Math.PI * 2, 0, Math.PI * 0.65),
+            isElite ? matDarkBronze : matBlackIron
+          );
+          dome.scale.set(1.25, 0.95, 1.1);
+          dome.rotation.z = side * -0.35;
+          dome.castShadow = true;
+          pauldronGrp.add(dome);
+
+          // Twin Jagged Shoulder Spikes jutting out from each pauldron
+          [0.15, 0.48].forEach((angOffset, sIdx) => {
+            const spk = new THREE.Mesh(
+              new THREE.ConeGeometry((0.095 - sIdx * 0.015) * sc, (0.48 - sIdx * 0.08) * sc, 6),
+              isElite ? matBoneHorn : matGunmetal
+            );
+            spk.position.set(side * (0.14 + sIdx * 0.12) * sc, (0.28 - sIdx * 0.06) * sc, 0);
+            spk.rotation.z = side * (-0.45 - angOffset);
+            pauldronGrp.add(spk);
+          });
+          aimGroup.add(pauldronGrp);
+        });
+
+        // 4. MENACING HORNED WAR-HELM, SKULL FACEPLATE & SLANTED GLOWING BLOOD-RED EYES
+        const headGroup = new THREE.Group();
+        headGroup.position.set(0, 1.62 * sc, 0.08 * sc);
+        aimGroup.add(headGroup);
+
+        const helmDome = new THREE.Mesh(new THREE.SphereGeometry(0.36 * sc, 16, 14), matBlackIron);
+        helmDome.scale.set(0.96, 1.08, 1.05);
+        helmDome.castShadow = true;
+        headGroup.add(helmDome);
+
+        // Jagged Iron Skull-Jaw Faceplate & Nasal Guard
+        const jawGuard = new THREE.Mesh(
+          new THREE.CylinderGeometry(0.32 * sc, 0.24 * sc, 0.32 * sc, 7),
+          isElite ? matDarkBronze : matGunmetal
+        );
+        jawGuard.position.set(0, -0.1 * sc, 0.14 * sc);
+        headGroup.add(jawGuard);
+
+        // Central Helmet Crest Ridge / Fin
+        const helmCrest = new THREE.Mesh(
+          new THREE.BoxGeometry(0.08 * sc, 0.34 * sc, 0.56 * sc),
+          isElite ? matDarkBronze : matCrimson
+        );
+        helmCrest.position.set(0, 0.28 * sc, -0.02 * sc);
+        headGroup.add(helmCrest);
+
+        // Angry Slanted Glowing Eye Visor Slits!
+        [-1, 1].forEach((side) => {
+          const eyeSlit = new THREE.Mesh(
+            new THREE.BoxGeometry(0.17 * sc, 0.055 * sc, 0.08 * sc),
+            isElite ? matMoltenGlow : matRedEye
+          );
+          eyeSlit.position.set(side * 0.14 * sc, 0.04 * sc, 0.34 * sc);
+          eyeSlit.rotation.z = side * -0.28; // Angry scowl angle!
+          eyeSlit.rotation.y = side * 0.25;
+          headGroup.add(eyeSlit);
+
+          // Curved Multi-Segment Demon / Ram War-Horns sweeping outward & forward!
+          const hornPivot = new THREE.Group();
+          hornPivot.position.set(side * 0.28 * sc, 0.18 * sc, -0.02 * sc);
+          hornPivot.rotation.z = side * -0.82;
+          hornPivot.rotation.x = 0.42;
+          for (let h = 0; h < 4; h++) {
+            const r1 = 0.11 * sc * (1 - h * 0.2);
+            const r2 = 0.11 * sc * (1 - (h + 1) * 0.21);
+            const hSeg = new THREE.Mesh(new THREE.CylinderGeometry(Math.max(0.015, r2), r1, 0.24 * sc, 8), matBoneHorn);
+            hSeg.position.set(0, h * 0.2 * sc, h * 0.06 * sc);
+            hSeg.rotation.x = 0.24 * h;
+            hornPivot.add(hSeg);
+          }
+          headGroup.add(hornPivot);
+        });
+
+        // 5. WEAPON RIG: SPIKED DRAGON-BONE GREATBOW OR TWIN-PROD STEEL SIEGE ARBALEST
+        weaponRig = new THREE.Group();
+        weaponRig.position.set(0, 1.12 * sc, 0.42 * sc);
+        aimGroup.add(weaponRig);
+
+        // Armored Left & Right Arms holding the weapon
+        [-1, 1].forEach((side) => {
+          const arm = new THREE.Mesh(new THREE.CylinderGeometry(0.11 * sc, 0.095 * sc, 0.62 * sc, 8), matBlackIron);
+          arm.rotation.x = Math.PI * 0.5;
+          arm.rotation.z = side * -0.22;
+          arm.position.set(side * 0.38 * sc, 0.05 * sc, 0.12 * sc);
+          weaponRig.add(arm);
+        });
+
+        if (!isElite) {
+          // ARCHER: Wicked Recurve Dragon-Bone & Black-Iron Greatbow with Blade Spikes
+          const bowArc = new THREE.Mesh(
+            new THREE.TorusGeometry(0.76 * sc, 0.075 * sc, 10, 22, Math.PI),
+            matBlackIron
+          );
+          bowArc.rotation.x = Math.PI * 0.5;
+          bowArc.rotation.z = -Math.PI * 0.5;
+          bowArc.position.set(0, 0, 0.12 * sc);
+          weaponRig.add(bowArc);
+
+          // Bone Recurve Wing Tips & Front Bayonet Spikes
+          [-0.76, 0.76].forEach((bx) => {
+            const tipSpike = new THREE.Mesh(new THREE.ConeGeometry(0.08 * sc, 0.36 * sc, 6), matBoneHorn);
+            tipSpike.rotation.x = Math.PI * 0.5;
+            tipSpike.rotation.z = bx < 0 ? 0.35 : -0.35;
+            tipSpike.position.set(bx * sc, 0, 0.28 * sc);
+            weaponRig.add(tipSpike);
+          });
+        } else {
+          // CROSSBOW: Heavy Steel Siege Arbalest with Stock, Dual Prods, Winch Gears & Scope Crystal
+          const stock = new THREE.Mesh(new THREE.BoxGeometry(0.24 * sc, 0.22 * sc, 1.15 * sc), matBlackIron);
+          stock.position.set(0, -0.04 * sc, 0.32 * sc);
+          weaponRig.add(stock);
+
+          const mainProd = new THREE.Mesh(
+            new THREE.TorusGeometry(0.84 * sc, 0.09 * sc, 10, 22, Math.PI),
+            matDarkBronze
+          );
+          mainProd.rotation.x = Math.PI * 0.5;
+          mainProd.rotation.z = -Math.PI * 0.5;
+          mainProd.position.set(0, 0.02 * sc, 0.32 * sc);
+          weaponRig.add(mainProd);
+
+          const foreProd = new THREE.Mesh(
+            new THREE.TorusGeometry(0.58 * sc, 0.065 * sc, 8, 18, Math.PI),
+            matBlackIron
+          );
+          foreProd.rotation.x = Math.PI * 0.5;
+          foreProd.rotation.z = -Math.PI * 0.5;
+          foreProd.position.set(0, 0.04 * sc, 0.58 * sc);
+          weaponRig.add(foreProd);
+
+          // Glowing Laser-Rune Scope Crystal on top of the Arbalest
+          const scopeCrystal = new THREE.Mesh(new THREE.OctahedronGeometry(0.14 * sc, 0), matMoltenGlow);
+          scopeCrystal.position.set(0, 0.18 * sc, 0.35 * sc);
+          weaponRig.add(scopeCrystal);
+        }
+
+        // Dynamic Taut Bowstrings (Left & Right halves that pull back with the arrow!)
+        const strLen = 0.78 * sc;
+        bowStringL = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, strLen, 6), matString);
+        bowStringL.rotation.z = Math.PI * 0.5;
+        bowStringL.position.set(-0.38 * sc, 0.02 * sc, 0.12 * sc);
+        bowStringR = new THREE.Mesh(new THREE.CylinderGeometry(0.018, 0.018, strLen, 6), matString);
+        bowStringR.rotation.z = Math.PI * 0.5;
+        bowStringR.position.set(0.38 * sc, 0.02 * sc, 0.12 * sc);
+        weaponRig.add(bowStringL, bowStringR);
+
+        // Nocked Barbed Hellfire Arrow / Bolt (animates backward during draw!)
+        nockedArrow = new THREE.Group();
+        const nShaft = new THREE.Mesh(new THREE.CylinderGeometry(0.038 * sc, 0.038 * sc, 0.95 * sc, 8), matBoneHorn);
+        nShaft.rotation.x = Math.PI * 0.5;
+        nShaft.position.z = 0.45 * sc;
+        const nHead = new THREE.Mesh(
+          new THREE.ConeGeometry(0.16 * sc, 0.48 * sc, 6),
+          isElite ? matMoltenGlow : matRedEye
+        );
+        nHead.rotation.x = Math.PI * 0.5;
+        nHead.position.z = 0.96 * sc;
+        nockedArrow.add(nShaft, nHead);
+        weaponRig.add(nockedArrow);
+
+      } else if (type === 'BALLISTA') {
+        // 3D IRON-JAWS SCORPION SIEGE CRAWLER (Armored War Chariot + Crewed Horned Gunner + Giant Torsion Ballista)
+        const base = new THREE.Mesh(new THREE.BoxGeometry(2.05, 0.58, 1.95), matBlackIron);
+        base.position.y = 0.38;
+        base.castShadow = true;
+        root.add(base);
+
+        // Front Spiked Iron Mantlet Armor Plates & Forged Dragon-Skull Fang Ram
+        [-0.78, 0.78].forEach((mx) => {
+          const mantlet = new THREE.Mesh(new THREE.BoxGeometry(0.78, 0.85, 0.16), matDarkBronze);
+          mantlet.position.set(mx, 0.72, 0.98);
+          mantlet.rotation.y = mx < 0 ? 0.22 : -0.22;
+          mantlet.castShadow = true;
+          root.add(mantlet);
+        });
+        [-0.85, -0.32, 0.32, 0.85].forEach((fx) => {
+          const fang = new THREE.Mesh(new THREE.ConeGeometry(0.13, 0.62, 6), matBoneHorn);
+          fang.rotation.x = Math.PI * 0.48;
+          fang.position.set(fx, 0.36, 1.24);
+          root.add(fang);
+        });
+
+        // 4 Iron-Bound War Wheels with Spiked Hubs (rotate as it rolls!)
+        [[-1.08, -0.65], [1.08, -0.65], [-1.08, 0.65], [1.08, 0.65]].forEach(([wx, wz]) => {
+          const wheelGrp = new THREE.Group();
+          wheelGrp.position.set(wx, 0.42, wz);
+          const wheelRim = new THREE.Mesh(new THREE.CylinderGeometry(0.42, 0.42, 0.22, 14), matBlackIron);
+          wheelRim.rotation.z = Math.PI * 0.5;
+          wheelGrp.add(wheelRim);
+
+          const hubSpike = new THREE.Mesh(new THREE.ConeGeometry(0.12, 0.34, 6), matDarkBronze);
+          hubSpike.rotation.z = wx < 0 ? Math.PI * 0.5 : -Math.PI * 0.5;
+          hubSpike.position.x = wx < 0 ? -0.18 : 0.18;
+          wheelGrp.add(hubSpike);
+          root.add(wheelGrp);
+          wheels.push(wheelGrp);
+        });
+
+        // Rotating Upper Scorpion Turret + Crewed Horned Iron Gunner behind the controls!
+        const turret = new THREE.Mesh(new THREE.CylinderGeometry(0.64, 0.78, 0.68, 12), matBlackIron);
+        turret.position.y = 0.86;
+        aimGroup.add(turret);
+
+        // 3D Armored Siege Gunner operating the Ballista
+        const gunnerTorso = new THREE.Mesh(new THREE.CylinderGeometry(0.34, 0.4, 0.85, 10), matBloodCloak);
+        gunnerTorso.position.set(0, 1.15, -0.58);
+        aimGroup.add(gunnerTorso);
+        const gunnerHelm = new THREE.Mesh(new THREE.SphereGeometry(0.28, 12, 12), matBlackIron);
+        gunnerHelm.position.set(0, 1.72, -0.58);
+        aimGroup.add(gunnerHelm);
+        [-0.22, 0.22].forEach((ghx) => {
+          const gHorn = new THREE.Mesh(new THREE.ConeGeometry(0.08, 0.38, 6), matBoneHorn);
+          gHorn.position.set(ghx, 1.92, -0.55);
+          gHorn.rotation.z = ghx < 0 ? 0.65 : -0.65;
+          aimGroup.add(gHorn);
+          const gEye = new THREE.Mesh(new THREE.SphereGeometry(0.055, 6, 6), matRedEye);
+          gEye.position.set(ghx * 0.5, 1.72, -0.32);
+          aimGroup.add(gEye);
+        });
+
+        // Weapon Rig on Turret (Recoils violently when firing!)
+        weaponRig = new THREE.Group();
+        weaponRig.position.set(0, 1.05, 0.15);
+        aimGroup.add(weaponRig);
+
+        // Twin Bronze Torsion Coil Drums + Sweeping Steel Bow Arms + Spiked Tips
+        [-0.85, 0.85].forEach((dx) => {
+          const drum = new THREE.Mesh(new THREE.CylinderGeometry(0.24, 0.24, 0.58, 10), matDarkBronze);
+          drum.position.set(dx, 0.05, 0.35);
+          weaponRig.add(drum);
+
+          const wingSpike = new THREE.Mesh(new THREE.ConeGeometry(0.11, 0.45, 6), matBoneHorn);
+          wingSpike.rotation.x = Math.PI * 0.5;
+          wingSpike.position.set(dx * 1.48, 0.05, 0.55);
+          weaponRig.add(wingSpike);
+        });
+
+        const giantBow = new THREE.Mesh(new THREE.TorusGeometry(1.32, 0.13, 10, 24, Math.PI), matBlackIron);
+        giantBow.rotation.x = Math.PI * 0.5;
+        giantBow.rotation.z = -Math.PI * 0.5;
+        giantBow.position.set(0, 0.05, 0.32);
+        weaponRig.add(giantBow);
+
+        const rail = new THREE.Mesh(new THREE.BoxGeometry(0.36, 0.24, 1.85), matDarkBronze);
+        rail.position.set(0, 0.02, 0.48);
+        weaponRig.add(rail);
+
+        const coreOrb = new THREE.Mesh(new THREE.OctahedronGeometry(0.28, 1), matMoltenGlow);
+        coreOrb.position.set(0, 0.32, 0.05);
+        weaponRig.add(coreOrb);
+
+        // Loaded Giant Dragon-Slayer Harpoon Spear on the Ballista Rail
+        nockedArrow = new THREE.Group();
+        const hShaft = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.065, 1.55, 8), matBoneHorn);
+        hShaft.rotation.x = Math.PI * 0.5;
+        hShaft.position.z = 0.65;
+        const hTip = new THREE.Mesh(new THREE.ConeGeometry(0.24, 0.65, 6), matRedEye);
+        hTip.rotation.x = Math.PI * 0.5;
+        hTip.position.z = 1.45;
+        nockedArrow.add(hShaft, hTip);
+        weaponRig.add(nockedArrow);
+
+      } else if (type === 'BOSS') {
+        const cfg = getLevelConfig(wave);
+        const bType = cfg.bossType || 'DREAD_BALLISTA';
+        const matEmerald = new THREE.MeshStandardMaterial({ color: 0x39ff14, emissive: 0x15803d, emissiveIntensity: 0.7, roughness: 0.2 });
+        const matCyan = new THREE.MeshStandardMaterial({ color: 0x00f0ff, emissive: 0x0369a1, emissiveIntensity: 0.75, metalness: 0.7, roughness: 0.2 });
+        const matViolet = new THREE.MeshStandardMaterial({ color: 0xc042ff, emissive: 0x6b21a8, emissiveIntensity: 0.8, roughness: 0.25 });
+
+        if (bType === 'LONGBOW_CAPTAIN') {
+          // LEVEL 1 BOSS: CAPTAIN VANE, ROYAL LONGBOW COMMANDER
+          // Raised Golden Royal Chariot Platform + Twin Emerald Standards + Giant Armored Archer Commander
+          const podium = new THREE.Mesh(new THREE.CylinderGeometry(1.9, 2.2, 0.75, 16), matGold);
+          podium.position.y = 0.45;
+          podium.castShadow = true;
+          root.add(podium);
+
+          [-1.55, 1.55].forEach((px) => {
+            const pole = new THREE.Mesh(new THREE.CylinderGeometry(0.08, 0.1, 2.6, 8), matGold);
+            pole.position.set(px, 1.5, -0.4);
+            root.add(pole);
+
+            const banner = new THREE.Mesh(new THREE.BoxGeometry(0.55, 0.95, 0.12), matEmerald);
+            banner.position.set(px, 2.2, -0.4);
+            root.add(banner);
+          });
+
+          const armorTorso = new THREE.Mesh(new THREE.CylinderGeometry(0.72, 0.9, 1.55, 14), matCrimson);
+          armorTorso.position.y = 1.45;
+          aimGroup.add(armorTorso);
+
+          const shoulderPads = new THREE.Mesh(new THREE.BoxGeometry(2.1, 0.42, 0.95), matGold);
+          shoulderPads.position.y = 2.05;
+          aimGroup.add(shoulderPads);
+
+          const helm = new THREE.Mesh(new THREE.SphereGeometry(0.55, 14, 14), matGold);
+          helm.position.y = 2.55;
+          aimGroup.add(helm);
+
+          const crown = new THREE.Mesh(new THREE.ConeGeometry(0.52, 0.65, 6), matEmerald);
+          crown.position.y = 3.05;
+          aimGroup.add(crown);
+
+          // Giant Royal Greatbow in front
+          const greatBow = new THREE.Mesh(new THREE.TorusGeometry(1.55, 0.14, 10, 24, Math.PI), matGold);
+          greatBow.rotation.x = Math.PI * 0.5;
+          greatBow.rotation.z = -Math.PI * 0.5;
+          greatBow.position.set(0, 1.65, 0.68);
+          aimGroup.add(greatBow);
+
+          const glowingTip = new THREE.Mesh(new THREE.ConeGeometry(0.28, 0.85, 6), matRedEye);
+          glowingTip.rotation.x = Math.PI * 0.5;
+          glowingTip.position.set(0, 1.65, 1.35);
+          aimGroup.add(glowingTip);
+
+        } else if (bType === 'ARBALEST_GOLIATH') {
+          // LEVEL 2 BOSS: IRON ARBALEST GOLIATH (Clockwork Twin-Crossbow Siege Mech)
+          const chassis = new THREE.Mesh(new THREE.BoxGeometry(3.6, 1.15, 2.2), matIron);
+          chassis.position.y = 0.68;
+          chassis.castShadow = true;
+          root.add(chassis);
+
+          const coreShield = new THREE.Mesh(new THREE.OctahedronGeometry(0.85, 1), matCyan);
+          coreShield.position.set(0, 1.65, 0.25);
+          aimGroup.add(coreShield);
+
+          const dome = new THREE.Mesh(new THREE.CylinderGeometry(0.85, 1.05, 1.25, 10), matIron);
+          dome.position.set(0, 1.55, -0.1);
+          aimGroup.add(dome);
+
+          // Twin Heavy Cyan & Gold Arbalest Wing Arms
+          [-1.55, 1.55].forEach((ax) => {
+            const armPod = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.75, 1.55), matGold);
+            armPod.position.set(ax, 1.45, 0.35);
+            aimGroup.add(armPod);
+
+            const xbow = new THREE.Mesh(new THREE.TorusGeometry(0.95, 0.11, 8, 18, Math.PI), matCyan);
+            xbow.rotation.x = Math.PI * 0.5;
+            xbow.rotation.z = -Math.PI * 0.5;
+            xbow.position.set(ax, 1.48, 0.85);
+            aimGroup.add(xbow);
+          });
+
+        } else if (bType === 'LICH_SOVEREIGN') {
+          // LEVEL 4 BOSS: HEX-BOW LICH SOVEREIGN (Floating Necro-Arcane Archer + 3 Orbiting D20 Crystals)
+          const dais = new THREE.Mesh(new THREE.CylinderGeometry(2.1, 1.4, 0.65, 6), matViolet);
+          dais.position.y = 0.55;
+          root.add(dais);
+
+          const robe = new THREE.Mesh(new THREE.ConeGeometry(1.15, 2.2, 8), matDarkHorn);
+          robe.position.y = 1.65;
+          aimGroup.add(robe);
+
+          const skullHelm = new THREE.Mesh(new THREE.OctahedronGeometry(0.65, 1), matViolet);
+          skullHelm.position.y = 2.75;
+          aimGroup.add(skullHelm);
+
+          // 3 Floating D20 Arcane Crystals around the Lich Sovereign
+          [-1.65, 0, 1.65].forEach((cx, idx) => {
+            const orbD20 = new THREE.Mesh(new THREE.IcosahedronGeometry(0.46, 0), idx === 1 ? matCyan : matViolet);
+            orbD20.position.set(cx, idx === 1 ? 3.45 : 2.35, 0.2);
+            aimGroup.add(orbD20);
+          });
+
+          // Giant Spectral Violet Hex-Bow
+          const hexBow = new THREE.Mesh(new THREE.TorusGeometry(1.65, 0.13, 8, 22, Math.PI), matCyan);
+          hexBow.rotation.x = Math.PI * 0.5;
+          hexBow.rotation.z = -Math.PI * 0.5;
+          hexBow.position.set(0, 1.75, 0.72);
+          aimGroup.add(hexBow);
+
+        } else if (bType === 'SLAYER_TITAN' || bType === 'THRONE_EMPEROR') {
+          // LEVEL 5 & 6+ BOSSES: DRAGON-SLAYER TITAN CATAPULT / INFERNAL THRONE EMPEROR
+          const isEmp = bType === 'THRONE_EMPEROR';
+          const mainHull = new THREE.Mesh(new THREE.BoxGeometry(4.6, 1.25, 2.6), isEmp ? matDarkHorn : matCrimson);
+          mainHull.position.y = 0.72;
+          mainHull.castShadow = true;
+          root.add(mainHull);
+
+          // Triple Siege Ballista Batteries (Left, Center, Right)
+          [-1.65, 0, 1.65].forEach((tx, idx) => {
+            const pod = new THREE.Mesh(new THREE.CylinderGeometry(0.52, 0.65, 0.85, 10), matGold);
+            pod.position.set(tx, 1.45 + (idx === 1 ? 0.35 : 0), 0.35);
+            root.add(pod);
+
+            const bow = new THREE.Mesh(
+              new THREE.TorusGeometry(0.95, 0.11, 8, 18, Math.PI),
+              isEmp ? matEmerald : matGold
+            );
+            bow.rotation.x = Math.PI * 0.5;
+            bow.rotation.z = -Math.PI * 0.5;
+            bow.position.set(tx, 1.55 + (idx === 1 ? 0.35 : 0), 0.78);
+            root.add(bow);
+          });
+
+          const throneTower = new THREE.Mesh(new THREE.CylinderGeometry(0.95, 1.15, 1.65, 8), matGold);
+          throneTower.position.set(0, 1.85, -0.25);
+          aimGroup.add(throneTower);
+
+          const apexD20 = new THREE.Mesh(new THREE.IcosahedronGeometry(0.68, 0), isEmp ? matEmerald : matRedEye);
+          apexD20.position.set(0, 3.05, -0.25);
+          aimGroup.add(apexD20);
+
+        } else {
+          // LEVEL 3 BOSS: INFERNAL DREAD BALLISTA WARLORD
+          const hull = new THREE.Mesh(new THREE.BoxGeometry(4.2, 1.1, 2.4), matIron);
+          hull.position.y = 0.65;
+          hull.castShadow = true;
+          root.add(hull);
+
+          const bannerTrim = new THREE.Mesh(new THREE.BoxGeometry(4.3, 0.35, 2.46), matCrimson);
+          bannerTrim.position.y = 1.05;
+          root.add(bannerTrim);
+
+          [-1.35, 1.35].forEach((tx) => {
+            const bTurret = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.6, 0.7, 12), matGold);
+            bTurret.position.set(tx, 1.35, 0.2);
+            root.add(bTurret);
+
+            const bBow = new THREE.Mesh(new THREE.TorusGeometry(0.95, 0.1, 8, 18, Math.PI), matGold);
+            bBow.rotation.x = Math.PI * 0.5;
+            bBow.rotation.z = -Math.PI * 0.5;
+            bBow.position.set(tx, 1.45, 0.65);
+            root.add(bBow);
+          });
+
+          const keep = new THREE.Mesh(new THREE.CylinderGeometry(0.75, 0.9, 1.3, 8), matCrimson);
+          keep.position.set(0, 1.55, -0.15);
+          aimGroup.add(keep);
+
+          const crown = new THREE.Mesh(new THREE.TorusGeometry(0.65, 0.12, 8, 16), matGold);
+          crown.rotation.x = Math.PI * 0.5;
+          crown.position.set(0, 2.2, -0.15);
+          aimGroup.add(crown);
+
+          const bossEye = new THREE.Mesh(new THREE.SphereGeometry(0.38, 14, 14), matRedEye);
+          bossEye.position.set(0, 1.6, 0.55);
+          aimGroup.add(bossEye);
+        }
+      }
+
+      // Charge ring indicator under enemy (pulses red right before firing arrows!)
+      const chargeRadius = type === 'BOSS' ? 2.4 : (type === 'BALLISTA' ? 1.3 : 0.78);
+      const chargeRing = new THREE.Mesh(
+        new THREE.RingGeometry(chargeRadius * 0.82, chargeRadius, 24),
+        new THREE.MeshBasicMaterial({ color: 0xff2a55, side: THREE.DoubleSide, transparent: true, opacity: 0.25 })
+      );
+      chargeRing.rotation.x = -Math.PI * 0.5;
+      chargeRing.position.y = 0.06;
+      root.add(chargeRing);
+
+      // Floating 3D Health Bar above enemy
+      const hbWidth = type === 'BOSS' ? 3.4 : (type === 'BALLISTA' ? 1.6 : 1.05);
+      const hb = createHealthBar3D(hbWidth);
+      hb.grp.position.set(0, type === 'BOSS' ? 3.45 : (type === 'BALLISTA' ? 2.15 : 2.25), 0);
+      root.add(hb.grp);
+
+      return { root, aimGroup, chargeRing, hb, leftLeg, rightLeg, weaponRig, nockedArrow, bowStringL, bowStringR, wheels };
+    }
+
+    function spawnEnemy(type, x, z = -23) {
+      const cfg = getLevelConfig(wave);
+      const built = createEnemyMesh(type);
+      built.root.position.set(x, -1.9, z);
+      scene.add(built.root);
+
+      const maxHp =
+        type === 'BOSS' ? cfg.bossHp :
+        type === 'BALLISTA' ? (7 + Math.floor(wave * 1.2)) :
+        type === 'CROSSBOW' ? (4 + Math.floor(wave * 0.5)) :
+        (2 + Math.floor(wave * 0.4));
+
+      // Stop position on the upper battlefield where they stand and shoot arrows at Spark!
+      const holdZ =
+        type === 'BOSS' ? -10.0 :
+        type === 'BALLISTA' ? (-10.5 + Math.random() * 4.5) :
+        (-11.0 + Math.random() * 6.8);
+
+      const enemyObj = {
+        type,
+        bossType: type === 'BOSS' ? cfg.bossType : null,
+        mesh: built.root,
+        aimGroup: built.aimGroup,
+        chargeRing: built.chargeRing,
+        hb: built.hb,
+        leftLeg: built.leftLeg,
+        rightLeg: built.rightLeg,
+        weaponRig: built.weaponRig,
+        nockedArrow: built.nockedArrow,
+        bowStringL: built.bowStringL,
+        bowStringR: built.bowStringR,
+        wheels: built.wheels || [],
+        hp: maxHp,
+        maxHp,
+        holdZ,
+        vz: type === 'BOSS' ? 4.8 : 6.5,
+        strafePhase: Math.random() * Math.PI * 2,
+        fireCooldown: type === 'BOSS' ? 1.25 : (1.05 + Math.random() * 0.95),
+        recoilZ: 0,
+        volleyCount: 0,
+        hitFlash: 0,
+        hitRadius: type === 'BOSS' ? 2.25 : (type === 'BALLISTA' ? 1.32 : 0.92)
+      };
+
+      enemies.push(enemyObj);
+
+      if (type === 'BOSS') {
+        activeBoss = enemyObj;
+        sfx.sfxBossAlert();
+        screenShake = 0.35;
+        document.getElementById('bossBarWrap').classList.add('active');
+        document.getElementById('bossNameText').textContent = `👑 LVL ${wave} BOSS: ${cfg.bossName}`;
+        document.getElementById('bossHpText').textContent = `${maxHp} HP`;
+        document.getElementById('bossBarFill').style.width = '100%';
+        showCheckpointBanner(
+          `⚠️ LEVEL ${wave} BOSS BATTLE!`,
+          `👑 ${cfg.bossName}`,
+          `${cfg.bossSub} • Defeat Boss to Unlock Checkpoint ${wave + 1}!`
+        );
+        showCritToast(`👑 CRIT: "LEVEL ${wave} BOSS! Roast ${cfg.bossName} to unlock the Checkpoint Gate!"`);
+      }
+    }
+
+    // Build a Detailed 3D Archer Arrow Mesh
+    function createArrowMesh(isElite = false) {
+      const grp = new THREE.Group();
+
+      const tipMat = new THREE.MeshStandardMaterial({
+        color: isElite ? 0xff0055 : 0xe2e8f0,
+        emissive: isElite ? 0xff0055 : 0x334155,
+        emissiveIntensity: isElite ? 1.1 : 0.3,
+        metalness: 0.85,
+        roughness: 0.2
+      });
+      const tip = new THREE.Mesh(new THREE.ConeGeometry(0.22, 0.65, 6), tipMat);
+      tip.rotation.x = Math.PI * 0.5;
+      tip.position.z = 0.85;
+      grp.add(tip);
+
+      const shaftMat = new THREE.MeshStandardMaterial({ color: isElite ? 0x2e1065 : 0x78350f, roughness: 0.6 });
+      const shaft = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 1.8, 8), shaftMat);
+      shaft.rotation.x = Math.PI * 0.5;
+      grp.add(shaft);
+
+      const fletchMat = new THREE.MeshBasicMaterial({
+        color: isElite ? 0xff2a85 : 0xff3b30,
+        side: THREE.DoubleSide
+      });
+      for (let i = 0; i < 3; i++) {
+        const fin = new THREE.Mesh(new THREE.PlaneGeometry(0.34, 0.56), fletchMat);
+        fin.rotation.y = Math.PI * 0.5;
+        fin.rotation.z = (i / 3) * Math.PI * 2;
+        fin.position.z = -0.75;
+        grp.add(fin);
+      }
+
+      const ringMat = new THREE.MeshBasicMaterial({
+        color: isElite ? 0xff2a85 : 0xff4500,
+        transparent: true,
+        opacity: 0.68,
+        side: THREE.DoubleSide
+      });
+      const ring = new THREE.Mesh(new THREE.RingGeometry(0.22, 0.32, 16), ringMat);
+      ring.rotation.x = -Math.PI * 0.5;
+      ring.position.z = 0.68;
+      grp.add(ring);
+
+      return grp;
+    }
+
+    function spawnArrow(x, z, vx, vz, isElite = false, warningDelay = 0) {
+      if (warningDelay > 0) {
+        const dir = new THREE.Vector3(vx, 0, vz).normalize();
+        const len = 30;
+        const lineGeo = new THREE.PlaneGeometry(0.16, len);
+        lineGeo.rotateX(-Math.PI * 0.5);
+        const lineMat = new THREE.MeshBasicMaterial({
+          color: 0xff2a55,
+          transparent: true,
+          opacity: 0.65,
+          side: THREE.DoubleSide
+        });
+        const lineMesh = new THREE.Mesh(lineGeo, lineMat);
+        const angleY = Math.atan2(dir.x, dir.z);
+        lineMesh.rotation.y = angleY;
+        lineMesh.position.set(x + dir.x * (len * 0.5), -1.4, z + dir.z * (len * 0.5));
+        scene.add(lineMesh);
+
+        laserWarnings.push({
+          mesh: lineMesh,
+          timer: warningDelay,
+          x, z, vx, vz, isElite
+        });
+        return;
+      }
+
+      sfx.sfxBowRelease();
+      const mesh = createArrowMesh(isElite);
+      mesh.position.set(x, -1.1, z);
+      const angleY = Math.atan2(vx, vz);
+      mesh.rotation.y = angleY;
+      scene.add(mesh);
+
+      arrows.push({
+        mesh,
+        vx,
+        vz,
+        isElite,
+        grazed: false
+      });
+    }
+
+    // Spawn 3D Rotating Power-Ups
+    function spawnPowerup(x, z, forcedType = null) {
+      const types = ['D20', 'PEPPER', 'SHIELD', 'ZOOMIES', 'GEM', 'GEM'];
+      const type = forcedType || types[Math.floor(Math.random() * types.length)];
+      const grp = new THREE.Group();
+
+      let colorHex = 0x39ff14;
+      let label = '🎲 NAT-20 TRI-FLAME!';
+
+      if (type === 'D20') {
+        colorHex = 0x39ff14;
+        label = '🎲 NAT-20 TRI-FLAME!';
+        const d20 = new THREE.Mesh(
+          new THREE.IcosahedronGeometry(0.55, 0),
+          new THREE.MeshStandardMaterial({ color: 0x39ff14, emissive: 0x15803d, metalness: 0.4, roughness: 0.2 })
+        );
+        const wire = new THREE.Mesh(
+          new THREE.IcosahedronGeometry(0.57, 0),
+          new THREE.MeshBasicMaterial({ color: 0xffffff, wireframe: true })
+        );
+        grp.add(d20, wire);
+      } else if (type === 'PEPPER') {
+        colorHex = 0xff9f1c;
+        label = '🌶️ INFERNO BREATH (MELTS ARROWS)!';
+        const orb = new THREE.Mesh(
+          new THREE.DodecahedronGeometry(0.52, 0),
+          new THREE.MeshStandardMaterial({ color: 0xff5500, emissive: 0xff2200, emissiveIntensity: 0.9, roughness: 0.2 })
+        );
+        grp.add(orb);
+      } else if (type === 'SHIELD') {
+        colorHex = 0x00f0ff;
+        label = '🛡️ ARCANE WARD SHIELD!';
+        const torus = new THREE.Mesh(
+          new THREE.TorusGeometry(0.46, 0.13, 12, 24),
+          new THREE.MeshStandardMaterial({ color: 0x00f0ff, emissive: 0x0284c7, metalness: 0.7, roughness: 0.15 })
+        );
+        const core = new THREE.Mesh(new THREE.OctahedronGeometry(0.28, 0), new THREE.MeshBasicMaterial({ color: 0xffffff }));
+        grp.add(torus, core);
+      } else if (type === 'ZOOMIES') {
+        colorHex = 0xff2a85;
+        label = '⚡ WING ZOOMIES BOOST!';
+        const star = new THREE.Mesh(
+          new THREE.OctahedronGeometry(0.52, 0),
+          new THREE.MeshStandardMaterial({ color: 0xff2a85, emissive: 0xbe185d, metalness: 0.5, roughness: 0.2 })
+        );
+        grp.add(star);
+      } else {
+        colorHex = 0xfacc15;
+        label = '💎 HOARD GEM +250!';
+        const gem = new THREE.Mesh(
+          new THREE.OctahedronGeometry(0.42, 0),
+          new THREE.MeshStandardMaterial({ color: 0xfacc15, emissive: 0xb45309, metalness: 0.8, roughness: 0.1 })
+        );
+        gem.scale.set(0.85, 1.35, 0.85);
+        grp.add(gem);
+      }
+
+      const halo = new THREE.Mesh(
+        new THREE.RingGeometry(0.48, 0.68, 24),
+        new THREE.MeshBasicMaterial({ color: colorHex, side: THREE.DoubleSide, transparent: true, opacity: 0.75 })
+      );
+      halo.rotation.x = -Math.PI * 0.5;
+      halo.position.y = -0.35;
+      grp.add(halo);
+
+      grp.position.set(x, -1.1, z);
+      scene.add(grp);
+
+      powerups.push({
+        mesh: grp,
+        type,
+        colorHex,
+        label,
+        vz: 4.0
+      });
+    }
+
+    function spawnExplosion(x, y, z, colorHex = 0xff7b00, count = 14) {
+      const geo = new THREE.SphereGeometry(0.15, 6, 6);
+      for (let i = 0; i < count; i++) {
+        const mat = new THREE.MeshBasicMaterial({ color: colorHex, transparent: true, opacity: 1 });
+        const m = new THREE.Mesh(geo, mat);
+        m.position.set(x, y, z);
+        scene.add(m);
+        const ang = Math.random() * Math.PI * 2;
+        const spd = 2.5 + Math.random() * 8.5;
+        particles.push({
+          mesh: m,
+          vx: Math.cos(ang) * spd,
+          vy: 2 + Math.random() * 6,
+          vz: Math.sin(ang) * spd,
+          life: 0.35 + Math.random() * 0.3
+        });
+      }
+    }
+
+    // =========================================================================
+    // 7. 3D-TO-2D FLOATING COMBAT POPUPS & CRIT DM CALLOUTS
+    // =========================================================================
+    const popupsContainer = document.getElementById('floatingPopups');
+    function showFloatingPopup(worldX, worldZ, text, color = '#39ff14') {
+      const vec = new THREE.Vector3(worldX, -0.5, worldZ);
+      vec.project(camera);
+      const sx = (vec.x * 0.5 + 0.5) * container.clientWidth;
+      const sy = (-vec.y * 0.5 + 0.5) * container.clientHeight;
+
+      const el = document.createElement('div');
+      el.className = 'float-pop';
+      el.style.left = `${sx}px`;
+      el.style.top = `${sy}px`;
+      el.style.color = color;
+      el.textContent = text;
+      popupsContainer.appendChild(el);
+      setTimeout(() => el.remove(), 800);
+    }
+
+    let toastTimeout = null;
+    function showCritToast(msg) {
+      const toast = document.getElementById('critToast');
+      document.getElementById('critToastText').textContent = msg;
+      toast.classList.add('show');
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => toast.classList.remove('show'), 2600);
+    }
+
+    function updatePowerupHUD() {
+      const strip = document.getElementById('activePowerupsStrip');
+      let html = '';
+      if (sparkState.shield) {
+        html += `<div class="pw-pill" style="border-color:#00f0ff;color:#00f0ff;">🛡️ ARCANE SHIELD READY</div>`;
+      }
+      if (sparkState.triFlame > 0) {
+        html += `<div class="pw-pill" style="border-color:#39ff14;color:#39ff14;">🎲 TRI-FLAME ${sparkState.triFlame.toFixed(1)}s</div>`;
+      }
+      if (sparkState.infernoBreath > 0) {
+        html += `<div class="pw-pill" style="border-color:#ff9f1c;color:#ff9f1c;">🌶️ INFERNO ${sparkState.infernoBreath.toFixed(1)}s</div>`;
+      }
+      if (sparkState.zoomies > 0) {
+        html += `<div class="pw-pill" style="border-color:#ff2a85;color:#ff2a85;">⚡ ZOOMIES ${sparkState.zoomies.toFixed(1)}s</div>`;
+      }
+      strip.innerHTML = html;
+    }
+
+    // =========================================================================
+    // 8. TOUCH, MOUSE & KEYBOARD CONTROLS (PHONE-FIRST RESPONSIVE)
+    // =========================================================================
+    let isPointerDown = false;
+    const keys = {};
+
+    function screenToPlayfield(clientX, clientY, isTouch = false) {
+      const rect = container.getBoundingClientRect();
+      const nx = ((clientX - rect.left) / rect.width) * 2 - 1;
+      const ny = ((clientY - rect.top) / rect.height) * 2 - 1;
+      sparkState.targetX = Math.max(-BOUNDS_X, Math.min(BOUNDS_X, nx * (BOUNDS_X * 1.05)));
+      const touchOffsetZ = isTouch ? -1.6 : 0;
+      const mappedZ = -1.8 + ny * 9.6 + touchOffsetZ;
+      sparkState.targetZ = Math.max(BOUNDS_Z_MIN, Math.min(BOUNDS_Z_MAX, mappedZ));
+    }
+
+    container.addEventListener('pointerdown', (e) => {
+      isPointerDown = true;
+      sfx.init();
+      screenToPlayfield(e.clientX, e.clientY, e.pointerType === 'touch');
+    });
+    window.addEventListener('pointermove', (e) => {
+      if (gameState !== 'PLAYING') return;
+      if (e.pointerType === 'mouse' || isPointerDown) {
+        screenToPlayfield(e.clientX, e.clientY, e.pointerType === 'touch');
+      }
+    });
+    window.addEventListener('pointerup', () => {
+      isPointerDown = false;
+    });
+
+    window.addEventListener('keydown', (e) => {
+      keys[e.code] = true;
+    });
+    window.addEventListener('keyup', (e) => {
+      keys[e.code] = false;
+    });
+
+    // =========================================================================
+    // 9. LEVEL & DIFFICULTY DIRECTOR + ENEMY SQUAD & BOSS SPAWNER
+    // =========================================================================
+    let enemySpawnTimer = 0;
+    let powerupSpawnTimer = 4.0;
+    let bossSpawnedForWave = 0;
+
+    function updateWaveDirector(dt, t) {
+      const cfg = getLevelConfig(wave);
+
+      // 1. Check if Level Kill Quota is met -> Trigger End-of-Level 3D Boss Battle!
+      if (!checkpointGateActive && levelKills >= levelQuota) {
+        if (cfg.hasBoss && !levelBossDefeated) {
+          if (!activeBoss && bossSpawnedForWave < wave) {
+            bossSpawnedForWave = wave;
+            // Clear any leftover regular minions so the End-of-Level Boss takes center stage immediately!
+            for (let k = enemies.length - 1; k >= 0; k--) {
+              if (enemies[k].type !== 'BOSS') {
+                spawnExplosion(enemies[k].mesh.position.x, -0.6, enemies[k].mesh.position.z, 0x39ff14, 10);
+                scene.remove(enemies[k].mesh);
+                enemies.splice(k, 1);
+              }
+            }
+            spawnEnemy('BOSS', 0, -23);
+            updateLevelProgressHUD();
+          }
+        } else if (enemies.length === 0) {
+          // Level Boss defeated -> Spawn the 3D Checkpoint Archway Gate!
+          spawnCheckpointGate(wave + 1);
+        }
+      }
+
+      // 2. Spawn 3D Archers, Crossbow Elites & Siege Ballistas while quota isn't reached yet
+      enemySpawnTimer -= dt;
+      const remainingNeeded = Math.max(0, levelQuota - levelKills);
+      if (!checkpointGateActive && remainingNeeded > enemies.length && enemySpawnTimer <= 0 && enemies.length < cfg.maxEn) {
+        enemySpawnTimer = Math.max(0.65, 1.85 * cfg.cdScale);
+
+        const roll = Math.random();
+        const ex = (Math.random() - 0.5) * (BOUNDS_X * 1.65);
+
+        // Higher levels introduce more Crossbow Elites and Siege Ballistas!
+        const ballistaChance = wave === 1 ? 0.12 : Math.min(0.38, 0.15 + wave * 0.05);
+        const crossbowChance = wave === 1 ? 0.25 : Math.min(0.75, 0.35 + wave * 0.08);
+
+        if (roll < ballistaChance) {
+          spawnEnemy('BALLISTA', ex, -23);
+        } else if (roll < crossbowChance) {
+          spawnEnemy('CROSSBOW', ex, -23);
+        } else {
+          spawnEnemy('ARCHER', Math.max(-BOUNDS_X + 0.8, ex - 1.3), -23);
+          if (enemies.length < cfg.maxEn && (levelQuota - levelKills) > enemies.length) {
+            spawnEnemy('ARCHER', Math.min(BOUNDS_X - 0.8, ex + 1.3), -24.2);
+          }
+        }
+      }
+
+      // Ambient bonus power-up drops
+      powerupSpawnTimer -= dt;
+      if (powerupSpawnTimer <= 0) {
+        powerupSpawnTimer = 6.2 + Math.random() * 2.5;
+        const px = (Math.random() - 0.5) * (BOUNDS_X * 1.6);
+        spawnPowerup(px, -22);
+      }
+
+      // 3. Update 3D Checkpoint Gates scrolling down the bridge
+      for (let i = checkpointGates.length - 1; i >= 0; i--) {
+        const cg = checkpointGates[i];
+        cg.mesh.position.z += cg.vz * dt;
+        cg.keystone.rotation.y += dt * 3.2;
+        cg.keystone.rotation.x += dt * 1.8;
+
+        // When Spark crosses the Checkpoint Gate Z plane!
+        if (cg.mesh.position.z >= sparkState.z - 0.8) {
+          const nextLvl = cg.nextLevel;
+          wave = nextLvl;
+          unlockedCheckpoint = Math.max(unlockedCheckpoint, wave);
+          score += 500 * (wave - 1);
+          savedCheckpointScore = score;
+
+          localStorage.setItem('nm_spark_3d_cp_lvl', String(unlockedCheckpoint));
+          localStorage.setItem('nm_spark_3d_cp_score', String(savedCheckpointScore));
+          renderCheckpointSelector();
+
+          sfx.sfxPowerup();
+          screenShake = 0.3;
+          spawnExplosion(sparkState.x, -0.4, sparkState.z, 0x39ff14, 30);
+          spawnExplosion(-3.5, 0.5, sparkState.z - 1, 0x00f0ff, 18);
+          spawnExplosion(3.5, 0.5, sparkState.z - 1, 0xfacc15, 18);
+
+          // Reward a free Power-Up at every Checkpoint!
+          spawnPowerup(0, -14, wave % 2 === 0 ? 'SHIELD' : 'D20');
+
+          applyLevelTheme(wave);
+          const nextCfg = getLevelConfig(wave);
+          showCheckpointBanner(
+            `🏁 CHECKPOINT ${wave} SAVED!`,
+            `LEVEL ${wave}: ${nextCfg.name}`,
+            `Difficulty Up • Faster Arrows & Elite Squads (+${500 * (wave - 1)} Bonus!)`
+          );
+          showCritToast(`🎲 CRIT: "Checkpoint ${wave} Saved! Welcome to ${nextCfg.name}!"`);
+
+          scene.remove(cg.mesh);
+          checkpointGates.splice(i, 1);
+          continue;
+        }
+      }
+
+      // 4. Update Every 3D Enemy (March to holdZ, animate legs/wheels/bow-draw, aim at Spark, and shoot arrows!)
+      for (let i = enemies.length - 1; i >= 0; i--) {
+        const en = enemies[i];
+
+        const isMarching = en.mesh.position.z < en.holdZ;
+        if (isMarching) {
+          en.mesh.position.z += en.vz * dt;
+        } else {
+          const strafeAmp = en.type === 'BOSS' ? 3.4 : (en.type === 'BALLISTA' ? 1.45 : 2.15);
+          const strafeSpd = (en.type === 'BOSS' ? 1.15 : 1.75) * (1 + (wave - 1) * 0.06);
+          en.mesh.position.x += Math.cos(t * strafeSpd + en.strafePhase) * strafeAmp * dt;
+          en.mesh.position.x = Math.max(-BOUNDS_X + 0.8, Math.min(BOUNDS_X - 0.8, en.mesh.position.x));
+        }
+
+        // Articulated 3D Armored Leg Stride & Combat Stance Animation
+        if (en.leftLeg && en.rightLeg) {
+          const strideFreq = isMarching ? 14.0 : 6.5;
+          const strideAmp = isMarching ? 0.55 : 0.22;
+          const swing = Math.sin(t * strideFreq + en.strafePhase) * strideAmp;
+          en.leftLeg.rotation.x = swing;
+          en.rightLeg.rotation.x = -swing;
+        }
+
+        // Spin Iron War-Wheels on Scorpion Ballistas
+        if (en.wheels && en.wheels.length > 0) {
+          const wheelSpd = isMarching ? 9.5 : 3.2;
+          en.wheels.forEach((w) => {
+            w.rotation.x += wheelSpd * dt;
+          });
+        }
+
+        const dx = sparkState.x - en.mesh.position.x;
+        const dz = sparkState.z - en.mesh.position.z;
+        const aimAngle = Math.atan2(dx, dz);
+        en.aimGroup.rotation.y = aimAngle;
+
+        if (en.hitFlash > 0) {
+          en.hitFlash = Math.max(0, en.hitFlash - dt * 6);
+          en.mesh.scale.setScalar(1.0 + en.hitFlash * 0.14);
+        } else {
+          en.mesh.scale.setScalar(1.0);
+        }
+
+        // Physical Bow/Crossbow/Ballista Draw-Back & Recoil Animation!
+        en.recoilZ = Math.max(0, (en.recoilZ || 0) - dt * 2.2);
+        const drawProgress = Math.max(0, Math.min(1, 1 - (en.fireCooldown / 1.45)));
+        if (en.weaponRig) {
+          const baseZ = en.type === 'BALLISTA' ? 0.15 : 0.42;
+          en.weaponRig.position.z = baseZ - en.recoilZ * 0.35;
+        }
+        if (en.nockedArrow) {
+          en.nockedArrow.visible = en.recoilZ < 0.12;
+          en.nockedArrow.position.z = -drawProgress * 0.38;
+        }
+        if (en.bowStringL && en.bowStringR) {
+          en.bowStringL.rotation.y = drawProgress * 0.42;
+          en.bowStringR.rotation.y = -drawProgress * 0.42;
+          en.bowStringL.position.z = 0.12 - drawProgress * 0.18;
+          en.bowStringR.position.z = 0.12 - drawProgress * 0.18;
+        }
+
+        en.fireCooldown -= dt;
+        if (en.fireCooldown < 0.45) {
+          en.chargeRing.material.opacity = 0.5 + 0.5 * Math.abs(Math.sin(t * 28));
+          en.chargeRing.scale.setScalar(1.0 + (0.45 - en.fireCooldown) * 0.7);
+          // Lean menacingly into the shot right before releasing!
+          en.aimGroup.rotation.x = 0.12;
+        } else {
+          en.chargeRing.material.opacity = 0.2;
+          en.chargeRing.scale.setScalar(1.0);
+          en.aimGroup.rotation.x = 0;
+        }
+
+        if (en.fireCooldown <= 0) {
+          en.recoilZ = 0.42;
+          const arrowSpeed = cfg.arrowSpd;
+          // Predictive lead-target aiming at Level 2+ so minions feel sharper and meaner!
+          const leadFactor = wave >= 2 ? Math.min(0.32, 0.12 + wave * 0.03) : 0;
+          const targetX = sparkState.x + sparkState.vx * leadFactor;
+          const ldx = targetX - en.mesh.position.x;
+          const dist = Math.hypot(ldx, dz) || 1;
+          const dirX = ldx / dist;
+          const dirZ = dz / dist;
+
+          spawnExplosion(en.mesh.position.x + dirX * 0.8, -0.8, en.mesh.position.z + dirZ * 0.8, 0xff4500, 4);
+
+          if (en.type === 'ARCHER') {
+            en.fireCooldown = Math.max(1.05, 2.25 * cfg.cdScale);
+            spawnArrow(
+              en.mesh.position.x,
+              en.mesh.position.z + 0.75,
+              dirX * arrowSpeed,
+              dirZ * arrowSpeed,
+              false,
+              0
+            );
+            // At Level 3+, Dread-Horn Hunters fire a rapid 2-arrow hunter burst!
+            if (wave >= 3) {
+              setTimeout(() => {
+                if (gameState === 'PLAYING') {
+                  spawnArrow(en.mesh.position.x, en.mesh.position.z + 0.75, dirX * arrowSpeed, dirZ * arrowSpeed, false, 0);
+                }
+              }, 165);
+            }
+          } else if (en.type === 'CROSSBOW') {
+            en.fireCooldown = Math.max(1.25, 2.45 * cfg.cdScale);
+            // Center laser-guided Hellfire Dragon-Piercer Bolt
+            spawnArrow(
+              en.mesh.position.x,
+              en.mesh.position.z + 0.8,
+              dirX * (arrowSpeed * 1.26),
+              dirZ * (arrowSpeed * 1.26),
+              true,
+              0.35
+            );
+            // At Level 2+, Juggernaut Arbalests also fire 2 flanking wing-bolts!
+            if (wave >= 2) {
+              [-0.22, 0.22].forEach((sp) => {
+                const a = aimAngle + sp;
+                spawnArrow(
+                  en.mesh.position.x + Math.sin(a) * 0.5,
+                  en.mesh.position.z + 0.75,
+                  Math.sin(a) * arrowSpeed,
+                  Math.cos(a) * arrowSpeed,
+                  true,
+                  0
+                );
+              });
+            }
+          } else if (en.type === 'BALLISTA') {
+            en.fireCooldown = Math.max(1.5, 2.8 * cfg.cdScale);
+            // Level 1-3: 3-arrow Scorpion fan spread; Level 4+: 5-arrow fan spread!
+            const fanAngles = wave >= 4 ? [-0.36, -0.18, 0, 0.18, 0.36] : [-0.22, 0, 0.22];
+            fanAngles.forEach((spread) => {
+              const a = aimAngle + spread;
+              spawnArrow(
+                en.mesh.position.x + Math.sin(a) * 0.65,
+                en.mesh.position.z + Math.cos(a) * 0.65,
+                Math.sin(a) * arrowSpeed,
+                Math.cos(a) * arrowSpeed,
+                false,
+                0
+              );
+            });
+          } else if (en.type === 'BOSS') {
+            en.volleyCount = (en.volleyCount || 0) + 1;
+            const bType = en.bossType || 'DREAD_BALLISTA';
+
+            if (bType === 'LONGBOW_CAPTAIN') {
+              // Level 1 Boss: 3-Arrow Royal Fan Spread + Telegraphed Center Sniper Arrow every 2nd volley
+              en.fireCooldown = Math.max(1.25, 1.95 * cfg.cdScale);
+              [-0.24, 0, 0.24].forEach((spread) => {
+                const a = aimAngle + spread;
+                spawnArrow(
+                  en.mesh.position.x + Math.sin(a) * 0.7,
+                  en.mesh.position.z + 0.9,
+                  Math.sin(a) * arrowSpeed,
+                  Math.cos(a) * arrowSpeed,
+                  false,
+                  0
+                );
+              });
+              if (en.volleyCount % 2 === 0) {
+                spawnArrow(
+                  en.mesh.position.x,
+                  en.mesh.position.z + 1.0,
+                  dirX * (arrowSpeed * 1.25),
+                  dirZ * (arrowSpeed * 1.25),
+                  true,
+                  0.42
+                );
+              }
+            } else if (bType === 'ARBALEST_GOLIATH') {
+              // Level 2 Boss: Twin Left/Right Heavy Crossbow Arms + Dual Laser Bolts
+              en.fireCooldown = Math.max(1.2, 1.88 * cfg.cdScale);
+              [-1.45, 1.45].forEach((armX) => {
+                [-0.1, 0.1].forEach((spread) => {
+                  const a = aimAngle + spread;
+                  spawnArrow(
+                    en.mesh.position.x + armX,
+                    en.mesh.position.z + 0.9,
+                    Math.sin(a) * arrowSpeed,
+                    Math.cos(a) * arrowSpeed,
+                    false,
+                    0
+                  );
+                });
+              });
+              if (en.volleyCount % 2 === 1) {
+                [-1.1, 1.1].forEach((lx) => {
+                  spawnArrow(
+                    en.mesh.position.x + lx,
+                    en.mesh.position.z + 1.0,
+                    dirX * (arrowSpeed * 1.25),
+                    dirZ * (arrowSpeed * 1.25),
+                    true,
+                    0.38
+                  );
+                });
+              }
+            } else if (bType === 'LICH_SOVEREIGN') {
+              // Level 4 Boss: 5-Arrow Arcane Starburst Fan + Dual Crossing Laser Arrows
+              en.fireCooldown = Math.max(1.15, 1.85 * cfg.cdScale);
+              [-0.36, -0.18, 0, 0.18, 0.36].forEach((spread) => {
+                const a = aimAngle + spread;
+                spawnArrow(
+                  en.mesh.position.x + Math.sin(a) * 0.8,
+                  en.mesh.position.z + 0.9,
+                  Math.sin(a) * arrowSpeed,
+                  Math.cos(a) * arrowSpeed,
+                  true,
+                  0
+                );
+              });
+              [-0.14, 0.14].forEach((lSpread) => {
+                const la = aimAngle + lSpread;
+                spawnArrow(
+                  en.mesh.position.x,
+                  en.mesh.position.z + 1.0,
+                  Math.sin(la) * (arrowSpeed * 1.28),
+                  Math.cos(la) * (arrowSpeed * 1.28),
+                  true,
+                  0.38
+                );
+              });
+            } else if (bType === 'SLAYER_TITAN' || bType === 'THRONE_EMPEROR') {
+              // Level 5 & 6+ Bosses: Triple Turret Barrage + Triple Laser Harpoons
+              en.fireCooldown = Math.max(1.1, 1.8 * cfg.cdScale);
+              [-1.55, 0, 1.55].forEach((turretX) => {
+                [-0.16, 0.16].forEach((spread) => {
+                  const a = aimAngle + spread;
+                  spawnArrow(
+                    en.mesh.position.x + turretX,
+                    en.mesh.position.z + 0.9,
+                    Math.sin(a) * arrowSpeed,
+                    Math.cos(a) * arrowSpeed,
+                    false,
+                    0
+                  );
+                });
+              });
+              [-0.2, 0, 0.2].forEach((lSpread) => {
+                const la = aimAngle + lSpread;
+                spawnArrow(
+                  en.mesh.position.x,
+                  en.mesh.position.z + 1.05,
+                  Math.sin(la) * (arrowSpeed * 1.3),
+                  Math.cos(la) * (arrowSpeed * 1.3),
+                  true,
+                  0.36
+                );
+              });
+            } else {
+              // Level 3 Boss: Infernal Dread Ballista Warlord
+              en.fireCooldown = Math.max(1.15, 1.9 * cfg.cdScale);
+              [-1.35, 1.35].forEach((turretOffset) => {
+                [-0.15, 0.15].forEach((spread) => {
+                  const a = aimAngle + spread;
+                  spawnArrow(
+                    en.mesh.position.x + turretOffset,
+                    en.mesh.position.z + 0.9,
+                    Math.sin(a) * arrowSpeed,
+                    Math.cos(a) * arrowSpeed,
+                    false,
+                    0
+                  );
+                });
+              });
+              spawnArrow(
+                en.mesh.position.x,
+                en.mesh.position.z + 1.0,
+                dirX * (arrowSpeed * 1.3),
+                dirZ * (arrowSpeed * 1.3),
+                true,
+                0.38
+              );
+            }
+          }
+        }
+      }
+    }
+
+    // =========================================================================
+    // 10. START / CHECKPOINT CONTINUE / GAME OVER HANDLERS
+    // =========================================================================
+    function clearEntities() {
+      [fireballs, arrows, enemies, powerups, particles, laserWarnings, checkpointGates].forEach((arr) => {
+        arr.forEach((item) => scene.remove(item.mesh));
+        arr.length = 0;
+      });
+      activeBoss = null;
+      document.getElementById('bossBarWrap').classList.remove('active');
+    }
+
+    function startGame(fromLevel = 1, keepCheckpointScore = false) {
+      sfx.init();
+      sfx.playBgm();
+      clearEntities();
+
+      wave = Math.max(1, fromLevel);
+      score = keepCheckpointScore ? savedCheckpointScore : 0;
+      gameTime = 0;
+      enemiesRoasted = 0;
+      powerupsCollected = 0;
+      screenShake = 0;
+      bossSpawnedForWave = wave - 1;
+
+      sparkState.x = 0;
+      sparkState.z = 4.5;
+      sparkState.targetX = 0;
+      sparkState.targetZ = 4.5;
+      sparkState.vx = 0;
+      sparkState.vz = 0;
+      sparkState.triFlame = 0;
+      sparkState.infernoBreath = 0;
+      sparkState.shield = wave >= 3; // Starting at Checkpoint 3+ grants a starter Arcane Shield!
+      sparkState.zoomies = 0;
+      spark.shieldMesh.visible = sparkState.shield;
+
+      applyLevelTheme(wave);
+      document.getElementById('hudScore').textContent = score.toLocaleString();
+      updatePowerupHUD();
+
+      document.getElementById('startOverlay').classList.add('hidden');
+      document.getElementById('gameOverOverlay').classList.add('hidden');
+
+      gameState = 'PLAYING';
+      const cfg = getLevelConfig(wave);
+      showCheckpointBanner(
+        wave > 1 ? `🏁 RESPAWNED AT CHECKPOINT ${wave}` : `🐉 LEVEL 1 START`,
+        `LEVEL ${wave}: ${cfg.name}`,
+        `Roast ${cfg.quota} Enemies ${cfg.hasBoss ? '+ Boss ' : ''}to Reach Next Checkpoint!`
+      );
+      showCritToast(`🎲 CRIT: "Level ${wave}: ${cfg.name}! Roast ${cfg.quota} enemies to unlock the Checkpoint!"`);
+
+      // Spawn starter enemies for this level
+      spawnEnemy('ARCHER', -2.8, -16);
+      spawnEnemy('ARCHER', 2.8, -16);
+      if (wave >= 2) spawnEnemy('CROSSBOW', 0, -19);
+      spawnPowerup(-2.2, -13, 'D20');
+    }
+
+    function triggerGameOver() {
+      gameState = 'GAMEOVER';
+      screenShake = 0.65;
+      sfx.sfxGameOver();
+      spawnExplosion(sparkState.x, -0.8, sparkState.z, 0xff2a55, 28);
+
+      if (score > bestScore) {
+        bestScore = score;
+        localStorage.setItem('nm_spark_3d_best', String(bestScore));
+        document.getElementById('hudBest').textContent = bestScore.toLocaleString();
+      }
+
+      document.getElementById('goFinalScore').textContent = score.toLocaleString();
+      document.getElementById('goBestScore').textContent = `LVL ${wave} 🏁`;
+      document.getElementById('goEnemiesRoasted').textContent = enemiesRoasted.toLocaleString();
+      document.getElementById('goPowerups').textContent = powerupsCollected.toLocaleString();
+
+      const continueBtn = document.getElementById('btnContinueCheckpoint');
+      continueBtn.textContent = `🏁 CONTINUE FROM CHECKPOINT (LVL ${wave})`;
+
+      const quotes = [
+        `Crit says: "Took an arrow on Level ${wave}! Hit Continue to respawn right at Checkpoint Level ${wave}!"`,
+        `Crit says: "Watch for the glowing red charge rings under the archers right before they fire!"`,
+        `Pixel says: "Good thing you unlocked Checkpoint Level ${wave}! Respawn and torch 'em!"`
+      ];
+      document.getElementById('gameOverQuote').textContent = quotes[Math.floor(Math.random() * quotes.length)];
+      document.getElementById('gameOverOverlay').classList.remove('hidden');
+    }
+
+    document.getElementById('btnStartGame').addEventListener('click', () => {
+      startGame(selectedStartLevel, selectedStartLevel > 1 && selectedStartLevel === unlockedCheckpoint);
+    });
+    document.getElementById('btnContinueCheckpoint').addEventListener('click', () => {
+      startGame(wave, true);
+    });
+    document.getElementById('btnRestartGame').addEventListener('click', () => {
+      selectedStartLevel = 1;
+      savedCheckpointScore = 0;
+      startGame(1, false);
+    });
+    document.getElementById('btnToggleMute').addEventListener('click', (e) => {
+      const muted = sfx.toggleMute();
+      e.currentTarget.textContent = muted ? '🔇' : '🔊';
+    });
+    document.getElementById('btnFullscreen').addEventListener('click', () => {
+      const stage = document.getElementById('phoneStage');
+      if (!document.fullscreenElement) {
+        stage.requestFullscreen().catch(() => {});
+      } else {
+        document.exitFullscreen().catch(() => {});
+      }
+    });
+
+    // =========================================================================
+    // 11. MAIN 60 FPS 3D ANIMATION & PHYSICS LOOP
+    // =========================================================================
+    let lastTime = performance.now();
+
+    function animate(now) {
+      requestAnimationFrame(animate);
+      const dt = Math.min(0.05, (now - lastTime) / 1000);
+      lastTime = now;
+      const t = now * 0.001;
+
+      // 1. Scroll 3D Castle Bridge & Parallax Molten Lava Canyon Backdrop Continuously
+      const scrollSpeed = gameState === 'PLAYING' ? (sparkState.zoomies > 0 ? 13.5 : 9.0) : 3.5;
+      lavaAbyssTex.offset.y += scrollSpeed * 0.015 * dt;
+      bridgeTiles.forEach((row) => {
+        row.position.z += scrollSpeed * dt;
+        if (row.position.z > 16) {
+          row.position.z -= NUM_ROWS * ROW_DEPTH;
+        }
+      });
+
+      // 2. Articulate 0.5x Spark the Dragon in 3D
+      const flapFreq = sparkState.zoomies > 0 ? 22 : 14.5;
+      const flapAngle = Math.sin(t * flapFreq) * 0.58;
+      const tipLag = Math.sin(t * flapFreq - 0.65) * 0.42;
+
+      spark.leftWing.wingPivot.rotation.z = flapAngle;
+      spark.leftWing.outerPivot.rotation.z = tipLag;
+      spark.rightWing.wingPivot.rotation.z = -flapAngle;
+      spark.rightWing.outerPivot.rotation.z = -tipLag;
+
+      spark.root.position.y = -0.8 + Math.cos(t * flapFreq) * 0.1;
+
+      spark.tailSegments.forEach((seg, idx) => {
+        seg.rotation.y = Math.sin(t * 10 - idx * 0.55) * (0.18 + idx * 0.03) - sparkState.vx * 0.025;
+        seg.rotation.x = Math.cos(t * 7 - idx * 0.4) * 0.06;
+      });
+
+      sparkState.jawOpen = Math.max(0, sparkState.jawOpen - dt * 5.5);
+      spark.jawGroup.rotation.x = -0.15 - sparkState.jawOpen * 0.45;
+      spark.skullGroup.rotation.z = Math.sin(t * 8) * 0.18;
+
+      if (gameState === 'PLAYING') {
+        gameTime += dt;
+
+        // Keyboard movement
+        const kbSpeed = sparkState.zoomies > 0 ? 15.5 : 11.2;
+        if (keys['ArrowLeft'] || keys['KeyA']) sparkState.targetX -= kbSpeed * dt;
+        if (keys['ArrowRight'] || keys['KeyD']) sparkState.targetX += kbSpeed * dt;
+        if (keys['ArrowUp'] || keys['KeyW']) sparkState.targetZ -= kbSpeed * dt;
+        if (keys['ArrowDown'] || keys['KeyS']) sparkState.targetZ += kbSpeed * dt;
+        sparkState.targetX = Math.max(-BOUNDS_X, Math.min(BOUNDS_X, sparkState.targetX));
+        sparkState.targetZ = Math.max(BOUNDS_Z_MIN, Math.min(BOUNDS_Z_MAX, sparkState.targetZ));
+
+        const followLerp = sparkState.zoomies > 0 ? 18 : 13.5;
+        const prevX = sparkState.x;
+        const prevZ = sparkState.z;
+        sparkState.x += (sparkState.targetX - sparkState.x) * Math.min(1, followLerp * dt);
+        sparkState.z += (sparkState.targetZ - sparkState.z) * Math.min(1, followLerp * dt);
+        sparkState.vx = (sparkState.x - prevX) / (dt || 0.016);
+        sparkState.vz = (sparkState.z - prevZ) / (dt || 0.016);
+
+        spark.root.position.x = sparkState.x;
+        spark.root.position.z = sparkState.z;
+
+        const targetRoll = Math.max(-0.58, Math.min(0.58, -sparkState.vx * 0.045));
+        const targetPitch = Math.max(-0.3, Math.min(0.3, sparkState.vz * 0.025));
+        spark.root.rotation.z += (targetRoll - spark.root.rotation.z) * 12 * dt;
+        spark.root.rotation.x += (targetPitch - spark.root.rotation.x) * 12 * dt;
+        spark.headGroup.rotation.y = Math.max(-0.35, Math.min(0.35, -sparkState.vx * 0.025));
+
+        sparkMouthLight.position.set(sparkState.x, 0.2, sparkState.z - 0.9);
+
+        let hudDirty = false;
+        ['triFlame', 'infernoBreath', 'zoomies'].forEach((k) => {
+          if (sparkState[k] > 0) {
+            sparkState[k] = Math.max(0, sparkState[k] - dt);
+            hudDirty = true;
+          }
+        });
+        if (hudDirty || Math.floor(gameTime * 5) % 2 === 0) updatePowerupHUD();
+
+        if (sparkState.shield) {
+          spark.shieldMesh.visible = true;
+          spark.shieldMesh.rotation.y += dt * 2.5;
+          spark.shieldMesh.rotation.x += dt * 1.4;
+        } else {
+          spark.shieldMesh.visible = false;
+        }
+
+        // Auto-Fire Dragon Breath!
+        sparkState.fireTimer -= dt;
+        const fireInterval = sparkState.infernoBreath > 0 ? 0.08 : (sparkState.zoomies > 0 ? 0.11 : 0.16);
+        if (sparkState.fireTimer <= 0) {
+          sparkState.fireTimer = fireInterval;
+          spawnFireballs();
+        }
+
+        // Update Enemy Wave Director & Enemy Bow AI
+        updateWaveDirector(dt, t);
+
+        // Update Telegraph Laser Sight Warnings
+        for (let i = laserWarnings.length - 1; i >= 0; i--) {
+          const lw = laserWarnings[i];
+          lw.timer -= dt;
+          lw.mesh.material.opacity = 0.25 + 0.55 * Math.abs(Math.sin(t * 28));
+          if (lw.timer <= 0) {
+            scene.remove(lw.mesh);
+            laserWarnings.splice(i, 1);
+            spawnArrow(lw.x, lw.z, lw.vx, lw.vz, lw.isElite, 0);
+          }
+        }
+
+        // Update Fireballs & Check Collisions with 3D Enemies (Archers, Crossbowmen, Ballistas, Boss!)
+        for (let i = fireballs.length - 1; i >= 0; i--) {
+          const fb = fireballs[i];
+          fb.mesh.position.x += fb.vx * dt;
+          fb.mesh.position.z += fb.vz * dt;
+          fb.life -= dt;
+
+          let removed = false;
+
+          for (let j = enemies.length - 1; j >= 0; j--) {
+            const en = enemies[j];
+            const dist = Math.hypot(fb.mesh.position.x - en.mesh.position.x, fb.mesh.position.z - en.mesh.position.z);
+            if (dist < en.hitRadius) {
+              const dmg = fb.inferno ? 2 : 1;
+              en.hp -= dmg;
+              en.hitFlash = 1.0;
+              sfx.sfxHitEnemy();
+              spawnExplosion(fb.mesh.position.x, -0.8, fb.mesh.position.z, 0xa3e635, 5);
+
+              // Update enemy 3D health bar
+              const pct = Math.max(0, en.hp / en.maxHp);
+              en.hb.fill.scale.x = Math.max(0.01, pct);
+              en.hb.fill.position.x = -(1 - pct) * en.hb.width * 0.5;
+              en.hb.fill.material.color.setHex(pct > 0.5 ? 0x39ff14 : (pct > 0.25 ? 0xfacc15 : 0xff2a55));
+
+              if (en.type === 'BOSS' && activeBoss === en) {
+                document.getElementById('bossBarFill').style.width = `${Math.round(pct * 100)}%`;
+                document.getElementById('bossHpText').textContent = `${Math.max(0, en.hp)} HP`;
+              }
+
+              if (en.hp <= 0) {
+                // Enemy Roasted!
+                sfx.sfxKillEnemy();
+                enemiesRoasted++;
+                if (en.type === 'BOSS') {
+                  levelBossDefeated = true;
+                } else {
+                  levelKills++;
+                }
+                updateLevelProgressHUD();
+
+                const mult = sparkState.triFlame > 0 ? 2 : 1;
+                const pts = (en.type === 'BOSS' ? 2000 : (en.type === 'BALLISTA' ? 500 : (en.type === 'CROSSBOW' ? 300 : 200))) * mult;
+                score += pts;
+
+                const killMsg =
+                  en.type === 'BOSS' ? `👑 BOSS ROASTED +${pts}!` :
+                  en.type === 'BALLISTA' ? `💥 BALLISTA TORCHED +${pts}!` :
+                  `🔥 ROASTED +${pts}!`;
+                showFloatingPopup(en.mesh.position.x, en.mesh.position.z, killMsg, en.type === 'BOSS' ? '#facc15' : '#a3e635');
+                spawnExplosion(en.mesh.position.x, -0.6, en.mesh.position.z, 0xff7b00, en.type === 'BOSS' ? 34 : 16);
+
+                // Drop Loot / Power-Ups from Roasted Enemies!
+                if (en.type === 'BOSS') {
+                  activeBoss = null;
+                  document.getElementById('bossBarWrap').classList.remove('active');
+                  screenShake = 0.5;
+                  for (let lwIdx = laserWarnings.length - 1; lwIdx >= 0; lwIdx--) {
+                    scene.remove(laserWarnings[lwIdx].mesh);
+                  }
+                  laserWarnings.length = 0;
+                  showCritToast(`🎲 CRIT: "NAT 20! Level ${wave} Boss Roasted! Fly through the Checkpoint Gate!"`);
+                  spawnPowerup(en.mesh.position.x - 1.2, en.mesh.position.z, 'D20');
+                  spawnPowerup(en.mesh.position.x, en.mesh.position.z, 'SHIELD');
+                  spawnPowerup(en.mesh.position.x + 1.2, en.mesh.position.z, 'PEPPER');
+                } else if (en.type === 'BALLISTA' || Math.random() < 0.45) {
+                  spawnPowerup(en.mesh.position.x, en.mesh.position.z, Math.random() < 0.55 ? null : 'GEM');
+                }
+
+                scene.remove(en.mesh);
+                enemies.splice(j, 1);
+              }
+              removed = true;
+              break;
+            }
+          }
+
+          // If Inferno Breath is active, fireballs also melt incoming arrows!
+          if (!removed && fb.inferno) {
+            for (let a = arrows.length - 1; a >= 0; a--) {
+              const ar = arrows[a];
+              const dist = Math.hypot(fb.mesh.position.x - ar.mesh.position.x, fb.mesh.position.z - ar.mesh.position.z);
+              if (dist < 1.0) {
+                spawnExplosion(ar.mesh.position.x, -0.8, ar.mesh.position.z, 0xff5500, 9);
+                score += 75;
+                showFloatingPopup(ar.mesh.position.x, ar.mesh.position.z, '🌶️ MELTED +75!', '#ff9f1c');
+                scene.remove(ar.mesh);
+                arrows.splice(a, 1);
+                removed = true;
+                break;
+              }
+            }
+          }
+
+          if (removed || fb.life <= 0 || fb.mesh.position.z < -26) {
+            scene.remove(fb.mesh);
+            fireballs.splice(i, 1);
+          }
+        }
+
+        // Update Incoming Arrows & Check Spark Hitbox (Half-size Spark hitbox = 0.45!)
+        for (let i = arrows.length - 1; i >= 0; i--) {
+          const ar = arrows[i];
+          ar.mesh.position.x += ar.vx * dt;
+          ar.mesh.position.z += ar.vz * dt;
+
+          const dist = Math.hypot(ar.mesh.position.x - sparkState.x, ar.mesh.position.z - sparkState.z);
+
+          if (dist < 0.45) {
+            if (sparkState.shield) {
+              sparkState.shield = false;
+              updatePowerupHUD();
+              sfx.sfxShieldBreak();
+              screenShake = 0.4;
+              spawnExplosion(sparkState.x, -0.6, sparkState.z, 0x00f0ff, 24);
+              showFloatingPopup(sparkState.x, sparkState.z, '🛡️ SHIELD SAVED YOU!', '#00f0ff');
+              showCritToast('🎲 CRIT: "Arcane Ward absorbed that arrow! Keep roasting them!"');
+              for (let k = arrows.length - 1; k >= 0; k--) {
+                scene.remove(arrows[k].mesh);
+              }
+              arrows.length = 0;
+              break;
+            } else {
+              triggerGameOver();
+              return;
+            }
+          } else if (!ar.grazed && dist < 1.15) {
+            ar.grazed = true;
+            score += 100;
+            sfx.sfxGraze();
+            showFloatingPopup(sparkState.x, sparkState.z - 0.6, '⚡ GRAZE +100!', '#00f0ff');
+          }
+
+          if (ar.mesh.position.z > 14 || Math.abs(ar.mesh.position.x) > 14) {
+            score += 25;
+            scene.remove(ar.mesh);
+            arrows.splice(i, 1);
+          }
+        }
+
+        // Check if Spark collides directly with an enemy body
+        for (let i = 0; i < enemies.length; i++) {
+          const en = enemies[i];
+          const dist = Math.hypot(en.mesh.position.x - sparkState.x, en.mesh.position.z - sparkState.z);
+          if (dist < en.hitRadius * 0.72) {
+            // Push Spark back safely to keep him in front of the enemy formation
+            sparkState.z = Math.min(BOUNDS_Z_MAX, en.mesh.position.z + en.hitRadius + 0.6);
+            sparkState.targetZ = sparkState.z;
+          }
+        }
+
+        // Update Power-Ups & Check Collection
+        for (let i = powerups.length - 1; i >= 0; i--) {
+          const pw = powerups[i];
+          pw.mesh.rotation.y += dt * 3.0;
+          pw.mesh.position.z += pw.vz * dt;
+
+          const dx = sparkState.x - pw.mesh.position.x;
+          const dz = sparkState.z - pw.mesh.position.z;
+          const dist = Math.hypot(dx, dz);
+          if (dist < 3.2) {
+            pw.mesh.position.x += (dx / dist) * 10.0 * dt;
+            pw.mesh.position.z += (dz / dist) * 10.0 * dt;
+          }
+
+          if (dist < 1.05) {
+            powerupsCollected++;
+            const mult = sparkState.triFlame > 0 ? 2 : 1;
+            if (pw.type === 'D20') {
+              sparkState.triFlame = 8.0;
+              score += 300 * mult;
+              sfx.sfxPowerup();
+              showCritToast('🎲 CRIT: "NAT 20! Tri-Flame Spread & 2x Crit Score unlocked!"');
+            } else if (pw.type === 'PEPPER') {
+              sparkState.infernoBreath = 5.5;
+              score += 300 * mult;
+              sfx.sfxPowerup();
+              showCritToast('🌶️ CRIT: "Spicy dragon snack! Your fire now MELTS arrows!"');
+            } else if (pw.type === 'SHIELD') {
+              sparkState.shield = true;
+              score += 250 * mult;
+              sfx.sfxPowerup();
+            } else if (pw.type === 'ZOOMIES') {
+              sparkState.zoomies = 6.5;
+              score += 250 * mult;
+              sfx.sfxPowerup();
+            } else {
+              score += 250 * mult;
+              sfx.sfxGem();
+            }
+            updatePowerupHUD();
+            spawnExplosion(pw.mesh.position.x, -0.8, pw.mesh.position.z, pw.colorHex, 12);
+            showFloatingPopup(pw.mesh.position.x, pw.mesh.position.z, pw.label, '#39ff14');
+            scene.remove(pw.mesh);
+            powerups.splice(i, 1);
+            continue;
+          }
+
+          if (pw.mesh.position.z > 14) {
+            scene.remove(pw.mesh);
+            powerups.splice(i, 1);
+          }
+        }
+
+        document.getElementById('hudScore').textContent = score.toLocaleString();
+      } else {
+        spark.root.position.x = Math.sin(t * 1.5) * 0.8;
+        spark.root.position.z = 3.2 + Math.cos(t * 1.5) * 0.4;
+        spark.root.rotation.z = -Math.cos(t * 1.5) * 0.18;
+      }
+
+      // Update 3D Explosion Particles
+      for (let i = particles.length - 1; i >= 0; i--) {
+        const p = particles[i];
+        p.mesh.position.x += p.vx * dt;
+        p.mesh.position.y += p.vy * dt;
+        p.mesh.position.z += p.vz * dt;
+        p.vy -= 14 * dt;
+        p.life -= dt;
+        p.mesh.material.opacity = Math.max(0, p.life * 2.2);
+        if (p.life <= 0) {
+          scene.remove(p.mesh);
+          particles.splice(i, 1);
+        }
+      }
+
+      let camX = spark.root.position.x * 0.22;
+      let camY = 28.0;
+      let camZ = 11.8;
+      if (screenShake > 0) {
+        screenShake = Math.max(0, screenShake - dt * 1.8);
+        camX += (Math.random() - 0.5) * screenShake * 1.6;
+        camZ += (Math.random() - 0.5) * screenShake * 1.6;
+      }
+      camera.position.set(camX, camY, camZ);
+      camera.lookAt(spark.root.position.x * 0.15, 0, -2.2);
+
+      renderer.render(scene, camera);
+    }
+
+    window.addEventListener('resize', () => {
+      camera.aspect = container.clientWidth / container.clientHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize(container.clientWidth, container.clientHeight);
+    });
+
+    requestAnimationFrame(animate);
+  </script>
+</body>
+</html>

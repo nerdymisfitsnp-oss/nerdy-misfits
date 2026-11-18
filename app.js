@@ -106,8 +106,8 @@
       avatar: 'assets/avatar_pixel.png?v=3',
       loves: 'Retro games, snacks, and beating everyone.',
       power: 'Extra Life — respawns when it counts.',
-      quote: '“Speedrunner. High-score chaser. Chaos enjoyer! Me and 8-Bit are wiring up playable Nerdy Misfits browser mini-games right now—visit our Arcade tab to see what’s coming soon!”',
-      btnLabel: "Open Pixel's Mini-Games Arcade →",
+      quote: '“Speedrunner. High-score chaser. Chaos enjoyer! Me and 8-Bit just launched Spark’s Arrow Storm 3D in our Arcade tab—fly Spark across the castle bridge, roast horned archers & 3D Bosses, and unlock Checkpoints!”',
+      btnLabel: "Play Spark's 3D Game in Pixel's Arcade →",
       btnAction: () => switchCrewTab('pixel')
     },
     crit: {
@@ -121,8 +121,8 @@
       avatar: 'assets/avatar_crit.png?v=3',
       loves: 'Tabletop RPGs, lore, dice, epic campaigns, shiny things, snacks, and mayhem.',
       power: 'Critical Influence — can bend fate (and rules) • Spark breathes chaos (and fire).',
-      quote: '“Story weaver. Dungeon builder. Rules are suggestions! Join me and my mischievous dragon Spark to explore 146 articulated dragons, character dragons, and tabletop RPG dice towers!”',
-      btnLabel: "Open Crit & Spark's Tab →",
+      quote: '“Story weaver. Dungeon builder. Rules are suggestions! Join me and my mischievous dragon Spark to play our new 3D game Spark’s Arrow Storm 3D, or explore 146 articulated dragons and tabletop RPG dice towers!”',
+      btnLabel: "Open Crit & Spark's Tab (146 Dragons + 3D Game) →",
       btnAction: () => switchCrewTab('crit'),
       bannerTitle: "Crit & Spark’s Sanctum: 146 Dragons, Character Dragons & Tabletop RPG Gear",
       rootCatIds: ['Y5S6IHG5LHAHHVF3AMNBXOZZ', 'TAZ4GVCDOX2HBTXL4P5J3DLY'],
@@ -347,9 +347,42 @@
       booksyBookWrap.style.display = crewKey === 'booksy' ? 'block' : 'none';
     }
 
+    const critGameWrap = document.getElementById('critSparkGameWrap');
+    if (critGameWrap) {
+      critGameWrap.style.display = crewKey === 'crit' ? 'block' : 'none';
+      if (crewKey !== 'crit') {
+        const drawer = document.getElementById('critInlineGameDrawer');
+        const iframe = document.getElementById('critArcadeGameIframe');
+        const btn = document.getElementById('btnToggleCritInlineGame');
+        if (drawer) drawer.style.display = 'none';
+        if (iframe && iframe.getAttribute('src')) iframe.setAttribute('src', '');
+        if (btn) btn.innerHTML = '<span>🕹️ Play Right Here in Crit’s Tab ▼</span>';
+      }
+    }
+
     renderGremlinSubcatPills(profile);
     renderActiveGremlinProducts();
   }
+
+  window.toggleCritInlineGame = function () {
+    const drawer = document.getElementById('critInlineGameDrawer');
+    const iframe = document.getElementById('critArcadeGameIframe');
+    const btn = document.getElementById('btnToggleCritInlineGame');
+    if (!drawer || !iframe) return;
+
+    const isOpen = drawer.style.display !== 'none';
+    if (isOpen) {
+      drawer.style.display = 'none';
+      iframe.setAttribute('src', '');
+      if (btn) btn.innerHTML = '<span>🕹️ Play Right Here in Crit’s Tab ▼</span>';
+    } else {
+      drawer.style.display = 'block';
+      if (!iframe.getAttribute('src')) {
+        iframe.setAttribute('src', iframe.getAttribute('data-src') || 'spark_game.html');
+      }
+      if (btn) btn.innerHTML = '<span>✖ Hide Inline 3D Game Stage ▲</span>';
+    }
+  };
 
   function renderGremlinSubcatPills(profile) {
     const container = document.getElementById('hostSubcatPills');

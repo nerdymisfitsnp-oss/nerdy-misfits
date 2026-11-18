@@ -85,7 +85,7 @@
             <img src="assets/avatar_crit.png?v=3" alt="Crit" class="crew-tab-avatar" />
             <div class="crew-tab-text">
               <span class="crew-tab-who"><span class="tab-full-label">🎲 CRIT &amp; SPARK</span><span class="tab-short-label">CRIT</span></span>
-              <span class="crew-tab-what">146 Dragons &amp; RPG Dice</span>
+              <span class="crew-tab-what">146 Dragons &amp; 3D Game</span>
             </div>
           </button>
 
@@ -116,12 +116,12 @@
             </div>
           </button>
 
-          <!-- Tab 7: Pixel (Mini-Games Arcade Coming Soon!) -->
+          <!-- Tab 7: Pixel (Playable 3D Mini-Games Arcade!) -->
           <button type="button" class="crew-tab-btn" data-crew="pixel" onclick="switchCrewTab('pixel')">
             <img src="assets/avatar_pixel.png?v=3" alt="Pixel" class="crew-tab-avatar" />
             <div class="crew-tab-text">
               <span class="crew-tab-who"><span class="tab-full-label">🟣 PIXEL'S ARCADE</span><span class="tab-short-label">PIXEL</span></span>
-              <span class="crew-tab-what">Mini-Games (Coming Soon)</span>
+              <span class="crew-tab-what">Play Spark's 3D Game!</span>
             </div>
           </button>
 
@@ -275,6 +275,9 @@
             <button id="spotActionBtn" class="btn-friendly-primary" onclick="switchCrewTab('fokal')">
               <span>Explore Fokal's Sensory Fidgets →</span>
             </button>
+            <button class="btn-friendly-secondary" style="border-color:var(--neon-green);color:var(--neon-green);" onclick="switchCrewTab('pixel')">
+              <span>🕹️🐉 Play Spark's 3D Game</span>
+            </button>
             <button class="btn-friendly-secondary" onclick="switchCrewTab('inky')">
               <span>🎨 Custom Print Studio</span>
             </button>
@@ -331,6 +334,7 @@
             </h2>
           </div>
           <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <button class="btn-friendly-secondary" style="border-color:var(--neon-green);color:var(--neon-green);" onclick="switchCrewTab('pixel')">🕹️🐉 Play Spark's 3D Game</button>
             <button class="btn-friendly-secondary" onclick="switchCrewTab('fokal')">💖 Fokal's Sensory &amp; Clickers</button>
             <button class="btn-friendly-secondary" onclick="switchCrewTab('crit')">🐉 Crit &amp; Spark's 146 Dragons</button>
             <button class="btn-friendly-primary" onclick="switchCrewTab('markets')">📦 Browse All 526 Prints →</button>
@@ -509,6 +513,55 @@
         </div>
       </div>
 
+      <!-- Crit × Spark Official Playable 3D Mobile Game Spotlight (Shown in Crit & Spark's Tab!) -->
+      <div id="critSparkGameWrap" style="display:none;margin-bottom:28px;">
+        <div style="background:linear-gradient(145deg, #101824 0%, #090c14 65%, #121c10 100%);border:3px solid var(--neon-green);border-radius:var(--radius-xl);padding:26px 28px;box-shadow:0 20px 55px rgba(0,0,0,0.8), 0 0 34px rgba(57,255,20,0.28);">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:20px;">
+            <div style="display:flex;align-items:center;gap:18px;flex-wrap:wrap;flex:1;min-width:260px;">
+              <img src="assets/crew_crit.png?v=3" alt="Crit &amp; Spark" style="height:105px;width:auto;object-fit:contain;filter:drop-shadow(0 8px 16px rgba(0,0,0,0.75));" />
+              <div style="flex:1;min-width:220px;">
+                <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+                  <span class="host-pill" style="background:var(--neon-green);color:#050805;border-color:#fff;">🐉🎲 CRIT &amp; SPARK OFFICIAL 3D GAME // LIVE NOW</span>
+                  <span class="host-pill" style="background:rgba(255,159,28,0.18);color:#fbbf24;border-color:#fbbf24;">🏁 LEVELS + 3D BOSSES + CHECKPOINTS</span>
+                </div>
+                <h2 style="font-family:var(--font-display);font-size:clamp(1.35rem, 2.4vw, 1.85rem);font-weight:900;color:#fff;margin-bottom:6px;">
+                  Play Spark’s Arrow Storm 3D — Roast Horned Archers, Bosses &amp; Evade Arrows!
+                </h2>
+                <p style="font-size:0.9rem;color:#cbd5e1;line-height:1.5;">
+                  Fly <strong>Spark the Mischievous Dragon</strong> across the molten lava castle bridge! Torch horned black-iron archers, juggernaut crossbows, scorpion ballistas, and end-of-level 3D Bosses while grabbing Nat-20 D20 power-ups!
+                </p>
+              </div>
+            </div>
+
+            <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
+              <button type="button" class="btn-friendly-primary" id="btnToggleCritInlineGame" onclick="toggleCritInlineGame()">
+                <span>🕹️ Play Right Here in Crit’s Tab ▼</span>
+              </button>
+              <button type="button" class="btn-friendly-secondary" style="border-color:var(--pixel-purple);color:#e9d5ff;" onclick="switchCrewTab('pixel')">
+                <span>🟣 Open Pixel’s Arcade Tab →</span>
+              </button>
+              <a href="spark_game.html" target="_blank" rel="noopener" class="btn-friendly-secondary" style="text-decoration:none;border-color:var(--neon-cyan);color:var(--neon-cyan);">
+                <span>📱 Fullscreen Mobile ↗</span>
+              </a>
+            </div>
+          </div>
+
+          <!-- Expandable Inline 9:16 3D Game Stage inside Crit & Spark's Tab -->
+          <div id="critInlineGameDrawer" style="display:none;margin-top:22px;padding-top:22px;border-top:1px solid rgba(57,255,20,0.3);text-align:center;">
+            <div style="display:flex;justify-content:center;">
+              <iframe
+                id="critArcadeGameIframe"
+                src=""
+                data-src="spark_game.html"
+                title="Spark's Arrow Storm 3D — Crit & Spark Tab"
+                style="width:100%;max-width:440px;height:860px;border:none;border-radius:38px;box-shadow:0 20px 60px rgba(0,0,0,0.88);"
+                allow="fullscreen; autoplay"
+              ></iframe>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Simple Friendly Filter Toolbar -->
       <div class="toolbar-row">
         <div id="gremlinResultsCount" style="font-weight:700;color:var(--ink-secondary);">
@@ -543,49 +596,78 @@
   </section>
 
   <!-- ====================================================================
-       PIXEL'S RETRO ARCADE & MINI-GAMES ARENA (COMING SOON BANNER!)
+       PIXEL'S RETRO ARCADE & MINI-GAMES ARENA (SPARK'S ARROW STORM 3D LIVE!)
        ==================================================================== -->
   <section id="view-pixel" class="tab-view-panel">
     <div class="container">
-      <!-- Neon Nerdy Misfits "Arcade Mini-Games Coming Soon" Hero Banner -->
-      <div class="pixel-arcade-hero-box" style="background:linear-gradient(145deg, #1b0b32 0%, #0e101c 65%, #160928 100%);border:3px solid var(--pixel-purple);border-radius:var(--radius-xl);padding:42px 36px;box-shadow:0 24px 60px rgba(0,0,0,0.75), 0 0 38px rgba(192,66,255,0.35);position:relative;overflow:hidden;margin-bottom:36px;">
-        <div class="pixel-arcade-hero-grid" style="display:grid;grid-template-columns:auto 1fr;gap:32px;align-items:center;">
+      <!-- Playable 3D Mobile Arcade Cabinet #01: SPARK'S ARROW STORM 3D (TOP & CENTER!) -->
+      <div id="sparkArcadeCabinetAnchor" style="background:linear-gradient(145deg, #101424 0%, #090b12 100%);border:3px solid var(--neon-green);border-radius:var(--radius-xl);padding:28px 24px;box-shadow:0 24px 60px rgba(0,0,0,0.8), 0 0 36px rgba(57,255,20,0.28);margin-bottom:36px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:14px;margin-bottom:20px;">
+          <div>
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+              <span class="host-pill" style="background:var(--neon-green);color:#050805;">🐉 CABINET #01 // NOW LIVE &amp; PLAYABLE</span>
+              <span class="host-pill" style="background:rgba(192,66,255,0.2);color:#e9d5ff;border-color:var(--pixel-purple);">🟣 PIXEL × CRIT &amp; SPARK 3D ARCADE</span>
+              <span class="host-pill" style="background:rgba(255,159,28,0.18);color:#fbbf24;border-color:#fbbf24;">🏁 LEVELS + 3D BOSSES + CHECKPOINTS</span>
+            </div>
+            <h1 style="font-family:var(--font-display);font-size:clamp(1.6rem, 3vw, 2.2rem);font-weight:900;margin-top:4px;color:#fff;">
+              Spark’s Arrow Storm 3D — Spit Fire, Roast Bosses &amp; Evade Arrows!
+            </h1>
+            <p style="font-size:0.94rem;color:#cbd5e1;margin-top:4px;max-width:760px;">
+              Touch/drag or move your mouse to fly <strong>Spark the Mischievous Dragon</strong> across the castle bridge! Roast horned black-iron archers, juggernaut crossbows, scorpion ballistas, and end-of-level 3D Bosses to unlock Checkpoints. <strong>One arrow hit = GAME OVER!</strong>
+            </p>
+          </div>
+          <div style="display:flex;gap:10px;flex-wrap:wrap;">
+            <a href="spark_game.html" target="_blank" rel="noopener" class="btn-friendly-primary" style="text-decoration:none;">
+              <span>📱 Launch Fullscreen Mobile View ↗</span>
+            </a>
+            <button type="button" class="btn-friendly-secondary" onclick="switchCrewTab('crit')">
+              <span>🐉 Shop Crit &amp; Spark’s 146 Dragons →</span>
+            </button>
+          </div>
+        </div>
+
+        <div style="display:flex;justify-content:center;">
+          <iframe
+            id="pixelArcadeGameIframe"
+            src="spark_game.html"
+            title="Spark's Arrow Storm 3D"
+            style="width:100%;max-width:440px;height:860px;border:none;border-radius:38px;box-shadow:0 20px 60px rgba(0,0,0,0.85);"
+            allow="fullscreen; autoplay"
+          ></iframe>
+        </div>
+      </div>
+
+      <!-- Neon Nerdy Misfits Pixel & 8-Bit Arcade Host Banner -->
+      <div class="pixel-arcade-hero-box" style="background:linear-gradient(145deg, #1b0b32 0%, #0e101c 65%, #160928 100%);border:3px solid var(--pixel-purple);border-radius:var(--radius-xl);padding:34px 32px;box-shadow:0 24px 60px rgba(0,0,0,0.75), 0 0 38px rgba(192,66,255,0.35);position:relative;overflow:hidden;margin-bottom:36px;">
+        <div class="pixel-arcade-hero-grid" style="display:grid;grid-template-columns:auto 1fr;gap:28px;align-items:center;">
           <!-- Pixel & 8-Bit Sprite -->
-          <div style="background:radial-gradient(circle, rgba(192,66,255,0.32) 0%, #131626 75%);border:2.5px solid var(--pixel-purple);border-radius:22px;padding:18px;text-align:center;box-shadow:0 0 28px rgba(192,66,255,0.4);">
-            <img src="assets/crew_pixel.png?v=3" alt="Pixel — The Game Goblin &amp; 8-Bit" style="height:240px;width:auto;object-fit:contain;margin:0 auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.7));" />
-            <div style="margin-top:10px;font-family:var(--font-mono);font-size:0.75rem;color:var(--neon-green);font-weight:800;">
-              👾 PIXEL &amp; 8-BIT // PLAYER 1 READY
+          <div style="background:radial-gradient(circle, rgba(192,66,255,0.32) 0%, #131626 75%);border:2.5px solid var(--pixel-purple);border-radius:22px;padding:16px;text-align:center;box-shadow:0 0 28px rgba(192,66,255,0.4);">
+            <img src="assets/crew_pixel.png?v=3" alt="Pixel — The Game Goblin &amp; 8-Bit" style="height:200px;width:auto;object-fit:contain;margin:0 auto;filter:drop-shadow(0 8px 18px rgba(0,0,0,0.7));" />
+            <div style="margin-top:8px;font-family:var(--font-mono);font-size:0.74rem;color:var(--neon-green);font-weight:800;">
+              👾 PIXEL &amp; 8-BIT // ARCADE HOSTS
             </div>
           </div>
 
-          <!-- Coming Soon Marquee & Copy -->
+          <!-- Arcade Marquee & Copy -->
           <div>
-            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;">
+            <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:10px;">
               <span class="host-pill" style="background:var(--pixel-purple);color:#fff;border-color:#fff;">🟣 PIXEL • THE GAME GOBLIN</span>
-              <span class="host-pill" style="background:rgba(57,255,20,0.16);color:var(--neon-green);border-color:var(--neon-green);">🕹️ INSERT COIN // LEVELING UP</span>
+              <span class="host-pill" style="background:rgba(57,255,20,0.16);color:var(--neon-green);border-color:var(--neon-green);">🕹️ CABINET #01 LIVE NOW!</span>
             </div>
 
-            <div style="font-family:var(--font-mono);font-size:0.9rem;color:var(--neon-pink);font-weight:800;letter-spacing:0.12em;text-transform:uppercase;margin-bottom:6px;">
-              ★ NERDY MISFITS ARCADE ZONE — COMING SOON ★
-            </div>
+            <h2 style="font-family:var(--font-display);font-size:clamp(1.6rem, 3vw, 2.4rem);font-weight:900;line-height:1.12;color:#ffffff;text-shadow:0 0 24px rgba(192,66,255,0.55);margin-bottom:12px;">
+              Welcome to Pixel &amp; 8-Bit’s Nerdy Misfits Arcade Zone!
+            </h2>
 
-            <h1 style="font-family:var(--font-display);font-size:clamp(2rem, 3.8vw, 3.1rem);font-weight:900;line-height:1.08;color:#ffffff;text-shadow:0 0 24px rgba(192,66,255,0.55);margin-bottom:14px;">
-              Pixel’s Playable Mini-Games Are Loading Into the System…
-            </h1>
-
-            <p style="font-size:1.02rem;color:#d5daf0;max-width:680px;line-height:1.6;margin-bottom:20px;">
-              “Speedrunner. High-score chaser. Chaos enjoyer! Me and <strong>8-Bit</strong> are wiring up custom playable <strong>Nerdy Misfits Arcade Mini-Games</strong> right here on this tab—where you’ll be able to chase high scores, battle dungeon bosses, and win workshop loot!”
+            <p style="font-size:0.98rem;color:#d5daf0;max-width:680px;line-height:1.6;margin-bottom:18px;">
+              “Speedrunner. High-score chaser. Chaos enjoyer! <strong>Spark’s Arrow Storm 3D</strong> is officially live above—reach the highest Checkpoint Level you can, roast every Level Boss, and check out our next upcoming Misfit mini-game cabinets below!”
             </p>
 
-            <!-- Loading Progress Bar -->
-            <div style="max-width:520px;background:#0a0c14;border:2px solid var(--neon-green);border-radius:99px;padding:5px;margin-bottom:24px;box-shadow:0 0 18px rgba(57,255,20,0.28);">
-              <div style="width:78%;background:linear-gradient(90deg, var(--neon-green), var(--neon-cyan), var(--pixel-purple));color:#050805;font-family:var(--font-mono);font-size:0.74rem;font-weight:900;padding:4px 14px;border-radius:99px;text-align:right;">
-                ARCADE BUILD: 78% LOADED...
-              </div>
-            </div>
-
             <div style="display:flex;gap:12px;flex-wrap:wrap;">
-              <button type="button" class="btn-friendly-primary" onclick="switchCrewTab('fokal')">
+              <button type="button" class="btn-friendly-primary" onclick="document.getElementById('sparkArcadeCabinetAnchor').scrollIntoView({behavior:'smooth'})">
+                <span>🐉 Play Spark’s Arrow Storm 3D ↑</span>
+              </button>
+              <button type="button" class="btn-friendly-secondary" onclick="switchCrewTab('fokal')">
                 <span>💖 Shop Fokal’s Sensory Fidgets &amp; Clickers →</span>
               </button>
               <button type="button" class="btn-friendly-secondary" onclick="switchCrewTab('crit')">
