@@ -2717,6 +2717,228 @@
     }
   };
 
+  // ========================================================================
+  // 10. REAL-TIME GOOGLE CALENDAR SCHEDULE & PICKUP SYNC (nerdymisfitsnp@gmail.com)
+  // ========================================================================
+  let activeCalendarWindow = 'week'; // 'week' (6), 'month' (18), 'all' (60)
+  let cachedCalendarEvents = [];
+
+  // Special / One-Off Events synced directly from nerdymisfitsnp@gmail.com Google Calendar
+  const GCAL_SPECIAL_EVENTS = [
+    { date: '2026-11-19', startH: 17, startM: 30, timeLabel: '5:30 PM - 9:30 PM', displayTitle: 'Moonlight Market at the Marina', city: 'Punta Gorda (Laishley Park Marina)', cityShort: 'Punta Gorda', address: 'Laishley Park, Punta Gorda, FL 33950', icon: '🌙' },
+    { date: '2026-12-05', startH: 12, startM: 0,  timeLabel: '12 PM - 5 PM',      displayTitle: 'Poinsetta Festival',             city: 'North Port (City Center Front Green)', cityShort: 'North Port', address: '4970 City Hall Blvd, North Port, FL 34286', icon: '🎄' },
+    { date: '2026-12-06', startH: 10, startM: 0,  timeLabel: '10 AM - 2 PM',      displayTitle: 'Holiday Market',                 city: 'Port Charlotte',                       cityShort: 'Port Charlotte', address: '6444 Coniston St, Port Charlotte, FL 33981', icon: '🎁' },
+    { date: '2026-12-11', startH: 16, startM: 30, timeLabel: '4:30 PM - 9 PM',    displayTitle: 'Lombardoughs Community Market',  city: "Fort Myers (Lombardough's)",           cityShort: 'Fort Myers', address: '17081 S. Tamiami Trl, Fort Myers, FL 33908', icon: '🍕' },
+    { date: '2026-12-17', startH: 17, startM: 30, timeLabel: '5:30 PM - 9:30 PM', displayTitle: 'Moonlight Market at the Marina', city: 'Punta Gorda (Laishley Park Marina)', cityShort: 'Punta Gorda', address: 'Laishley Park, Punta Gorda, FL 33950', icon: '🌙' },
+    { date: '2027-01-16', startH: 8,  startM: 0,  timeLabel: '8 AM - 5 PM',       displayTitle: 'Shark Rox',                      city: 'North Port (Imagine School)',          cityShort: 'North Port', address: '1998 E. Price Blvd, North Port, FL 34289', icon: '🦈' },
+    { date: '2027-01-16', startH: 11, startM: 0,  timeLabel: '11 AM - 7 PM',      displayTitle: 'Refelcta- Con',                  city: 'Port Charlotte (Centennial Park)',     cityShort: 'Port Charlotte', address: '1185 Centennial Blvd, Port Charlotte, FL 33953', icon: '👾' },
+    { date: '2027-01-21', startH: 17, startM: 30, timeLabel: '5:30 PM - 9:30 PM', displayTitle: 'Moonlight Market at the Marina', city: 'Punta Gorda (Laishley Park Marina)', cityShort: 'Punta Gorda', address: 'Laishley Park, Punta Gorda, FL 33950', icon: '🌙' },
+    { date: '2027-02-18', startH: 17, startM: 30, timeLabel: '5:30 PM - 9:30 PM', displayTitle: 'Moonlight Market at the Marina', city: 'Punta Gorda (Laishley Park Marina)', cityShort: 'Punta Gorda', address: 'Laishley Park, Punta Gorda, FL 33950', icon: '🌙' },
+    { date: '2027-03-18', startH: 17, startM: 30, timeLabel: '5:30 PM - 9:30 PM', displayTitle: 'Moonlight Market at the Marina', city: 'Punta Gorda (Laishley Park Marina)', cityShort: 'Punta Gorda', address: 'Laishley Park, Punta Gorda, FL 33950', icon: '🌙' }
+  ];
+
+  function buildClientRealtimeCalendarEvents() {
+    const nowFl = new Date(new Date().toLocaleString('en-US', { timeZone: 'America/New_York' }));
+    const startDay = new Date(nowFl.getFullYear(), nowFl.getMonth(), nowFl.getDate());
+    const dows = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+    const dowsCap = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const mons = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'];
+    const monsCap = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+
+    const list = [];
+    const seen = new Set();
+
+    function addEv(dateStr, startH, startM, timeLabel, displayTitle, city, cityShort, address, icon) {
+      const key = `${dateStr}|${displayTitle.toLowerCase()}|${startH}`;
+      if (seen.has(key)) return;
+      seen.add(key);
+
+      const [yr, mo, dy] = dateStr.split('-').map((n) => parseInt(n, 10));
+      const dObj = new Date(yr, mo - 1, dy);
+      const dowIdx = dObj.getDay();
+      const dayLabel = `${dows[dowIdx]} • ${mons[mo - 1]} ${dy}`;
+      const shortDay = `${dowsCap[dowIdx]} ${monsCap[mo - 1]} ${dy}`;
+
+      list.push({
+        date: dateStr,
+        startIso: `${dateStr}T${String(startH).padStart(2, '0')}:${String(startM).padStart(2, '0')}:00`,
+        dayLabel,
+        shortDay,
+        timeLabel,
+        title: displayTitle.toUpperCase(),
+        displayTitle,
+        city,
+        cityShort,
+        address,
+        icon,
+        pickupValue: `${shortDay}: ${displayTitle} (${cityShort})`,
+        pickupOptionText: `${icon} ${shortDay} (${timeLabel}): ${displayTitle} — ${cityShort}`,
+        mapUrl: `https://maps.google.com/?q=${encodeURIComponent(address)}`
+      });
+    }
+
+    // 1. Add all Special / One-off events from nerdymisfitsnp@gmail.com
+    const todayIso = `${startDay.getFullYear()}-${String(startDay.getMonth() + 1).padStart(2, '0')}-${String(startDay.getDate()).padStart(2, '0')}`;
+    GCAL_SPECIAL_EVENTS.forEach((sp) => {
+      if (sp.date >= todayIso) {
+        addEv(sp.date, sp.startH, sp.startM, sp.timeLabel, sp.displayTitle, sp.city, sp.cityShort, sp.address, sp.icon);
+      }
+    });
+
+    // 2. Generate the next 120 days of Recurring Series from nerdymisfitsnp@gmail.com
+    for (let offset = 0; offset < 120; offset++) {
+      const cur = new Date(startDay.getFullYear(), startDay.getMonth(), startDay.getDate() + offset);
+      const yr = cur.getFullYear();
+      const mo = cur.getMonth() + 1;
+      const dy = cur.getDate();
+      const dow = cur.getDay(); // 0=Sun, 2=Tue, 4=Thu, 5=Fri, 6=Sat
+      const dateStr = `${yr}-${String(mo).padStart(2, '0')}-${String(dy).padStart(2, '0')}`;
+      const nthWeekdayInMonth = Math.ceil(dy / 7);
+
+      // Every 3rd Tuesday: Novel Legacy Trail Market (5 PM - 7 PM)
+      if (dow === 2 && nthWeekdayInMonth === 3) {
+        addEv(dateStr, 17, 0, '5 PM - 7 PM', 'Novel Legacy Trail Market', 'Nokomis (NOVEL Legacy Trail)', 'Nokomis', '15560 Render Wy, Nokomis, FL 34275', '🚲');
+      }
+      // Every Thursday (except Thanksgiving 2026-11-26): The Market on Dearborn (9 AM - 1 PM)
+      if (dow === 4 && dateStr !== '2026-11-26') {
+        addEv(dateStr, 9, 0, '9 AM - 1 PM', 'The Market on Dearborn', 'Englewood', 'Englewood', '232 W. Dearborn Street, Englewood, FL 34223', '📍');
+      }
+      // Every 3rd Friday: Derby Days Market (4 PM - 7 PM)
+      if (dow === 5 && nthWeekdayInMonth === 3) {
+        addEv(dateStr, 16, 0, '4 PM - 7 PM', 'Derby Days Market', 'North Port (Jockey Club)', 'North Port', '3050 Pan American Blvd, North Port, FL 34287', '🏇');
+      }
+      // Every Saturday: Shop Local North Port Market (8:30 AM - 12:30 PM)
+      if (dow === 6) {
+        addEv(dateStr, 8, 30, '8:30 AM - 12:30 PM', 'Shop Local North Port Market', 'North Port High School parking lot', 'North Port', '6400 W. Price Blvd, North Port, FL 34291', '☀️');
+      }
+      // Every Sunday: History Park Market (9 AM - 1 PM)
+      if (dow === 0) {
+        addEv(dateStr, 9, 0, '9 AM - 1 PM', 'History Park Market', 'Punta Gorda (History Park)', 'Punta Gorda', '501 Shreve St, Punta Gorda, FL 33950', '🌴');
+      }
+    }
+
+    list.sort((a, b) => a.startIso.localeCompare(b.startIso));
+    return { todayIso, events: list };
+  }
+
+  function formatDateRangeBanner(eventsSlice) {
+    if (!eventsSlice || eventsSlice.length === 0) return 'UPCOMING SWFL MARKETS';
+    const monsFull = ['JANUARY', 'FEBRUARY', 'MARCH', 'APRIL', 'MAY', 'JUNE', 'JULY', 'AUGUST', 'SEPTEMBER', 'OCTOBER', 'NOVEMBER', 'DECEMBER'];
+    const first = eventsSlice[0].date.split('-').map((n) => parseInt(n, 10));
+    const last = eventsSlice[eventsSlice.length - 1].date.split('-').map((n) => parseInt(n, 10));
+    const m1 = monsFull[first[1] - 1];
+    const m2 = monsFull[last[1] - 1];
+    if (first[0] === last[0] && first[1] === last[1]) {
+      return `${m1} ${first[2]} - ${last[2]}, ${first[0]}`;
+    }
+    return `${m1} ${first[2]} - ${m2} ${last[2]}, ${last[0]}`;
+  }
+
+  function renderScheduleCardsHtml(eventsSlice, todayIso) {
+    const themes = ['neon-pink', 'neon-cyan', 'neon-green', 'neon-cyan', 'neon-pink', 'neon-green'];
+    return eventsSlice
+      .map((ev, idx) => {
+        const theme = themes[idx % themes.length];
+        const isToday = ev.date === todayIso;
+        const liveTag = isToday
+          ? `<span style="background:var(--neon-green);color:#050805;padding:1px 7px;border-radius:99px;font-size:0.66rem;font-weight:900;margin-left:6px;">🟢 TODAY!</span>`
+          : '';
+        const safePickup = escapeHtml(ev.pickupValue).replace(/'/g, '&#39;');
+        return `
+          <div class="schedule-event-card ${theme}">
+            <div>
+              <div class="schedule-top-meta">
+                <span>${escapeHtml(ev.dayLabel)}${liveTag}</span>
+                <span>${escapeHtml(ev.timeLabel)}</span>
+              </div>
+              <h3 class="schedule-event-title">${escapeHtml(ev.title)}</h3>
+              <div class="schedule-event-city">${escapeHtml(ev.city)}</div>
+              <div class="schedule-event-addr">${escapeHtml(ev.address)}</div>
+            </div>
+            <div class="schedule-event-actions">
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('${safePickup}')">Pick Up Here</button>
+              <a href="${escapeHtml(ev.mapUrl)}" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+            </div>
+          </div>
+        `;
+      })
+      .join('');
+  }
+
+  function applyCalendarEventsToDOM(allUpcoming, todayIso) {
+    if (!Array.isArray(allUpcoming) || allUpcoming.length === 0) return;
+    cachedCalendarEvents = allUpcoming;
+
+    // 1. Update Home Page "FIND US THIS WEEK" (Next 6 upcoming markets)
+    const homeSlice = allUpcoming.slice(0, 6);
+    const homeRangeEl = document.getElementById('homeScheduleDateRange');
+    const homeGridEl = document.getElementById('homeMarketsGrid');
+    if (homeRangeEl) homeRangeEl.textContent = formatDateRangeBanner(homeSlice);
+    if (homeGridEl) homeGridEl.innerHTML = renderScheduleCardsHtml(homeSlice, todayIso);
+
+    // 2. Update Markets & All Tab based on activeCalendarWindow ('week' = 6, 'month' = 18, 'all' = 48)
+    const countLimit = activeCalendarWindow === 'week' ? 6 : (activeCalendarWindow === 'month' ? 18 : 48);
+    const tabSlice = allUpcoming.slice(0, countLimit);
+    const tabRangeEl = document.getElementById('marketsTabDateRange');
+    const tabGridEl = document.getElementById('marketsTabGrid');
+    if (tabRangeEl) tabRangeEl.textContent = formatDateRangeBanner(tabSlice);
+    if (tabGridEl) tabGridEl.innerHTML = renderScheduleCardsHtml(tabSlice, todayIso);
+
+    // 3. Update Checkout Slide-Over Stash Pickup Dropdown (#cartFulfillmentSelect) with next 14 markets
+    const selectEl = document.getElementById('cartFulfillmentSelect');
+    if (selectEl) {
+      const currentVal = selectEl.value;
+      const pickupSlice = allUpcoming.slice(0, 14);
+      let optsHtml = `<option value="🚚 US Shipping">🚚 US Shipping (North Port Workshop)</option>`;
+      pickupSlice.forEach((ev) => {
+        optsHtml += `<option value="${escapeHtml(ev.pickupValue)}">${escapeHtml(ev.pickupOptionText)}</option>`;
+      });
+      selectEl.innerHTML = optsHtml;
+      if (currentVal && Array.from(selectEl.options).some((o) => o.value === currentVal)) {
+        selectEl.value = currentVal;
+      }
+    }
+  }
+
+  window.setCalendarViewWindow = function (mode) {
+    activeCalendarWindow = mode;
+    ['Week', 'Month', 'All'].forEach((k) => {
+      const btn = document.getElementById(`calFilterBtn${k}`);
+      if (btn) btn.classList.toggle('active', k.toLowerCase() === mode);
+    });
+    const built = buildClientRealtimeCalendarEvents();
+    applyCalendarEventsToDOM(cachedCalendarEvents.length ? cachedCalendarEvents : built.events, built.todayIso);
+  };
+
+  window.syncLiveGoogleCalendarSchedule = async function (isManual = false) {
+    // 1. Immediately render real-time date-filtered schedule so there is zero flash of old dates
+    const localBuilt = buildClientRealtimeCalendarEvents();
+    applyCalendarEventsToDOM(localBuilt.events, localBuilt.todayIso);
+
+    // 2. Fetch live /api/calendar endpoint (merges any live Google Calendar API / iCal updates)
+    try {
+      const res = await fetch(`/api/calendar?t=${Date.now()}`);
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data.allUpcoming) && data.allUpcoming.length > 0) {
+          applyCalendarEventsToDOM(data.allUpcoming, data.todayIso || localBuilt.todayIso);
+        }
+      }
+    } catch (_) {}
+
+    const statusEl = document.getElementById('calendarLiveSyncStatus');
+    if (statusEl) {
+      const timeStr = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+      statusEl.textContent = `🟢 LIVE GOOGLE CALENDAR SYNCED (${timeStr}) • nerdymisfitsnp@gmail.com`;
+    }
+    if (isManual) {
+      showToast('📅 Synced live market locations & pickup dates from nerdymisfitsnp@gmail.com!');
+    }
+  };
+
+  window.syncLiveGoogleCalendarSchedule(false);
+  setInterval(() => window.syncLiveGoogleCalendarSchedule(false), 5 * 60 * 1000);
+
   // Support direct links to tabs via ?tab=inky or #inky
   (function applyInitialTabFromUrl() {
     const validTabs = ['glitch', 'fokal', 'crit', 'justus', 'booksy', 'inky', 'pixel', 'markets'];

@@ -344,119 +344,127 @@
         <div id="glitchFeaturedGrid" class="product-grid"></div>
       </section>
 
-      <!-- FIND US THIS WEEK SCHEDULE ON HOME SCREEN -->
+      <!-- FIND US THIS WEEK SCHEDULE ON HOME SCREEN (REAL-TIME GOOGLE CALENDAR: nerdymisfitsnp@gmail.com) -->
       <section class="schedule-banner-box" style="margin-top:48px;">
         <div class="schedule-header-center">
+          <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(57,255,20,0.14);border:1.5px solid var(--neon-green);border-radius:99px;padding:4px 14px;font-family:var(--font-mono);font-size:0.74rem;font-weight:800;color:var(--neon-green);margin-bottom:8px;">
+            <span>🟢 LIVE GOOGLE CALENDAR SYNC • nerdymisfitsnp@gmail.com</span>
+          </div>
           <div class="schedule-headline">FIND US THIS WEEK</div>
-          <div class="schedule-date-range">OCTOBER 26 - NOVEMBER 1, 2026</div>
+          <div class="schedule-date-range" id="homeScheduleDateRange">NOVEMBER 19 - NOVEMBER 28, 2026</div>
         </div>
 
-        <div class="markets-grid">
-          <!-- Event 1: Thu Oct 29 Morning -->
+        <div class="markets-grid" id="homeMarketsGrid">
+          <!-- Event 1: Thu Nov 19 Morning -->
           <div class="schedule-event-card neon-pink">
             <div>
               <div class="schedule-top-meta">
-                <span>THU • OCT 29</span>
+                <span>THU • NOV 19</span>
                 <span>9 AM - 1 PM</span>
               </div>
               <h3 class="schedule-event-title">THE MARKET ON DEARBORN</h3>
               <div class="schedule-event-city">Englewood</div>
-              <div class="schedule-event-addr">232 West Dearborn Street, Englewood, FL</div>
+              <div class="schedule-event-addr">232 W. Dearborn Street, Englewood, FL 34223</div>
             </div>
             <div class="schedule-event-actions">
-              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Thu Oct 29: The Market on Dearborn (Englewood)')">Pick Up Here</button>
-              <a href="https://maps.google.com/?q=232+West+Dearborn+Street+Englewood+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Thu Nov 19: The Market on Dearborn (Englewood)')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=232+W.+Dearborn+Street,+Englewood,+FL+34223" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
             </div>
           </div>
 
-          <!-- Event 2: Thu Oct 29 Evening -->
+          <!-- Event 2: Thu Nov 19 Evening -->
           <div class="schedule-event-card neon-cyan">
             <div>
               <div class="schedule-top-meta">
-                <span>THU • OCT 29</span>
-                <span>5 PM - 7 PM</span>
+                <span>THU • NOV 19</span>
+                <span>5:30 PM - 9:30 PM</span>
               </div>
-              <h3 class="schedule-event-title">IMAGINE SCHOOL TRUNK OR TREAT</h3>
-              <div class="schedule-event-city">North Port</div>
-              <div class="schedule-event-addr">1998 East Price Blvd, North Port, FL</div>
+              <h3 class="schedule-event-title">MOONLIGHT MARKET AT THE MARINA</h3>
+              <div class="schedule-event-city">Punta Gorda (Laishley Park Marina)</div>
+              <div class="schedule-event-addr">Laishley Park, Punta Gorda, FL 33950</div>
             </div>
             <div class="schedule-event-actions">
-              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Thu Oct 29: Imagine School Trunk or Treat (North Port)')">Pick Up Here</button>
-              <a href="https://maps.google.com/?q=1998+East+Price+Blvd+North+Port+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Thu Nov 19: Moonlight Market at the Marina (Punta Gorda)')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=Laishley+Park,+Punta+Gorda,+FL+33950" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
             </div>
           </div>
 
-          <!-- Event 3: Sat Oct 31 Venice -->
+          <!-- Event 3: Fri Nov 20 -->
           <div class="schedule-event-card neon-green">
             <div>
               <div class="schedule-top-meta">
-                <span>SAT • OCT 31</span>
-                <span>8 AM - 3 PM</span>
+                <span>FRI • NOV 20</span>
+                <span>4 PM - 7 PM</span>
               </div>
-              <h3 class="schedule-event-title">MISS VENICE FASTPITCH SUPER SATURDAY</h3>
-              <div class="schedule-event-city">Venice</div>
-              <div class="schedule-event-addr">1300 Ridgewood Ave, Venice, FL</div>
+              <h3 class="schedule-event-title">DERBY DAYS MARKET</h3>
+              <div class="schedule-event-city">North Port (Jockey Club)</div>
+              <div class="schedule-event-addr">3050 Pan American Blvd, North Port, FL 34287</div>
             </div>
             <div class="schedule-event-actions">
-              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sat Oct 31: Miss Venice Fastpitch (Venice)')">Pick Up Here</button>
-              <a href="https://maps.google.com/?q=1300+Ridgewood+Ave+Venice+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Fri Nov 20: Derby Days Market (North Port)')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=3050+Pan+American+Blvd,+North+Port,+FL+34287" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
             </div>
           </div>
 
-          <!-- Event 4: Sat Oct 31 North Port -->
+          <!-- Event 4: Sat Nov 21 -->
           <div class="schedule-event-card neon-cyan">
             <div>
               <div class="schedule-top-meta">
-                <span>SAT • OCT 31</span>
+                <span>SAT • NOV 21</span>
                 <span>8:30 AM - 12:30 PM</span>
               </div>
               <h3 class="schedule-event-title">SHOP LOCAL NORTH PORT MARKET</h3>
               <div class="schedule-event-city">North Port High School parking lot</div>
-              <div class="schedule-event-addr">6400 W. Price Blvd, North Port, FL</div>
+              <div class="schedule-event-addr">6400 W. Price Blvd, North Port, FL 34291</div>
             </div>
             <div class="schedule-event-actions">
-              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sat Oct 31: Shop Local North Port Market (@ NPHS)')">Pick Up Here</button>
-              <a href="https://maps.google.com/?q=6400+W+Price+Blvd+North+Port+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sat Nov 21: Shop Local North Port Market (North Port)')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=6400+W.+Price+Blvd,+North+Port,+FL+34291" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
             </div>
           </div>
 
-          <!-- Event 5: Sat Oct 31 Port Charlotte -->
+          <!-- Event 5: Sun Nov 22 -->
           <div class="schedule-event-card neon-pink">
             <div>
               <div class="schedule-top-meta">
-                <span>SAT • OCT 31</span>
-                <span>3 PM - 9 PM</span>
+                <span>SUN • NOV 22</span>
+                <span>9 AM - 1 PM</span>
               </div>
-              <h3 class="schedule-event-title">PAPER &amp; PIXELS TRUNK OR TREAT</h3>
-              <div class="schedule-event-city">Port Charlotte</div>
-              <div class="schedule-event-addr">941 South Tamiami Trail Suite A, Port Charlotte, FL</div>
+              <h3 class="schedule-event-title">HISTORY PARK MARKET</h3>
+              <div class="schedule-event-city">Punta Gorda (History Park)</div>
+              <div class="schedule-event-addr">501 Shreve St, Punta Gorda, FL 33950</div>
             </div>
             <div class="schedule-event-actions">
-              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sat Oct 31: Paper & Pixels Trunk or Treat (Port Charlotte)')">Pick Up Here</button>
-              <a href="https://maps.google.com/?q=941+South+Tamiami+Trail+Suite+A+Port+Charlotte+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sun Nov 22: History Park Market (Punta Gorda)')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=501+Shreve+St,+Punta+Gorda,+FL+33950" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
             </div>
           </div>
 
-          <!-- Event 6: Sun Nov 1 Punta Gorda -->
-          <div class="schedule-event-card neon-cyan">
+          <!-- Event 6: Sat Nov 28 -->
+          <div class="schedule-event-card neon-green">
             <div>
               <div class="schedule-top-meta">
-                <span>SUN • NOV 1</span>
-                <span>9 AM - 1 PM</span>
+                <span>SAT • NOV 28</span>
+                <span>8:30 AM - 12:30 PM</span>
               </div>
-              <h3 class="schedule-event-title">PUNTA GORDA HISTORY PARK</h3>
-              <div class="schedule-event-city">Farmers Market</div>
-              <div class="schedule-event-addr">501 Shreve St, Punta Gorda, FL</div>
+              <h3 class="schedule-event-title">SHOP LOCAL NORTH PORT MARKET</h3>
+              <div class="schedule-event-city">North Port High School parking lot</div>
+              <div class="schedule-event-addr">6400 W. Price Blvd, North Port, FL 34291</div>
             </div>
             <div class="schedule-event-actions">
-              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sun Nov 1: Punta Gorda History Park Farmers Market')">Pick Up Here</button>
-              <a href="https://maps.google.com/?q=501+Shreve+St+Punta+Gorda+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
+              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sat Nov 28: Shop Local North Port Market (North Port)')">Pick Up Here</button>
+              <a href="https://maps.google.com/?q=6400+W.+Price+Blvd,+North+Port,+FL+34291" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
             </div>
           </div>
         </div>
 
-        <div style="text-align:center;margin-top:22px;font-family:var(--font-display);font-weight:800;font-size:1.1rem;color:var(--neon-green);">
-          Come shop with the Misfits!
+        <div style="text-align:center;margin-top:22px;display:flex;flex-direction:column;align-items:center;gap:12px;">
+          <div style="font-family:var(--font-display);font-weight:800;font-size:1.1rem;color:var(--neon-green);">
+            Come shop with the Misfits!
+          </div>
+          <button type="button" class="btn-friendly-secondary" style="border-color:var(--neon-cyan);color:var(--neon-cyan);" onclick="switchCrewTab('markets')">
+            <span>📅 View Full Upcoming Google Calendar Schedule (Next 30+ Days) →</span>
+          </button>
         </div>
       </section>
 
@@ -1175,117 +1183,34 @@
        ==================================================================== -->
   <section id="view-markets" class="tab-view-panel">
     <div class="container">
-      <!-- SWFL Weekly Schedule Banner (Matching Uploaded Graphic) -->
+      <!-- SWFL Weekly & Monthly Live Google Calendar Schedule Banner (nerdymisfitsnp@gmail.com) -->
       <div class="schedule-banner-box">
         <div class="schedule-header-center">
           <img src="assets/official_logo.png" alt="Nerdy Misfits" style="height:84px;margin:0 auto 12px;background:#000;padding:6px 14px;border-radius:12px;border:2px solid var(--neon-green);" />
-          <div class="schedule-headline">FIND US THIS WEEK</div>
-          <div class="schedule-date-range">OCTOBER 26 - NOVEMBER 1, 2026</div>
-        </div>
-
-        <div class="markets-grid">
-          <!-- Event 1: Thu Oct 29 Morning -->
-          <div class="schedule-event-card neon-pink">
-            <div>
-              <div class="schedule-top-meta">
-                <span>THU • OCT 29</span>
-                <span>9 AM - 1 PM</span>
-              </div>
-              <h3 class="schedule-event-title">THE MARKET ON DEARBORN</h3>
-              <div class="schedule-event-city">Englewood</div>
-              <div class="schedule-event-addr">232 West Dearborn Street, Englewood, FL</div>
-            </div>
-            <div class="schedule-event-actions">
-              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Thu Oct 29: The Market on Dearborn (Englewood)')">Pick Up Here</button>
-              <a href="https://maps.google.com/?q=232+West+Dearborn+Street+Englewood+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
-            </div>
+          <div style="display:inline-flex;align-items:center;gap:8px;background:rgba(57,255,20,0.14);border:1.5px solid var(--neon-green);border-radius:99px;padding:4px 14px;font-family:var(--font-mono);font-size:0.74rem;font-weight:800;color:var(--neon-green);margin-bottom:8px;">
+            <span id="calendarLiveSyncStatus">🟢 LIVE GOOGLE CALENDAR SYNC • nerdymisfitsnp@gmail.com</span>
           </div>
+          <div class="schedule-headline">FIND US THIS WEEK &amp; UPCOMING MARKETS</div>
+          <div class="schedule-date-range" id="marketsTabDateRange">NOVEMBER 19 - NOVEMBER 28, 2026</div>
 
-          <!-- Event 2: Thu Oct 29 Evening -->
-          <div class="schedule-event-card neon-cyan">
-            <div>
-              <div class="schedule-top-meta">
-                <span>THU • OCT 29</span>
-                <span>5 PM - 7 PM</span>
-              </div>
-              <h3 class="schedule-event-title">IMAGINE SCHOOL TRUNK OR TREAT</h3>
-              <div class="schedule-event-city">North Port</div>
-              <div class="schedule-event-addr">1998 East Price Blvd, North Port, FL</div>
-            </div>
-            <div class="schedule-event-actions">
-              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Thu Oct 29: Imagine School Trunk or Treat (North Port)')">Pick Up Here</button>
-              <a href="https://maps.google.com/?q=1998+East+Price+Blvd+North+Port+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
-            </div>
-          </div>
-
-          <!-- Event 3: Sat Oct 31 Venice -->
-          <div class="schedule-event-card neon-green">
-            <div>
-              <div class="schedule-top-meta">
-                <span>SAT • OCT 31</span>
-                <span>8 AM - 3 PM</span>
-              </div>
-              <h3 class="schedule-event-title">MISS VENICE FASTPITCH SUPER SATURDAY</h3>
-              <div class="schedule-event-city">Venice</div>
-              <div class="schedule-event-addr">1300 Ridgewood Ave, Venice, FL</div>
-            </div>
-            <div class="schedule-event-actions">
-              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sat Oct 31: Miss Venice Fastpitch (Venice)')">Pick Up Here</button>
-              <a href="https://maps.google.com/?q=1300+Ridgewood+Ave+Venice+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
-            </div>
-          </div>
-
-          <!-- Event 4: Sat Oct 31 North Port -->
-          <div class="schedule-event-card neon-cyan">
-            <div>
-              <div class="schedule-top-meta">
-                <span>SAT • OCT 31</span>
-                <span>8:30 AM - 12:30 PM</span>
-              </div>
-              <h3 class="schedule-event-title">SHOP LOCAL NORTH PORT MARKET</h3>
-              <div class="schedule-event-city">North Port High School parking lot</div>
-              <div class="schedule-event-addr">6400 W. Price Blvd, North Port, FL</div>
-            </div>
-            <div class="schedule-event-actions">
-              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sat Oct 31: Shop Local North Port Market (@ NPHS)')">Pick Up Here</button>
-              <a href="https://maps.google.com/?q=6400+W+Price+Blvd+North+Port+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
-            </div>
-          </div>
-
-          <!-- Event 5: Sat Oct 31 Port Charlotte -->
-          <div class="schedule-event-card neon-pink">
-            <div>
-              <div class="schedule-top-meta">
-                <span>SAT • OCT 31</span>
-                <span>3 PM - 9 PM</span>
-              </div>
-              <h3 class="schedule-event-title">PAPER &amp; PIXELS TRUNK OR TREAT</h3>
-              <div class="schedule-event-city">Port Charlotte</div>
-              <div class="schedule-event-addr">941 South Tamiami Trail Suite A, Port Charlotte, FL</div>
-            </div>
-            <div class="schedule-event-actions">
-              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sat Oct 31: Paper & Pixels Trunk or Treat (Port Charlotte)')">Pick Up Here</button>
-              <a href="https://maps.google.com/?q=941+South+Tamiami+Trail+Suite+A+Port+Charlotte+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
-            </div>
-          </div>
-
-          <!-- Event 6: Sun Nov 1 Punta Gorda -->
-          <div class="schedule-event-card neon-cyan">
-            <div>
-              <div class="schedule-top-meta">
-                <span>SUN • NOV 1</span>
-                <span>9 AM - 1 PM</span>
-              </div>
-              <h3 class="schedule-event-title">PUNTA GORDA HISTORY PARK</h3>
-              <div class="schedule-event-city">Farmers Market</div>
-              <div class="schedule-event-addr">501 Shreve St, Punta Gorda, FL</div>
-            </div>
-            <div class="schedule-event-actions">
-              <button class="btn-friendly-primary" style="padding:7px 15px;font-size:0.8rem;" onclick="setPickup('Sun Nov 1: Punta Gorda History Park Farmers Market')">Pick Up Here</button>
-              <a href="https://maps.google.com/?q=501+Shreve+St+Punta+Gorda+FL" target="_blank" rel="noopener" class="btn-friendly-secondary" style="padding:7px 14px;font-size:0.8rem;">Map ↗</a>
-            </div>
+          <!-- Calendar Range Filter Pills -->
+          <div style="display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:14px;">
+            <button type="button" class="filter-chip active" id="calFilterBtnWeek" onclick="setCalendarViewWindow('week')">
+              📅 Next 6 Booths (This Week)
+            </button>
+            <button type="button" class="filter-chip" id="calFilterBtnMonth" onclick="setCalendarViewWindow('month')">
+              🗓️ Next 30 Days (18+ Markets)
+            </button>
+            <button type="button" class="filter-chip" id="calFilterBtnAll" onclick="setCalendarViewWindow('all')">
+              🌟 All Upcoming Markets &amp; Cons
+            </button>
+            <button type="button" class="filter-chip" style="border-color:var(--neon-cyan);color:var(--neon-cyan);" onclick="syncLiveGoogleCalendarSchedule(true)">
+              🔄 Refresh Live Calendar
+            </button>
           </div>
         </div>
+
+        <div class="markets-grid" id="marketsTabGrid"></div>
 
         <div style="text-align:center;margin-top:22px;font-family:var(--font-display);font-weight:800;font-size:1.1rem;color:var(--neon-green);">
           Come shop with the Misfits!
@@ -1818,12 +1743,13 @@
           </label>
           <select id="cartFulfillmentSelect" class="friendly-select" style="width:100%;" onchange="setPickup(this.value)">
             <option value="🚚 US Shipping">🚚 US Shipping (North Port Workshop)</option>
-            <option value="Thu Oct 29: The Market on Dearborn (Englewood)">📍 Thu Oct 29 (9a-1p): The Market on Dearborn — Englewood</option>
-            <option value="Thu Oct 29: Imagine School Trunk or Treat (North Port)">🎃 Thu Oct 29 (5p-7p): Imagine School Trunk or Treat — North Port</option>
-            <option value="Sat Oct 31: Miss Venice Fastpitch (Venice)">🥎 Sat Oct 31 (8a-3p): Miss Venice Fastpitch — Venice</option>
-            <option value="Sat Oct 31: Shop Local North Port Market (@ NPHS)">☀️ Sat Oct 31 (8:30a-12:30p): Shop Local Market — NPHS</option>
-            <option value="Sat Oct 31: Paper & Pixels Trunk or Treat (Port Charlotte)">👾 Sat Oct 31 (3p-9p): Paper &amp; Pixels Trunk or Treat — Port Charlotte</option>
-            <option value="Sun Nov 1: Punta Gorda History Park Farmers Market">🌴 Sun Nov 1 (9a-1p): Punta Gorda History Park Farmers Market</option>
+            <option value="Thu Nov 19: The Market on Dearborn (Englewood)">📍 Thu Nov 19 (9 AM - 1 PM): The Market on Dearborn — Englewood</option>
+            <option value="Thu Nov 19: Moonlight Market at the Marina (Punta Gorda)">🌙 Thu Nov 19 (5:30 PM - 9:30 PM): Moonlight Market at the Marina — Punta Gorda</option>
+            <option value="Fri Nov 20: Derby Days Market (North Port)">🏇 Fri Nov 20 (4 PM - 7 PM): Derby Days Market — North Port</option>
+            <option value="Sat Nov 21: Shop Local North Port Market (North Port)">☀️ Sat Nov 21 (8:30 AM - 12:30 PM): Shop Local North Port Market — North Port</option>
+            <option value="Sun Nov 22: History Park Market (Punta Gorda)">🌴 Sun Nov 22 (9 AM - 1 PM): History Park Market — Punta Gorda</option>
+            <option value="Sat Nov 28: Shop Local North Port Market (North Port)">☀️ Sat Nov 28 (8:30 AM - 12:30 PM): Shop Local North Port Market — North Port</option>
+            <option value="Sun Nov 29: History Park Market (Punta Gorda)">🌴 Sun Nov 29 (9 AM - 1 PM): History Park Market — Punta Gorda</option>
           </select>
         </div>
       </div>
