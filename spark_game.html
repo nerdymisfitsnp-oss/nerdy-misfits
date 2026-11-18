@@ -871,6 +871,9 @@
       sfxShieldBreak() {
         this.tone(620, 90, 0.35, 'sawtooth', 0.25);
       }
+      sfxArmorDeflect() {
+        this.tone(1350, 920, 0.045, 'square', 0.08);
+      }
       sfxBossAlert() {
         [140, 110, 92].forEach((f, i) => {
           setTimeout(() => this.tone(f, f * 0.92, 0.28, 'sawtooth', 0.24), i * 160);
@@ -1522,87 +1525,87 @@
     const LEVEL_THEMES = [
       {
         name: 'OUTER COURTYARD',
-        quota: 5,
+        quota: 10,
         hasBoss: true,
         bossType: 'LONGBOW_CAPTAIN',
         bossName: 'CAPTAIN VANE, ROYAL LONGBOW COMMANDER',
-        bossSub: '3-Way Royal Fan Volley + Laser Sniper Arrow!',
-        bossHp: 30,
+        bossSub: '5-Arrow Royal Fan Barrage + Predictive Laser Sniper!',
+        bossHp: 145,
         rim1: 0x39ff14,
         rim2: 0xff2a85,
-        arrowSpd: 10.5,
-        cdScale: 1.0,
-        maxEn: 3
-      },
-      {
-        name: 'CROSSBOW BATTLEMENTS',
-        quota: 7,
-        hasBoss: true,
-        bossType: 'ARBALEST_GOLIATH',
-        bossName: 'IRON ARBALEST GOLIATH',
-        bossSub: 'Twin Heavy Crossbow Mech + Dual Laser Bolts!',
-        bossHp: 44,
-        rim1: 0x00f0ff,
-        rim2: 0xa855f7,
-        arrowSpd: 12.2,
-        cdScale: 0.88,
+        arrowSpd: 12.6,
+        cdScale: 0.84,
         maxEn: 4
       },
       {
-        name: 'MOLTEN LAVA CAUSEWAY',
-        quota: 9,
+        name: 'CROSSBOW BATTLEMENTS',
+        quota: 14,
         hasBoss: true,
-        bossType: 'DREAD_BALLISTA',
-        bossName: 'INFERNAL DREAD BALLISTA WARLORD',
-        bossSub: 'Twin Siege Turrets + Molten Center Harpoon!',
-        bossHp: 58,
-        rim1: 0xff7b00,
-        rim2: 0xff2a55,
-        arrowSpd: 13.8,
-        cdScale: 0.78,
+        bossType: 'ARBALEST_GOLIATH',
+        bossName: 'IRON ARBALEST GOLIATH',
+        bossSub: 'Twin 6-Bolt Arbalest Salvos + Dual Laser Harpoons!',
+        bossHp: 215,
+        rim1: 0x00f0ff,
+        rim2: 0xa855f7,
+        arrowSpd: 14.4,
+        cdScale: 0.75,
         maxEn: 5
       },
       {
-        name: 'ARCANE SHADOW KEEP',
-        quota: 11,
+        name: 'MOLTEN LAVA CAUSEWAY',
+        quota: 18,
         hasBoss: true,
-        bossType: 'LICH_SOVEREIGN',
-        bossName: 'HEX-BOW LICH SOVEREIGN',
-        bossSub: '5-Arrow Arcane Starburst + Crossing Laser Volleys!',
-        bossHp: 74,
-        rim1: 0xc042ff,
-        rim2: 0x00f0ff,
-        arrowSpd: 15.5,
-        cdScale: 0.70,
+        bossType: 'DREAD_BALLISTA',
+        bossName: 'INFERNAL DREAD BALLISTA WARLORD',
+        bossSub: '8-Bolt Siege Crossfire + Staggered Magma Harpoons!',
+        bossHp: 295,
+        rim1: 0xff7b00,
+        rim2: 0xff2a55,
+        arrowSpd: 16.2,
+        cdScale: 0.67,
         maxEn: 6
       },
       {
-        name: 'DRAGON SLAYER CITADEL',
-        quota: 13,
+        name: 'ARCANE SHADOW KEEP',
+        quota: 22,
         hasBoss: true,
-        bossType: 'SLAYER_TITAN',
-        bossName: 'DRAGON-SLAYER TITAN CATAPULT',
-        bossSub: '6-Arrow Sweeping Fortress Barrage + Triple Harpoons!',
-        bossHp: 92,
-        rim1: 0xff2a55,
-        rim2: 0xfacc15,
-        arrowSpd: 17.2,
-        cdScale: 0.62,
+        bossType: 'LICH_SOVEREIGN',
+        bossName: 'HEX-BOW LICH SOVEREIGN',
+        bossSub: '7-Arrow Arcane Starburst + Triple Crossing Lasers!',
+        bossHp: 385,
+        rim1: 0xc042ff,
+        rim2: 0x00f0ff,
+        arrowSpd: 18.0,
+        cdScale: 0.59,
         maxEn: 7
       },
       {
+        name: 'DRAGON SLAYER CITADEL',
+        quota: 26,
+        hasBoss: true,
+        bossType: 'SLAYER_TITAN',
+        bossName: 'DRAGON-SLAYER TITAN CATAPULT',
+        bossSub: '9-Arrow Fortress Curtain + Triple Laser Harpoons!',
+        bossHp: 490,
+        rim1: 0xff2a55,
+        rim2: 0xfacc15,
+        arrowSpd: 19.8,
+        cdScale: 0.52,
+        maxEn: 8
+      },
+      {
         name: 'INFERNAL THRONE BRIDGE',
-        quota: 15,
+        quota: 30,
         hasBoss: true,
         bossType: 'THRONE_EMPEROR',
-        bossName: 'EMPEROR MALakor, THRONE OVERLORD',
-        bossSub: '7-Arrow Spiral Curtain + Triple Laser Harpoons!',
-        bossHp: 112,
+        bossName: 'EMPEROR MALAKOR, THRONE OVERLORD',
+        bossSub: 'Double-Wave Bullet Curtain + Triple Laser Harpoons!',
+        bossHp: 610,
         rim1: 0x39ff14,
         rim2: 0xff5500,
-        arrowSpd: 19.0,
-        cdScale: 0.55,
-        maxEn: 8
+        arrowSpd: 21.6,
+        cdScale: 0.46,
+        maxEn: 9
       }
     ];
 
@@ -1613,17 +1616,17 @@
       return {
         level: lvl,
         name: extra > 0 ? `NIGHTMARE CITADEL ${extra + 1}` : base.name,
-        quota: base.quota + extra * 3,
+        quota: base.quota + extra * 5,
         hasBoss: true, // EVERY level ends with an epic 3D Boss!
         bossType: base.bossType,
         bossName: extra > 0 ? `NIGHTMARE OVERLORD MK-${extra + 1}` : base.bossName,
         bossSub: base.bossSub,
-        bossHp: base.bossHp + extra * 22,
+        bossHp: base.bossHp + extra * 150,
         rim1: base.rim1,
         rim2: base.rim2,
-        arrowSpd: Math.min(25, base.arrowSpd + extra * 1.4),
-        cdScale: Math.max(0.42, base.cdScale * Math.pow(0.94, extra)),
-        maxEn: Math.min(9, base.maxEn + Math.floor(extra * 0.5))
+        arrowSpd: Math.min(27, base.arrowSpd + extra * 1.5),
+        cdScale: Math.max(0.36, base.cdScale * Math.pow(0.92, extra)),
+        maxEn: Math.min(10, base.maxEn + Math.floor(extra * 0.5))
       };
     }
 
@@ -2506,35 +2509,55 @@
       chargeRing.position.y = 0.06;
       root.add(chargeRing);
 
+      // Boss Entry Invulnerability Barrier Dome (active until Boss marches fully on-screen!)
+      let entryShieldMesh = null;
+      if (type === 'BOSS') {
+        entryShieldMesh = new THREE.Mesh(
+          new THREE.IcosahedronGeometry(2.75, 1),
+          new THREE.MeshStandardMaterial({
+            color: 0xfacc15,
+            emissive: 0xff5500,
+            emissiveIntensity: 0.85,
+            transparent: true,
+            opacity: 0.34,
+            wireframe: true
+          })
+        );
+        entryShieldMesh.position.y = 1.45;
+        root.add(entryShieldMesh);
+      }
+
       // Floating 3D Health Bar above enemy
       const hbWidth = type === 'BOSS' ? 3.4 : (type === 'BALLISTA' ? 1.6 : 1.05);
       const hb = createHealthBar3D(hbWidth);
       hb.grp.position.set(0, type === 'BOSS' ? 3.45 : (type === 'BALLISTA' ? 2.15 : 2.25), 0);
       root.add(hb.grp);
 
-      return { root, aimGroup, chargeRing, hb, leftLeg, rightLeg, weaponRig, nockedArrow, bowStringL, bowStringR, wheels };
+      return { root, aimGroup, chargeRing, hb, leftLeg, rightLeg, weaponRig, nockedArrow, bowStringL, bowStringR, wheels, entryShieldMesh };
     }
 
-    function spawnEnemy(type, x, z = -23) {
+    function spawnEnemy(type, x, z = -18.5, isEscort = false) {
       const cfg = getLevelConfig(wave);
       const built = createEnemyMesh(type);
-      built.root.position.set(x, -1.9, z);
+      const startZ = type === 'BOSS' ? -17.0 : Math.max(-19.5, z);
+      built.root.position.set(x, -1.9, startZ);
       scene.add(built.root);
 
       const maxHp =
         type === 'BOSS' ? cfg.bossHp :
-        type === 'BALLISTA' ? (7 + Math.floor(wave * 1.2)) :
-        type === 'CROSSBOW' ? (4 + Math.floor(wave * 0.5)) :
-        (2 + Math.floor(wave * 0.4));
+        type === 'BALLISTA' ? (16 + wave * 4) :
+        type === 'CROSSBOW' ? (9 + wave * 3) :
+        (5 + wave * 2);
 
       // Stop position on the upper battlefield where they stand and shoot arrows at Spark!
       const holdZ =
-        type === 'BOSS' ? -10.0 :
-        type === 'BALLISTA' ? (-10.5 + Math.random() * 4.5) :
-        (-11.0 + Math.random() * 6.8);
+        type === 'BOSS' ? -8.6 :
+        type === 'BALLISTA' ? (-9.8 + Math.random() * 3.8) :
+        (-10.2 + Math.random() * 5.6);
 
       const enemyObj = {
         type,
+        isEscort,
         bossType: type === 'BOSS' ? cfg.bossType : null,
         mesh: built.root,
         aimGroup: built.aimGroup,
@@ -2547,12 +2570,19 @@
         bowStringL: built.bowStringL,
         bowStringR: built.bowStringR,
         wheels: built.wheels || [],
+        entryShieldMesh: built.entryShieldMesh || null,
+        entryShieldTimer: type === 'BOSS' ? 0.55 : 0,
+        dashTimer: 2.4,
+        dashVx: 0,
+        escortTimer: 3.8,
+        bossHitCooldown: 0,
+        enraged: false,
         hp: maxHp,
         maxHp,
         holdZ,
-        vz: type === 'BOSS' ? 4.8 : 6.5,
+        vz: type === 'BOSS' ? 10.5 : 8.8,
         strafePhase: Math.random() * Math.PI * 2,
-        fireCooldown: type === 'BOSS' ? 1.25 : (1.05 + Math.random() * 0.95),
+        fireCooldown: type === 'BOSS' ? 0.35 : (0.55 + Math.random() * 0.5),
         recoilZ: 0,
         volleyCount: 0,
         hitFlash: 0,
@@ -2871,7 +2901,13 @@
                 enemies.splice(k, 1);
               }
             }
-            spawnEnemy('BOSS', 0, -23);
+            // Also clear in-flight player fireballs so the Boss marches onto the bridge untouched!
+            for (let f = fireballs.length - 1; f >= 0; f--) {
+              scene.remove(fireballs[f].mesh);
+            }
+            fireballs.length = 0;
+
+            spawnEnemy('BOSS', 0, -17.0);
             updateLevelProgressHUD();
           }
         } else if (enemies.length === 0) {
@@ -2882,35 +2918,36 @@
 
       // 2. Spawn 3D Archers, Crossbow Elites & Siege Ballistas while quota isn't reached yet
       enemySpawnTimer -= dt;
+      const nonEscortEnemies = enemies.filter((e) => !e.isEscort && e.type !== 'BOSS').length;
       const remainingNeeded = Math.max(0, levelQuota - levelKills);
-      if (!checkpointGateActive && remainingNeeded > enemies.length && enemySpawnTimer <= 0 && enemies.length < cfg.maxEn) {
-        enemySpawnTimer = Math.max(0.65, 1.85 * cfg.cdScale);
+      if (!checkpointGateActive && !activeBoss && remainingNeeded > nonEscortEnemies && enemySpawnTimer <= 0 && enemies.length < cfg.maxEn) {
+        enemySpawnTimer = Math.max(0.48, 1.35 * cfg.cdScale);
 
         const roll = Math.random();
         const ex = (Math.random() - 0.5) * (BOUNDS_X * 1.65);
 
-        // Higher levels introduce more Crossbow Elites and Siege Ballistas!
-        const ballistaChance = wave === 1 ? 0.12 : Math.min(0.38, 0.15 + wave * 0.05);
-        const crossbowChance = wave === 1 ? 0.25 : Math.min(0.75, 0.35 + wave * 0.08);
+        // Aggressive squad mix right from Level 1!
+        const ballistaChance = Math.min(0.42, 0.14 + wave * 0.05);
+        const crossbowChance = Math.min(0.78, 0.36 + wave * 0.08);
 
         if (roll < ballistaChance) {
-          spawnEnemy('BALLISTA', ex, -23);
+          spawnEnemy('BALLISTA', ex, -18.5);
         } else if (roll < crossbowChance) {
-          spawnEnemy('CROSSBOW', ex, -23);
+          spawnEnemy('CROSSBOW', ex, -18.5);
         } else {
-          spawnEnemy('ARCHER', Math.max(-BOUNDS_X + 0.8, ex - 1.3), -23);
-          if (enemies.length < cfg.maxEn && (levelQuota - levelKills) > enemies.length) {
-            spawnEnemy('ARCHER', Math.min(BOUNDS_X - 0.8, ex + 1.3), -24.2);
+          spawnEnemy('ARCHER', Math.max(-BOUNDS_X + 0.8, ex - 1.3), -18.5);
+          if (enemies.length < cfg.maxEn && (levelQuota - levelKills) > (nonEscortEnemies + 1)) {
+            spawnEnemy('ARCHER', Math.min(BOUNDS_X - 0.8, ex + 1.3), -19.5);
           }
         }
       }
 
-      // Ambient bonus power-up drops
+      // Ambient bonus power-up drops (rarer so you have to dodge with skill!)
       powerupSpawnTimer -= dt;
       if (powerupSpawnTimer <= 0) {
-        powerupSpawnTimer = 6.2 + Math.random() * 2.5;
+        powerupSpawnTimer = 9.5 + Math.random() * 3.5;
         const px = (Math.random() - 0.5) * (BOUNDS_X * 1.6);
-        spawnPowerup(px, -22);
+        spawnPowerup(px, -18);
       }
 
       // 3. Update 3D Checkpoint Gates scrolling down the bridge
@@ -2960,14 +2997,63 @@
       for (let i = enemies.length - 1; i >= 0; i--) {
         const en = enemies[i];
 
+        if (en.bossHitCooldown > 0) {
+          en.bossHitCooldown = Math.max(0, en.bossHitCooldown - dt);
+        }
+
         const isMarching = en.mesh.position.z < en.holdZ;
         if (isMarching) {
-          en.mesh.position.z += en.vz * dt;
+          en.mesh.position.z = Math.min(en.holdZ, en.mesh.position.z + en.vz * dt);
         } else {
-          const strafeAmp = en.type === 'BOSS' ? 3.4 : (en.type === 'BALLISTA' ? 1.45 : 2.15);
-          const strafeSpd = (en.type === 'BOSS' ? 1.15 : 1.75) * (1 + (wave - 1) * 0.06);
-          en.mesh.position.x += Math.cos(t * strafeSpd + en.strafePhase) * strafeAmp * dt;
-          en.mesh.position.x = Math.max(-BOUNDS_X + 0.8, Math.min(BOUNDS_X - 0.8, en.mesh.position.x));
+          if (en.entryShieldTimer > 0) {
+            en.entryShieldTimer = Math.max(0, en.entryShieldTimer - dt);
+          }
+
+          if (en.type === 'BOSS') {
+            // Boss Tactical Evasive Strafing + Periodic Rapid Side-Dashes + Escort Minion Summons!
+            const enrageMult = en.enraged ? 1.38 : 1.0;
+            const strafeAmp = 4.35 * enrageMult;
+            const strafeSpd = 1.65 * (1 + (wave - 1) * 0.06) * enrageMult;
+            en.mesh.position.x += Math.cos(t * strafeSpd + en.strafePhase) * strafeAmp * dt;
+
+            en.dashTimer -= dt;
+            if (en.dashTimer <= 0) {
+              en.dashTimer = en.enraged ? 1.85 : 2.55;
+              // Dash swiftly away from Spark's current X lane so Spark cannot camp in front of the Boss!
+              const dashDir = en.mesh.position.x > 0 ? -1 : 1;
+              en.dashVx = dashDir * (11.5 * enrageMult);
+            }
+            if (Math.abs(en.dashVx) > 0.2) {
+              en.mesh.position.x += en.dashVx * dt;
+              en.dashVx *= Math.pow(0.04, dt);
+            }
+            en.mesh.position.x = Math.max(-BOUNDS_X + 1.4, Math.min(BOUNDS_X - 1.4, en.mesh.position.x));
+
+            // Boss summons flanking Escort Minions during the Boss fight to create crossfire!
+            en.escortTimer -= dt;
+            const activeEscorts = enemies.filter((e) => e.isEscort).length;
+            if (en.escortTimer <= 0 && activeEscorts < 2) {
+              en.escortTimer = en.enraged ? 3.8 : 5.0;
+              const flankX = (Math.random() < 0.5 ? -1 : 1) * (BOUNDS_X - 1.2);
+              const escortType = (wave >= 2 && Math.random() < 0.5) ? 'CROSSBOW' : 'ARCHER';
+              spawnEnemy(escortType, flankX, -17.5, true);
+            }
+          } else {
+            const strafeAmp = en.type === 'BALLISTA' ? 1.55 : 2.35;
+            const strafeSpd = 1.85 * (1 + (wave - 1) * 0.07);
+            en.mesh.position.x += Math.cos(t * strafeSpd + en.strafePhase) * strafeAmp * dt;
+            en.mesh.position.x = Math.max(-BOUNDS_X + 0.8, Math.min(BOUNDS_X - 0.8, en.mesh.position.x));
+          }
+        }
+
+        // Update Boss Entry Invulnerability Barrier Dome visibility & rotation
+        if (en.entryShieldMesh) {
+          const shieldActive = isMarching || en.entryShieldTimer > 0;
+          en.entryShieldMesh.visible = shieldActive;
+          if (shieldActive) {
+            en.entryShieldMesh.rotation.y += dt * 3.5;
+            en.entryShieldMesh.rotation.x += dt * 2.1;
+          }
         }
 
         // Articulated 3D Armored Leg Stride & Combat Stance Animation
@@ -3001,7 +3087,7 @@
 
         // Physical Bow/Crossbow/Ballista Draw-Back & Recoil Animation!
         en.recoilZ = Math.max(0, (en.recoilZ || 0) - dt * 2.2);
-        const drawProgress = Math.max(0, Math.min(1, 1 - (en.fireCooldown / 1.45)));
+        const drawProgress = Math.max(0, Math.min(1, 1 - (en.fireCooldown / 1.25)));
         if (en.weaponRig) {
           const baseZ = en.type === 'BALLISTA' ? 0.15 : 0.42;
           en.weaponRig.position.z = baseZ - en.recoilZ * 0.35;
@@ -3017,33 +3103,36 @@
           en.bowStringR.position.z = 0.12 - drawProgress * 0.18;
         }
 
-        en.fireCooldown -= dt;
+        // Wait to count down fireCooldown if still way off-screen
+        if (en.mesh.position.z > -13.5) {
+          en.fireCooldown -= dt;
+        }
         if (en.fireCooldown < 0.45) {
           en.chargeRing.material.opacity = 0.5 + 0.5 * Math.abs(Math.sin(t * 28));
           en.chargeRing.scale.setScalar(1.0 + (0.45 - en.fireCooldown) * 0.7);
-          // Lean menacingly into the shot right before releasing!
           en.aimGroup.rotation.x = 0.12;
         } else {
-          en.chargeRing.material.opacity = 0.2;
+          en.chargeRing.material.opacity = en.enraged ? 0.45 : 0.2;
           en.chargeRing.scale.setScalar(1.0);
           en.aimGroup.rotation.x = 0;
         }
 
-        if (en.fireCooldown <= 0) {
+        if (en.fireCooldown <= 0 && en.mesh.position.z >= -12.8) {
           en.recoilZ = 0.42;
-          const arrowSpeed = cfg.arrowSpd;
-          // Predictive lead-target aiming at Level 2+ so minions feel sharper and meaner!
-          const leadFactor = wave >= 2 ? Math.min(0.32, 0.12 + wave * 0.03) : 0;
+          const arrowSpeed = cfg.arrowSpd * (en.enraged ? 1.16 : 1.0);
+          // Predictive lead-target aiming right from Level 1!
+          const leadFactor = Math.min(0.36, 0.15 + wave * 0.035);
           const targetX = sparkState.x + sparkState.vx * leadFactor;
           const ldx = targetX - en.mesh.position.x;
           const dist = Math.hypot(ldx, dz) || 1;
           const dirX = ldx / dist;
           const dirZ = dz / dist;
+          const leadAimAngle = Math.atan2(ldx, dz);
 
           spawnExplosion(en.mesh.position.x + dirX * 0.8, -0.8, en.mesh.position.z + dirZ * 0.8, 0xff4500, 4);
 
           if (en.type === 'ARCHER') {
-            en.fireCooldown = Math.max(1.05, 2.25 * cfg.cdScale);
+            en.fireCooldown = Math.max(0.85, 1.75 * cfg.cdScale);
             spawnArrow(
               en.mesh.position.x,
               en.mesh.position.z + 0.75,
@@ -3052,45 +3141,42 @@
               false,
               0
             );
-            // At Level 3+, Dread-Horn Hunters fire a rapid 2-arrow hunter burst!
-            if (wave >= 3) {
+            // At Level 2+, Dread-Horn Hunters fire a rapid 2-arrow burst!
+            if (wave >= 2) {
               setTimeout(() => {
-                if (gameState === 'PLAYING') {
+                if (gameState === 'PLAYING' && en.hp > 0) {
                   spawnArrow(en.mesh.position.x, en.mesh.position.z + 0.75, dirX * arrowSpeed, dirZ * arrowSpeed, false, 0);
                 }
-              }, 165);
+              }, 150);
             }
           } else if (en.type === 'CROSSBOW') {
-            en.fireCooldown = Math.max(1.25, 2.45 * cfg.cdScale);
-            // Center laser-guided Hellfire Dragon-Piercer Bolt
+            en.fireCooldown = Math.max(1.05, 1.95 * cfg.cdScale);
+            // Center laser-guided Hellfire Dragon-Piercer Bolt (FIREPROOF!)
             spawnArrow(
               en.mesh.position.x,
               en.mesh.position.z + 0.8,
-              dirX * (arrowSpeed * 1.26),
-              dirZ * (arrowSpeed * 1.26),
+              dirX * (arrowSpeed * 1.28),
+              dirZ * (arrowSpeed * 1.28),
               true,
-              0.35
+              0.32
             );
-            // At Level 2+, Juggernaut Arbalests also fire 2 flanking wing-bolts!
-            if (wave >= 2) {
-              [-0.22, 0.22].forEach((sp) => {
-                const a = aimAngle + sp;
-                spawnArrow(
-                  en.mesh.position.x + Math.sin(a) * 0.5,
-                  en.mesh.position.z + 0.75,
-                  Math.sin(a) * arrowSpeed,
-                  Math.cos(a) * arrowSpeed,
-                  true,
-                  0
-                );
-              });
-            }
+            // Plus 2 flanking barbed wing-bolts!
+            [-0.22, 0.22].forEach((sp) => {
+              const a = leadAimAngle + sp;
+              spawnArrow(
+                en.mesh.position.x + Math.sin(a) * 0.5,
+                en.mesh.position.z + 0.75,
+                Math.sin(a) * arrowSpeed,
+                Math.cos(a) * arrowSpeed,
+                true,
+                0
+              );
+            });
           } else if (en.type === 'BALLISTA') {
-            en.fireCooldown = Math.max(1.5, 2.8 * cfg.cdScale);
-            // Level 1-3: 3-arrow Scorpion fan spread; Level 4+: 5-arrow fan spread!
-            const fanAngles = wave >= 4 ? [-0.36, -0.18, 0, 0.18, 0.36] : [-0.22, 0, 0.22];
+            en.fireCooldown = Math.max(1.25, 2.25 * cfg.cdScale);
+            const fanAngles = wave >= 3 ? [-0.38, -0.19, 0, 0.19, 0.38] : [-0.24, 0, 0.24];
             fanAngles.forEach((spread) => {
-              const a = aimAngle + spread;
+              const a = leadAimAngle + spread;
               spawnArrow(
                 en.mesh.position.x + Math.sin(a) * 0.65,
                 en.mesh.position.z + Math.cos(a) * 0.65,
@@ -3103,12 +3189,14 @@
           } else if (en.type === 'BOSS') {
             en.volleyCount = (en.volleyCount || 0) + 1;
             const bType = en.bossType || 'DREAD_BALLISTA';
+            const enrageCd = en.enraged ? 0.72 : 1.0;
 
             if (bType === 'LONGBOW_CAPTAIN') {
-              // Level 1 Boss: 3-Arrow Royal Fan Spread + Telegraphed Center Sniper Arrow every 2nd volley
-              en.fireCooldown = Math.max(1.25, 1.95 * cfg.cdScale);
-              [-0.24, 0, 0.24].forEach((spread) => {
-                const a = aimAngle + spread;
+              // Level 1 Boss: 5-Arrow Royal Fan Barrage (7 when Enraged) + Predictive Laser Sniper Arrow EVERY volley!
+              en.fireCooldown = Math.max(0.78, 1.25 * cfg.cdScale * enrageCd);
+              const spreads = en.enraged ? [-0.45, -0.3, -0.15, 0, 0.15, 0.3, 0.45] : [-0.34, -0.17, 0, 0.17, 0.34];
+              spreads.forEach((spread) => {
+                const a = leadAimAngle + spread;
                 spawnArrow(
                   en.mesh.position.x + Math.sin(a) * 0.7,
                   en.mesh.position.z + 0.9,
@@ -3118,22 +3206,20 @@
                   0
                 );
               });
-              if (en.volleyCount % 2 === 0) {
-                spawnArrow(
-                  en.mesh.position.x,
-                  en.mesh.position.z + 1.0,
-                  dirX * (arrowSpeed * 1.25),
-                  dirZ * (arrowSpeed * 1.25),
-                  true,
-                  0.42
-                );
-              }
+              spawnArrow(
+                en.mesh.position.x,
+                en.mesh.position.z + 1.0,
+                dirX * (arrowSpeed * 1.3),
+                dirZ * (arrowSpeed * 1.3),
+                true,
+                0.34
+              );
             } else if (bType === 'ARBALEST_GOLIATH') {
-              // Level 2 Boss: Twin Left/Right Heavy Crossbow Arms + Dual Laser Bolts
-              en.fireCooldown = Math.max(1.2, 1.88 * cfg.cdScale);
+              // Level 2 Boss: Twin Left/Right 3-Bolt Arbalest Clusters (6 bolts) + Dual Laser Harpoons!
+              en.fireCooldown = Math.max(0.75, 1.2 * cfg.cdScale * enrageCd);
               [-1.45, 1.45].forEach((armX) => {
-                [-0.1, 0.1].forEach((spread) => {
-                  const a = aimAngle + spread;
+                [-0.2, 0, 0.2].forEach((spread) => {
+                  const a = leadAimAngle + spread;
                   spawnArrow(
                     en.mesh.position.x + armX,
                     en.mesh.position.z + 0.9,
@@ -3144,23 +3230,21 @@
                   );
                 });
               });
-              if (en.volleyCount % 2 === 1) {
-                [-1.1, 1.1].forEach((lx) => {
-                  spawnArrow(
-                    en.mesh.position.x + lx,
-                    en.mesh.position.z + 1.0,
-                    dirX * (arrowSpeed * 1.25),
-                    dirZ * (arrowSpeed * 1.25),
-                    true,
-                    0.38
-                  );
-                });
-              }
+              [-1.1, 1.1].forEach((lx) => {
+                spawnArrow(
+                  en.mesh.position.x + lx,
+                  en.mesh.position.z + 1.0,
+                  dirX * (arrowSpeed * 1.3),
+                  dirZ * (arrowSpeed * 1.3),
+                  true,
+                  0.32
+                );
+              });
             } else if (bType === 'LICH_SOVEREIGN') {
-              // Level 4 Boss: 5-Arrow Arcane Starburst Fan + Dual Crossing Laser Arrows
-              en.fireCooldown = Math.max(1.15, 1.85 * cfg.cdScale);
-              [-0.36, -0.18, 0, 0.18, 0.36].forEach((spread) => {
-                const a = aimAngle + spread;
+              // Level 4 Boss: 7-Arrow Arcane Starburst Fan + Triple Crossing Laser Arrows!
+              en.fireCooldown = Math.max(0.72, 1.15 * cfg.cdScale * enrageCd);
+              [-0.48, -0.32, -0.16, 0, 0.16, 0.32, 0.48].forEach((spread) => {
+                const a = leadAimAngle + spread;
                 spawnArrow(
                   en.mesh.position.x + Math.sin(a) * 0.8,
                   en.mesh.position.z + 0.9,
@@ -3170,23 +3254,23 @@
                   0
                 );
               });
-              [-0.14, 0.14].forEach((lSpread) => {
-                const la = aimAngle + lSpread;
+              [-0.18, 0, 0.18].forEach((lSpread) => {
+                const la = leadAimAngle + lSpread;
                 spawnArrow(
                   en.mesh.position.x,
                   en.mesh.position.z + 1.0,
-                  Math.sin(la) * (arrowSpeed * 1.28),
-                  Math.cos(la) * (arrowSpeed * 1.28),
+                  Math.sin(la) * (arrowSpeed * 1.32),
+                  Math.cos(la) * (arrowSpeed * 1.32),
                   true,
-                  0.38
+                  0.32
                 );
               });
             } else if (bType === 'SLAYER_TITAN' || bType === 'THRONE_EMPEROR') {
-              // Level 5 & 6+ Bosses: Triple Turret Barrage + Triple Laser Harpoons
-              en.fireCooldown = Math.max(1.1, 1.8 * cfg.cdScale);
+              // Level 5 & 6+ Bosses: 9-Arrow Triple Turret Barrage + Staggered Second Wave + Triple Laser Harpoons!
+              en.fireCooldown = Math.max(0.68, 1.1 * cfg.cdScale * enrageCd);
               [-1.55, 0, 1.55].forEach((turretX) => {
-                [-0.16, 0.16].forEach((spread) => {
-                  const a = aimAngle + spread;
+                [-0.22, 0, 0.22].forEach((spread) => {
+                  const a = leadAimAngle + spread;
                   spawnArrow(
                     en.mesh.position.x + turretX,
                     en.mesh.position.z + 0.9,
@@ -3197,23 +3281,23 @@
                   );
                 });
               });
-              [-0.2, 0, 0.2].forEach((lSpread) => {
-                const la = aimAngle + lSpread;
+              [-0.22, 0, 0.22].forEach((lSpread) => {
+                const la = leadAimAngle + lSpread;
                 spawnArrow(
                   en.mesh.position.x,
                   en.mesh.position.z + 1.05,
-                  Math.sin(la) * (arrowSpeed * 1.3),
-                  Math.cos(la) * (arrowSpeed * 1.3),
+                  Math.sin(la) * (arrowSpeed * 1.35),
+                  Math.cos(la) * (arrowSpeed * 1.35),
                   true,
-                  0.36
+                  0.3
                 );
               });
             } else {
-              // Level 3 Boss: Infernal Dread Ballista Warlord
-              en.fireCooldown = Math.max(1.15, 1.9 * cfg.cdScale);
+              // Level 3 Boss: Infernal Dread Ballista Warlord (Twin 3-Bolt Turrets + Center Magma Laser + Follow-Up Salvo)
+              en.fireCooldown = Math.max(0.74, 1.18 * cfg.cdScale * enrageCd);
               [-1.35, 1.35].forEach((turretOffset) => {
-                [-0.15, 0.15].forEach((spread) => {
-                  const a = aimAngle + spread;
+                [-0.22, 0, 0.22].forEach((spread) => {
+                  const a = leadAimAngle + spread;
                   spawnArrow(
                     en.mesh.position.x + turretOffset,
                     en.mesh.position.z + 0.9,
@@ -3227,10 +3311,10 @@
               spawnArrow(
                 en.mesh.position.x,
                 en.mesh.position.z + 1.0,
-                dirX * (arrowSpeed * 1.3),
-                dirZ * (arrowSpeed * 1.3),
+                dirX * (arrowSpeed * 1.32),
+                dirZ * (arrowSpeed * 1.32),
                 true,
-                0.38
+                0.32
               );
             }
           }
@@ -3291,11 +3375,11 @@
       );
       showCritToast(`🎲 CRIT: "Level ${wave}: ${cfg.name}! Roast ${cfg.quota} enemies to unlock the Checkpoint!"`);
 
-      // Spawn starter enemies for this level
-      spawnEnemy('ARCHER', -2.8, -16);
-      spawnEnemy('ARCHER', 2.8, -16);
-      if (wave >= 2) spawnEnemy('CROSSBOW', 0, -19);
-      spawnPowerup(-2.2, -13, 'D20');
+      // Spawn fierce starter vanguard for this level
+      spawnEnemy('ARCHER', -3.2, -16.5);
+      spawnEnemy('ARCHER', 3.2, -16.5);
+      spawnEnemy('CROSSBOW', 0, -17.5);
+      if (wave >= 2) spawnEnemy('BALLISTA', -1.8, -18.5);
     }
 
     function triggerGameOver() {
@@ -3477,6 +3561,25 @@
             const en = enemies[j];
             const dist = Math.hypot(fb.mesh.position.x - en.mesh.position.x, fb.mesh.position.z - en.mesh.position.z);
             if (dist < en.hitRadius) {
+              // 1. Spawn Entry Invulnerability: Enemies & Bosses CANNOT be damaged off-screen or while entering!
+              const isBossEntering = en.type === 'BOSS' && (en.mesh.position.z < en.holdZ - 0.1 || en.entryShieldTimer > 0);
+              const isMinionOffscreen = en.type !== 'BOSS' && en.mesh.position.z < -11.6;
+              if (isBossEntering || isMinionOffscreen) {
+                sfx.sfxArmorDeflect();
+                spawnExplosion(fb.mesh.position.x, -0.8, fb.mesh.position.z, 0xfacc15, 3);
+                removed = true;
+                break;
+              }
+
+              // 2. Anti-Shotgun Cap on Bosses: prevents 3 Tri-Flame fireballs in the same frame from instant-melting the Boss!
+              if (en.type === 'BOSS' && en.bossHitCooldown > 0) {
+                removed = true;
+                break;
+              }
+              if (en.type === 'BOSS') {
+                en.bossHitCooldown = 0.075;
+              }
+
               const dmg = fb.inferno ? 2 : 1;
               en.hp -= dmg;
               en.hitFlash = 1.0;
@@ -3489,9 +3592,19 @@
               en.hb.fill.position.x = -(1 - pct) * en.hb.width * 0.5;
               en.hb.fill.material.color.setHex(pct > 0.5 ? 0x39ff14 : (pct > 0.25 ? 0xfacc15 : 0xff2a55));
 
+              // Trigger Boss Phase 2 ENRAGE at 50% HP!
+              if (en.type === 'BOSS' && !en.enraged && en.hp > 0 && pct <= 0.5) {
+                en.enraged = true;
+                sfx.sfxBossAlert();
+                screenShake = 0.38;
+                spawnExplosion(en.mesh.position.x, -0.4, en.mesh.position.z, 0xff2a55, 24);
+                showFloatingPopup(en.mesh.position.x, en.mesh.position.z, '🔥 BOSS ENRAGED (PHASE 2)!', '#ff2a55');
+                showCritToast(`🔥 CRIT: "WATCH OUT! The Level ${wave} Boss is ENRAGED — faster volleys & flankers!"`);
+              }
+
               if (en.type === 'BOSS' && activeBoss === en) {
                 document.getElementById('bossBarFill').style.width = `${Math.round(pct * 100)}%`;
-                document.getElementById('bossHpText').textContent = `${Math.max(0, en.hp)} HP`;
+                document.getElementById('bossHpText').textContent = `${Math.max(0, en.hp)} HP${en.enraged ? ' 🔥' : ''}`;
               }
 
               if (en.hp <= 0) {
@@ -3500,13 +3613,13 @@
                 enemiesRoasted++;
                 if (en.type === 'BOSS') {
                   levelBossDefeated = true;
-                } else {
+                } else if (!en.isEscort) {
                   levelKills++;
                 }
                 updateLevelProgressHUD();
 
                 const mult = sparkState.triFlame > 0 ? 2 : 1;
-                const pts = (en.type === 'BOSS' ? 2000 : (en.type === 'BALLISTA' ? 500 : (en.type === 'CROSSBOW' ? 300 : 200))) * mult;
+                const pts = (en.type === 'BOSS' ? 2500 : (en.type === 'BALLISTA' ? 500 : (en.type === 'CROSSBOW' ? 300 : 200))) * mult;
                 score += pts;
 
                 const killMsg =
@@ -3514,23 +3627,34 @@
                   en.type === 'BALLISTA' ? `💥 BALLISTA TORCHED +${pts}!` :
                   `🔥 ROASTED +${pts}!`;
                 showFloatingPopup(en.mesh.position.x, en.mesh.position.z, killMsg, en.type === 'BOSS' ? '#facc15' : '#a3e635');
-                spawnExplosion(en.mesh.position.x, -0.6, en.mesh.position.z, 0xff7b00, en.type === 'BOSS' ? 34 : 16);
+                spawnExplosion(en.mesh.position.x, -0.6, en.mesh.position.z, 0xff7b00, en.type === 'BOSS' ? 38 : 16);
 
                 // Drop Loot / Power-Ups from Roasted Enemies!
                 if (en.type === 'BOSS') {
                   activeBoss = null;
                   document.getElementById('bossBarWrap').classList.remove('active');
-                  screenShake = 0.5;
+                  screenShake = 0.55;
                   for (let lwIdx = laserWarnings.length - 1; lwIdx >= 0; lwIdx--) {
                     scene.remove(laserWarnings[lwIdx].mesh);
                   }
                   laserWarnings.length = 0;
+
+                  // Remove any remaining Boss escort minions in a shockwave!
+                  for (let ek = enemies.length - 1; ek >= 0; ek--) {
+                    if (enemies[ek] !== en) {
+                      spawnExplosion(enemies[ek].mesh.position.x, -0.6, enemies[ek].mesh.position.z, 0x39ff14, 12);
+                      scene.remove(enemies[ek].mesh);
+                      enemies.splice(ek, 1);
+                      if (ek < j) j--;
+                    }
+                  }
+
                   showCritToast(`🎲 CRIT: "NAT 20! Level ${wave} Boss Roasted! Fly through the Checkpoint Gate!"`);
                   spawnPowerup(en.mesh.position.x - 1.2, en.mesh.position.z, 'D20');
                   spawnPowerup(en.mesh.position.x, en.mesh.position.z, 'SHIELD');
                   spawnPowerup(en.mesh.position.x + 1.2, en.mesh.position.z, 'PEPPER');
-                } else if (en.type === 'BALLISTA' || Math.random() < 0.45) {
-                  spawnPowerup(en.mesh.position.x, en.mesh.position.z, Math.random() < 0.55 ? null : 'GEM');
+                } else if (en.type === 'BALLISTA' || Math.random() < 0.28) {
+                  spawnPowerup(en.mesh.position.x, en.mesh.position.z, Math.random() < 0.45 ? null : 'GEM');
                 }
 
                 scene.remove(en.mesh);
@@ -3541,12 +3665,13 @@
             }
           }
 
-          // If Inferno Breath is active, fireballs also melt incoming arrows!
+          // If Inferno Breath is active, fireballs melt regular wooden arrows, but Elite/Boss red-hot harpoons are FIREPROOF!
           if (!removed && fb.inferno) {
             for (let a = arrows.length - 1; a >= 0; a--) {
               const ar = arrows[a];
+              if (ar.isElite) continue; // Elite & Boss Harpoon bolts cannot be melted!
               const dist = Math.hypot(fb.mesh.position.x - ar.mesh.position.x, fb.mesh.position.z - ar.mesh.position.z);
-              if (dist < 1.0) {
+              if (dist < 0.95) {
                 spawnExplosion(ar.mesh.position.x, -0.8, ar.mesh.position.z, 0xff5500, 9);
                 score += 75;
                 showFloatingPopup(ar.mesh.position.x, ar.mesh.position.z, '🌶️ MELTED +75!', '#ff9f1c');
@@ -3558,7 +3683,8 @@
             }
           }
 
-          if (removed || fb.life <= 0 || fb.mesh.position.z < -26) {
+          // Clamp fireball range to the top of the visible bridge (z = -13.2) so off-screen enemies can NEVER be sniped!
+          if (removed || fb.life <= 0 || fb.mesh.position.z < -13.2) {
             scene.remove(fb.mesh);
             fireballs.splice(i, 1);
           }
