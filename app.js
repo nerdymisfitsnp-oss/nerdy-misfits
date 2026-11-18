@@ -1324,7 +1324,25 @@
     }
     if (shipDetailEl) {
       if (!isShipping) {
-        shipDetailEl.innerHTML = '🎪 <strong>SWFL Local Market Pickup Selected:</strong> $0.00 shipping! Pick up your order directly at our booth.';
+        const pInfo = typeof window.resolveClientPickupDetails === 'function'
+          ? window.resolveClientPickupDetails(fulfillment)
+          : null;
+        if (pInfo && pInfo.isPickup) {
+          shipDetailEl.innerHTML = `
+            <div style="display:flex;flex-direction:column;gap:4px;">
+              <div>🎪 <strong>${escapeHtml(pInfo.marketTitle)}</strong> — <strong style="color:var(--glitch-green);">FREE Booth Pickup ($0.00)</strong></div>
+              <div>🕒 <strong>Pickup Time:</strong> <span style="color:var(--neon-cyan);font-weight:800;">${escapeHtml(pInfo.pickupDate ? pInfo.pickupDate + ' • ' + pInfo.pickupTime : pInfo.pickupTime)}</span></div>
+              <div>📍 <strong>Location:</strong> ${escapeHtml(pInfo.pickupAddress)}</div>
+              <div style="margin-top:3px;">
+                <a href="${escapeHtml(pInfo.pickupMapUrl)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:5px;color:#00f0ff;font-weight:800;text-decoration:underline;">
+                  🗺️ Open Pickup Location in Google Maps ↗
+                </a>
+              </div>
+            </div>
+          `;
+        } else {
+          shipDetailEl.innerHTML = '🎪 <strong>SWFL Local Market Pickup Selected:</strong> $0.00 shipping! Pick up your order directly at our booth.';
+        }
       } else {
         shipDetailEl.innerHTML = shipCalc.detailHtml;
       }
@@ -1472,9 +1490,15 @@
       }
     }
 
+    const pickupDetails = !isShipping && typeof window.resolveClientPickupDetails === 'function'
+      ? window.resolveClientPickupDetails(fulfillment, custStreet)
+      : null;
+
     const formattedFullAddress = isShipping
       ? [custStreet, custCity, [custState, custZip].filter(Boolean).join(' ')].filter(Boolean).join(', ')
-      : (custStreet || fulfillment);
+      : pickupDetails
+        ? `${pickupDetails.marketTitle} | ${pickupDetails.pickupDate} • ${pickupDetails.pickupTime} | ${pickupDetails.pickupAddress} | Map: ${pickupDetails.pickupMapUrl}${custStreet ? ' | Notes: ' + custStreet : ''}`
+        : (custStreet || fulfillment);
 
     const orderId = `NM-${Date.now().toString().slice(-6)}`;
     const customer = {
@@ -1500,6 +1524,7 @@
       orderId,
       items: itemsWithPhotos,
       fulfillment,
+      pickupDetails,
       customer,
       subtotal,
       shipping,
@@ -1526,6 +1551,7 @@
               notifyEmail: 'nerdymisfitsnp@gmail.com',
               customer,
               fulfillment,
+              pickupDetails,
               items: itemsWithPhotos,
               subtotal,
               shipping,
@@ -1537,6 +1563,19 @@
 
             try {
               sessionStorage.setItem('nm_pending_order_id', orderId);
+              sessionStorage.setItem('nm_last_order_receipt', JSON.stringify({
+                orderId,
+                customer,
+                fulfillment,
+                pickupDetails,
+                items: itemsWithPhotos,
+                subtotal,
+                shippingCost: shipping,
+                totalCharged,
+                freeMysteryMini: freeMiniUnlocked,
+                paymentStatus: 'PAID (Square Verified)',
+                timestamp: new Date().toLocaleString('en-US')
+              }));
             } catch (_) {}
 
             window.location.href = data.url;
@@ -2393,6 +2432,313 @@
     }
   };
 
+  // ==========================================================================
+  // CUSTOMER ORDER RECEIPT MODAL & PICKUP LOCATION / GOOGLE MAPS RESOLVER
+  // ==========================================================================
+  const CLIENT_SWFL_PICKUP_DIRECTORY = [
+    {
+      keywords: ['dearborn', 'englewood'],
+      marketTitle: 'The Market on Dearborn (Englewood)',
+      defaultDay: 'Thursdays',
+      pickupTime: '9:00 AM - 1:00 PM',
+      pickupAddress: '232 W. Dearborn Street, Englewood, FL 34223',
+      pickupMapUrl: 'https://maps.google.com/?q=232+W.+Dearborn+Street,+Englewood,+FL+34223'
+    },
+    {
+      keywords: ['moonlight', 'marina', 'laishley'],
+      marketTitle: 'Moonlight Market at the Marina (Punta Gorda)',
+      defaultDay: '3rd Friday of the Month',
+      pickupTime: '5:30 PM - 9:30 PM',
+      pickupAddress: 'Laishley Park, Punta Gorda, FL 33950',
+      pickupMapUrl: 'https://maps.google.com/?q=Laishley+Park,+Punta+Gorda,+FL+33950'
+    },
+    {
+      keywords: ['derby days', 'jockey club', 'pan american'],
+      marketTitle: 'Derby Days Market (North Port)',
+      defaultDay: '3rd Saturday of the Month',
+      pickupTime: '4:00 PM - 7:00 PM',
+      pickupAddress: 'Jockey Club of North Port, 3050 Pan American Blvd, North Port, FL 34287',
+      pickupMapUrl: 'https://maps.google.com/?q=3050+Pan+American+Blvd,+North+Port,+FL+34287'
+    },
+    {
+      keywords: ['shop local north port', 'north port high', '6400 w. price', 'north port market'],
+      marketTitle: 'Shop Local North Port Market (North Port)',
+      defaultDay: '4th Sunday of the Month',
+      pickupTime: '8:30 AM - 12:30 PM',
+      pickupAddress: 'North Port High School, 6400 W. Price Blvd, North Port, FL 34291',
+      pickupMapUrl: 'https://maps.google.com/?q=6400+W.+Price+Blvd,+North+Port,+FL+34291'
+    },
+    {
+      keywords: ['history park', 'shreve'],
+      marketTitle: 'History Park Market (Punta Gorda)',
+      defaultDay: 'Sundays',
+      pickupTime: '9:00 AM - 1:00 PM',
+      pickupAddress: 'History Park of Punta Gorda, 501 Shreve St, Punta Gorda, FL 33950',
+      pickupMapUrl: 'https://maps.google.com/?q=501+Shreve+St,+Punta+Gorda,+FL+33950'
+    },
+    {
+      keywords: ['poinsetta', 'poinsettia', 'city hall blvd'],
+      marketTitle: 'Poinsetta Festival (North Port)',
+      defaultDay: 'Sat Dec 5',
+      pickupTime: '12:00 PM - 5:00 PM',
+      pickupAddress: 'City Center Front Green, 4970 City Hall Blvd, North Port, FL 34286',
+      pickupMapUrl: 'https://maps.google.com/?q=4970+City+Hall+Blvd,+North+Port,+FL+34286'
+    },
+    {
+      keywords: ['holiday market', 'coniston'],
+      marketTitle: 'Holiday Market (Port Charlotte)',
+      defaultDay: 'Sun Dec 6',
+      pickupTime: '10:00 AM - 2:00 PM',
+      pickupAddress: '6444 Coniston St, Port Charlotte, FL 33981',
+      pickupMapUrl: 'https://maps.google.com/?q=6444+Coniston+St,+Port+Charlotte,+FL+33981'
+    },
+    {
+      keywords: ['lombardough', 'tamiami', 'fort myers'],
+      marketTitle: 'Lombardoughs Community Market (Fort Myers)',
+      defaultDay: '2nd Wednesday of the Month',
+      pickupTime: '4:30 PM - 9:00 PM',
+      pickupAddress: "Lombardough's Pizza & Beer, 17081 S. Tamiami Trl, Fort Myers, FL 33908",
+      pickupMapUrl: 'https://maps.google.com/?q=17081+S.+Tamiami+Trl,+Fort+Myers,+FL+33908'
+    },
+    {
+      keywords: ['novel legacy', 'render wy', 'nokomis'],
+      marketTitle: 'Novel Legacy Trail Market (Nokomis)',
+      defaultDay: '3rd Wednesday of the Month',
+      pickupTime: '5:00 PM - 7:00 PM',
+      pickupAddress: 'NOVEL Legacy Trail, 15560 Render Wy, Nokomis, FL 34275',
+      pickupMapUrl: 'https://maps.google.com/?q=15560+Render+Wy,+Nokomis,+FL+34275'
+    },
+    {
+      keywords: ['shark rox', 'imagine school'],
+      marketTitle: 'Shark Rox (North Port)',
+      defaultDay: 'Sat Jan 23',
+      pickupTime: '8:00 AM - 5:00 PM',
+      pickupAddress: 'Imagine School at North Port, 1998 E. Price Blvd, North Port, FL 34289',
+      pickupMapUrl: 'https://maps.google.com/?q=1998+E.+Price+Blvd,+North+Port,+FL+34289'
+    },
+    {
+      keywords: ['refelcta', 'reflecta', 'centennial'],
+      marketTitle: 'Refelcta-Con (Port Charlotte)',
+      defaultDay: 'Sat Mar 6 - Sun Mar 7',
+      pickupTime: '11:00 AM - 7:00 PM',
+      pickupAddress: 'Centennial Park, 1185 Centennial Blvd, Port Charlotte, FL 33953',
+      pickupMapUrl: 'https://maps.google.com/?q=1185+Centennial+Blvd,+Port+Charlotte,+FL+33953'
+    }
+  ];
+
+  window.resolveClientPickupDetails = function (fulfillmentVal, customerNotes = '') {
+    const fulf = String(fulfillmentVal || '').trim();
+    if (!fulf || fulf.toLowerCase().includes('us shipping') || (fulf.toLowerCase().includes('shipping') && !fulf.toLowerCase().includes('pickup'))) {
+      return { isPickup: false };
+    }
+
+    // 1. Check live cachedCalendarEvents first for an exact pickupValue match
+    if (Array.isArray(cachedCalendarEvents) && cachedCalendarEvents.length > 0) {
+      const exactEv = cachedCalendarEvents.find(
+        (ev) => ev.pickupValue === fulf || ev.pickupOptionText === fulf
+      );
+      if (exactEv) {
+        return {
+          isPickup: true,
+          marketTitle: `${exactEv.title} (${exactEv.city.split('(')[0].trim()})`,
+          pickupDate: exactEv.dayLabel,
+          pickupTime: exactEv.timeLabel,
+          pickupAddress: exactEv.address,
+          pickupMapUrl: exactEv.mapUrl,
+          customerNotes: String(customerNotes || '').trim()
+        };
+      }
+    }
+
+    // 2. Parse date prefix & match against SWFL directory
+    let parsedDate = '';
+    let parsedTitle = '';
+    const cleaned = fulf
+      .replace(/^📍\s*/i, '')
+      .replace(/^Free Pickup:\s*/i, '')
+      .replace(/—\s*Free Pickup$/i, '')
+      .trim();
+    if (cleaned.includes('•')) {
+      const parts = cleaned.split('•').map((s) => s.trim());
+      parsedDate = parts[0] || '';
+      parsedTitle = parts.slice(1).join(' • ') || '';
+    } else {
+      parsedTitle = cleaned;
+    }
+
+    const lower = fulf.toLowerCase();
+    let entry = CLIENT_SWFL_PICKUP_DIRECTORY[0];
+    for (const candidate of CLIENT_SWFL_PICKUP_DIRECTORY) {
+      if (candidate.keywords.some((kw) => lower.includes(kw))) {
+        entry = candidate;
+        break;
+      }
+    }
+
+    return {
+      isPickup: true,
+      marketTitle: parsedTitle || entry.marketTitle,
+      pickupDate: parsedDate || entry.defaultDay,
+      pickupTime: entry.pickupTime,
+      pickupAddress: entry.pickupAddress,
+      pickupMapUrl: entry.pickupMapUrl,
+      customerNotes: String(customerNotes || '').trim()
+    };
+  };
+
+  window.showCustomerOrderReceiptModal = function (orderData) {
+    if (!orderData) return;
+    const existing = document.getElementById('nmCustomerReceiptModal');
+    if (existing) existing.remove();
+
+    const orderId = orderData.orderId || orderData.order_id || 'NM-849204';
+    const customerName = orderData.customerName || orderData.customer_name || orderData.customer?.name || 'Misfit Customer';
+    const customerEmail = orderData.customerEmail || orderData.customer_email || orderData.customer?.email || '';
+    const customerPhone = orderData.customerPhone || orderData.customer_phone || orderData.customer?.phone || '';
+    const fulfillment = orderData.fulfillment || '📍 Free Pickup: Thu Nov 19 • The Market on Dearborn (Englewood)';
+    const shippingAddress = orderData.shippingAddress || orderData.shipping_address || orderData.customer?.address || '';
+    const items = Array.isArray(orderData.items) ? orderData.items : [];
+    const subtotal = Number(orderData.subtotal ?? items.reduce((s, i) => s + Number(i.price || 0) * Number(i.qty || 1), 0));
+    const shippingCost = Number(orderData.shippingCost ?? orderData.shipping_cost ?? 0);
+    const totalCharged = Number(orderData.totalCharged ?? orderData.total_charged ?? (subtotal + shippingCost));
+    const freeMysteryMini = Boolean(orderData.freeMysteryMini ?? orderData.free_mystery_mini ?? (subtotal >= 25));
+    const paymentStatus = orderData.paymentStatus || orderData.status || 'PAID (Square Verified)';
+    const timestamp = orderData.timestamp || new Date().toLocaleString('en-US');
+
+    const pInfo = orderData.pickupInfo || orderData.pickupDetails || window.resolveClientPickupDetails(fulfillment);
+    const isPickup = Boolean(pInfo && pInfo.isPickup);
+    const marketTitle = pInfo?.marketTitle || fulfillment;
+    const pickupDate = pInfo?.pickupDateLabel || pInfo?.pickupDate || '';
+    const pickupTime = pInfo?.pickupTimeWindow || pInfo?.pickupTime || '9:00 AM - 1:00 PM';
+    const pickupAddr = pInfo?.venueAddress || pInfo?.pickupAddress || shippingAddress;
+    const pickupMapUrl = pInfo?.googleMapsUrl || pInfo?.pickupMapUrl || `https://maps.google.com/?q=${encodeURIComponent(pickupAddr)}`;
+
+    const itemsRowsHtml = items
+      .map((it) => {
+        const qty = Number(it.qty || 1);
+        const price = Number(it.price || 0);
+        const lineTotal = (qty * price).toFixed(2);
+        return `
+          <tr>
+            <td style="padding:10px 12px;border-bottom:1px solid #282c3e;width:64px;">
+              <img src="${escapeHtml(it.image || 'assets/circle_logo.png')}" alt="${escapeHtml(it.name || 'Item')}" style="width:56px;height:56px;object-fit:cover;border-radius:10px;border:2px solid #39ff14;display:block;background:#0e1017;" />
+            </td>
+            <td style="padding:10px 12px;border-bottom:1px solid #282c3e;color:#ffffff;font-weight:700;font-size:0.9rem;">
+              ${escapeHtml(it.name || '3D Print Item')}
+              <div style="font-size:0.75rem;color:#a5adcb;font-weight:400;margin-top:3px;">${escapeHtml(it.meta || 'Standard Finish')}</div>
+            </td>
+            <td style="padding:10px 12px;border-bottom:1px solid #282c3e;color:#cfd3e2;text-align:center;font-weight:700;">×${qty}</td>
+            <td style="padding:10px 12px;border-bottom:1px solid #282c3e;color:#39ff14;font-weight:800;text-align:right;">$${lineTotal}</td>
+          </tr>
+        `;
+      })
+      .join('');
+
+    const pickupBlockHtml = isPickup
+      ? `
+        <div style="background:linear-gradient(145deg,#121d2f 0%,#141826 100%);border:2px solid #00f0ff;border-radius:14px;padding:16px 18px;margin-bottom:18px;">
+          <div style="font-size:0.72rem;letter-spacing:1.5px;color:#39ff14;font-weight:900;text-transform:uppercase;margin-bottom:5px;">
+            📍 SWFL MARKET BOOTH PICKUP LOCATION &amp; TIME • FREE PICKUP ($0.00)
+          </div>
+          <div style="font-size:1.15rem;font-weight:900;color:#ffffff;margin-bottom:10px;">
+            🎪 ${escapeHtml(marketTitle)}
+          </div>
+          <div style="background:#0e121d;border:1px solid #25324c;border-radius:10px;padding:10px 14px;margin-bottom:12px;display:flex;flex-direction:column;gap:7px;font-size:0.86rem;">
+            <div><span style="color:#94a3b8;">🕒 Pickup Date &amp; Time:</span> <strong style="color:#39ff14;">${escapeHtml(pickupDate ? `${pickupDate} • ${pickupTime}` : pickupTime)}</strong></div>
+            <div><span style="color:#94a3b8;">📍 Pickup Address:</span> <strong style="color:#ffffff;">${escapeHtml(pickupAddr)}</strong></div>
+            <div><span style="color:#94a3b8;">🗺️ Google Maps Link:</span> <a href="${escapeHtml(pickupMapUrl)}" target="_blank" rel="noopener noreferrer" style="color:#00f0ff;font-weight:800;text-decoration:underline;word-break:break-all;">${escapeHtml(pickupMapUrl)}</a></div>
+          </div>
+          <div style="display:flex;flex-wrap:wrap;gap:10px;align-items:center;">
+            <a href="${escapeHtml(pickupMapUrl)}" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:6px;background:linear-gradient(90deg,#39ff14 0%,#00f0ff 100%);color:#0b0e17;font-weight:900;font-size:0.88rem;text-decoration:none;padding:10px 20px;border-radius:999px;">
+              🗺️ Open Pickup Location in Google Maps ↗
+            </a>
+          </div>
+          <div style="font-size:0.76rem;color:#cbd5e1;margin-top:10px;line-height:1.4;">
+            Show this receipt (<strong>Order #${escapeHtml(orderId)}</strong>) at the <strong>Nerdy Misfits</strong> tent during market hours (<strong>${escapeHtml(pickupTime)}</strong>) to pick up your order! Questions on market day? Call/text <a href="tel:+19412661801" style="color:#39ff14;font-weight:700;">941-266-1801</a>.
+          </div>
+        </div>
+      `
+      : `
+        <div style="background:#161925;border:1.5px solid #00f0ff;border-radius:12px;padding:14px 18px;margin-bottom:18px;">
+          <div style="font-size:0.72rem;letter-spacing:1.4px;color:#00f0ff;font-weight:900;text-transform:uppercase;margin-bottom:4px;">
+            🚚 USPS SHIPPING DESTINATION (FROM NORTH PORT WORKSHOP)
+          </div>
+          <div style="font-size:0.9rem;color:#ffffff;font-weight:700;">${escapeHtml(shippingAddress || 'Address on file')}</div>
+        </div>
+      `;
+
+    const modalOverlay = document.createElement('div');
+    modalOverlay.id = 'nmCustomerReceiptModal';
+    modalOverlay.style.cssText =
+      'position:fixed;inset:0;z-index:99999;background:rgba(5,7,13,0.86);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:18px;overflow-y:auto;';
+    modalOverlay.innerHTML = `
+      <div style="font-family:'Segoe UI',Roboto,Arial,sans-serif;width:100%;max-width:650px;max-height:92vh;overflow-y:auto;background:#0e1017;color:#ffffff;border:2px solid #39ff14;border-radius:18px;box-shadow:0 24px 60px rgba(0,0,0,0.85);">
+        <div style="background:linear-gradient(135deg,#181b28 0%,#0e1017 100%);padding:20px 24px;border-bottom:2px solid #39ff14;display:flex;justify-content:space-between;align-items:flex-start;gap:12px;">
+          <div>
+            <div style="font-size:0.72rem;letter-spacing:2px;color:#39ff14;font-weight:800;text-transform:uppercase;">🧾 NERDY MISFITS • OFFICIAL CUSTOMER ORDER RECEIPT</div>
+            <h2 style="margin:5px 0 3px;font-size:1.35rem;color:#ffffff;">Receipt #${escapeHtml(orderId)} — $${totalCharged.toFixed(2)} Paid</h2>
+            <div style="font-size:0.8rem;color:#a5adcb;">Confirmed on ${escapeHtml(timestamp)} | Status: <strong style="color:#39ff14;">${escapeHtml(paymentStatus)}</strong></div>
+          </div>
+          <button type="button" onclick="document.getElementById('nmCustomerReceiptModal')?.remove()" style="background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);color:#fff;border-radius:99px;padding:6px 13px;font-weight:800;cursor:pointer;">✕ Close</button>
+        </div>
+
+        <div style="padding:20px 24px;">
+          ${pickupBlockHtml}
+
+          <div style="font-size:0.8rem;letter-spacing:1.1px;color:#00f0ff;text-transform:uppercase;font-weight:800;margin:0 0 8px;">👤 Customer &amp; Order Summary</div>
+          <table style="width:100%;border-collapse:collapse;background:#161925;border-radius:10px;overflow:hidden;margin-bottom:18px;font-size:0.85rem;">
+            <tr>
+              <td style="padding:7px 14px;color:#a5adcb;width:140px;">Customer:</td>
+              <td style="padding:7px 14px;color:#ffffff;font-weight:700;">${escapeHtml(customerName)}</td>
+            </tr>
+            ${customerEmail ? `<tr><td style="padding:7px 14px;color:#a5adcb;">Receipt Emailed To:</td><td style="padding:7px 14px;color:#00f0ff;font-weight:700;">${escapeHtml(customerEmail)}</td></tr>` : ''}
+            ${customerPhone ? `<tr><td style="padding:7px 14px;color:#a5adcb;">Phone:</td><td style="padding:7px 14px;color:#39ff14;font-weight:700;">${escapeHtml(customerPhone)}</td></tr>` : ''}
+          </table>
+
+          <div style="font-size:0.8rem;letter-spacing:1.1px;color:#39ff14;text-transform:uppercase;font-weight:800;margin:0 0 8px;">🎒 Ordered Items</div>
+          <table style="width:100%;border-collapse:collapse;background:#161925;border-radius:10px;overflow:hidden;margin-bottom:16px;">
+            <thead>
+              <tr style="background:#1f2437;color:#a5adcb;font-size:0.74rem;text-transform:uppercase;">
+                <th style="padding:8px 12px;text-align:left;width:64px;">Photo</th>
+                <th style="padding:8px 12px;text-align:left;">Item &amp; Specs</th>
+                <th style="padding:8px 12px;text-align:center;">Qty</th>
+                <th style="padding:8px 12px;text-align:right;">Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              ${itemsRowsHtml}
+            </tbody>
+          </table>
+
+          <div style="background:#161925;border:1px solid #2e344e;border-radius:10px;padding:14px 18px;margin-bottom:16px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:0.86rem;color:#cfd3e2;">
+              <span>Items Subtotal:</span>
+              <strong>$${subtotal.toFixed(2)}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:5px;font-size:0.86rem;color:#cfd3e2;">
+              <span>${isPickup ? 'SWFL Market Booth Pickup:' : 'USPS Shipping:'}</span>
+              <strong style="color:${isPickup ? '#39ff14' : '#cfd3e2'};">${isPickup ? 'FREE ($0.00)' : `$${shippingCost.toFixed(2)}`}</strong>
+            </div>
+            <div style="display:flex;justify-content:space-between;margin-bottom:7px;font-size:0.82rem;color:#ffd23a;">
+              <span>Free Mystery Hatchling ($25+ Bonus):</span>
+              <strong>${freeMysteryMini ? '🐉 UNLOCKED (Included!)' : 'Not unlocked (< $25)'}</strong>
+            </div>
+            <div style="border-top:1px solid #2e344e;padding-top:8px;margin-top:6px;display:flex;justify-content:space-between;font-size:1.1rem;color:#39ff14;font-weight:900;">
+              <span>TOTAL PAID:</span>
+              <span>$${totalCharged.toFixed(2)} USD</span>
+            </div>
+          </div>
+
+          <div style="display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;">
+            <button type="button" onclick="window.print()" style="background:#1f2437;border:1px solid #3b4262;color:#ffffff;border-radius:99px;padding:9px 18px;font-weight:800;cursor:pointer;">🖨️ Print / Save Receipt</button>
+            <button type="button" onclick="document.getElementById('nmCustomerReceiptModal')?.remove()" style="background:#39ff14;border:none;color:#080c08;border-radius:99px;padding:9px 22px;font-weight:900;cursor:pointer;">Done ✓</button>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(modalOverlay);
+  };
+
   initAllViews();
   renderCart();
 
@@ -2402,13 +2748,27 @@
       const urlParams = new URLSearchParams(window.location.search);
       const paidOrderId = urlParams.get('paid_order');
       if (paidOrderId) {
-        showToast(`🎉 Payment Confirmed! Sending Order #${paidOrderId} to the Nerdy Misfits Workshop...`);
-        await window.sendMisfitOrderNotification({
+        showToast(`🎉 Payment Confirmed! Preparing your Order #${paidOrderId} receipt...`);
+        const notifyRes = await window.sendMisfitOrderNotification({
           action: 'confirm_paid',
           orderId: paidOrderId,
           paymentStatus: 'PAID (Square Verified)'
         });
-        showToast(`✅ Order #${paidOrderId} Paid & Confirmed! Check your email for updates.`);
+        showToast(`✅ Order #${paidOrderId} Paid & Confirmed! Your receipt & pickup map link are ready.`);
+        if (notifyRes && notifyRes.order) {
+          window.showCustomerOrderReceiptModal({
+            ...notifyRes.order,
+            pickupInfo: notifyRes.pickupInfo
+          });
+        } else {
+          try {
+            const cachedRaw = sessionStorage.getItem('nm_last_order_receipt');
+            if (cachedRaw) {
+              const parsed = JSON.parse(cachedRaw);
+              window.showCustomerOrderReceiptModal({ ...parsed, orderId: paidOrderId });
+            }
+          } catch (_) {}
+        }
         // Clean URL query params so refreshing doesn't re-run
         if (window.history && window.history.replaceState) {
           const cleanUrl = window.location.pathname + window.location.hash;
