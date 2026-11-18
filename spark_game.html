@@ -37,15 +37,15 @@
       justify-content: center;
     }
 
-    /* Desktop Phone Bezel Wrapper (auto-fills 100% on actual mobile screens) */
+    /* Responsive Full-Size 3D Arcade Stage (Auto-Expands to Widescreen on PC & Full-Bleed on Phone!) */
     .phone-stage-wrap {
       position: relative;
       width: 100vw;
       height: 100dvh;
-      max-width: 440px;
-      max-height: 900px;
+      max-width: 100vw;
+      max-height: 100dvh;
       background: #080912;
-      border-radius: 38px;
+      border-radius: 26px;
       border: 3px solid rgba(163, 230, 53, 0.55);
       box-shadow:
         0 26px 80px rgba(0, 0, 0, 0.85),
@@ -56,10 +56,8 @@
       flex-direction: column;
       touch-action: none;
     }
-    @media (max-width: 520px) {
+    @media (max-width: 600px) {
       .phone-stage-wrap {
-        max-width: 100vw;
-        max-height: 100dvh;
         border-radius: 0;
         border: none;
       }
@@ -630,6 +628,160 @@
       font-weight: 800;
       color: #fff;
       margin-top: 2px;
+    }
+
+    /* =========================================================================
+       PC / COMPUTER WIDESCREEN OPTIMIZATION (@media min-width: 720px)
+       ========================================================================= */
+    @media (min-width: 720px) {
+      .phone-notch {
+        display: none;
+      }
+      .hud-top {
+        max-width: 1040px;
+        width: 100%;
+        margin: 0 auto;
+        padding: 18px 28px 12px;
+        gap: 10px;
+      }
+      .brand-chip {
+        padding: 6px 16px 6px 8px;
+      }
+      .brand-chip img {
+        width: 30px;
+        height: 30px;
+      }
+      .brand-chip span {
+        font-size: 0.92rem;
+      }
+      .hud-icon-btn {
+        width: 40px;
+        height: 40px;
+        font-size: 1.1rem;
+      }
+      .hud-stats-bar {
+        gap: 14px;
+      }
+      .stat-box {
+        padding: 8px 16px;
+        border-radius: 14px;
+      }
+      .stat-lbl {
+        font-size: 0.72rem;
+      }
+      .stat-val {
+        font-size: 1.32rem;
+      }
+      .level-progress-wrap,
+      .boss-bar-wrap {
+        padding: 7px 14px;
+        border-radius: 12px;
+      }
+      .level-progress-header,
+      .boss-bar-header {
+        font-size: 0.76rem;
+        margin-bottom: 5px;
+      }
+      .level-progress-track,
+      .boss-bar-track {
+        height: 10px;
+      }
+      .pw-pill {
+        font-size: 0.78rem;
+        padding: 5px 14px;
+      }
+      .crit-toast {
+        top: 184px;
+        padding: 8px 18px 8px 10px;
+      }
+      .crit-toast img {
+        width: 34px;
+        height: 34px;
+      }
+      .crit-toast-text {
+        font-size: 0.86rem;
+      }
+      .checkpoint-banner {
+        max-width: 520px;
+        padding: 20px 32px;
+      }
+      .cp-title {
+        font-size: 2.0rem;
+      }
+      .cp-sub {
+        font-size: 0.92rem;
+      }
+      .hud-bottom {
+        max-width: 980px;
+        margin: 0 auto;
+        bottom: 16px;
+        padding: 8px 20px;
+        font-size: 0.78rem;
+      }
+      /* Widescreen PC Start & Game Over Overlays */
+      .hero-badge {
+        font-size: 0.82rem;
+        padding: 6px 16px;
+      }
+      .game-title {
+        font-size: 2.85rem;
+        margin-bottom: 8px;
+      }
+      .game-title span {
+        font-size: 1.95rem;
+      }
+      .game-subtitle {
+        max-width: 660px;
+        font-size: 0.96rem;
+        margin-bottom: 18px;
+      }
+      .powerups-legend {
+        max-width: 720px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+        padding: 16px 18px;
+        margin-bottom: 18px;
+      }
+      .legend-item {
+        font-size: 0.84rem;
+      }
+      .legend-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 1.25rem;
+      }
+      .checkpoint-select-box {
+        max-width: 720px;
+        padding: 12px 18px;
+        margin-bottom: 18px;
+      }
+      .cp-select-lbl {
+        font-size: 0.75rem;
+      }
+      .cp-lvl-btn {
+        font-size: 0.84rem;
+        padding: 7px 14px;
+      }
+      .play-cta-btn {
+        max-width: 420px;
+        font-size: 1.26rem;
+        padding: 16px 32px;
+      }
+      .gameover-title {
+        font-size: 3.1rem;
+      }
+      .score-summary-grid {
+        max-width: 720px;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 14px;
+      }
+      .score-card {
+        padding: 14px;
+      }
+      .score-card .val {
+        font-size: 1.55rem;
+      }
     }
   </style>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
@@ -1651,9 +1803,36 @@
     let screenShake = 0;
     let activeBoss = null;
 
-    const BOUNDS_X = 6.6;
+    let BOUNDS_X = 6.6;
     const BOUNDS_Z_MIN = -11.5;
     const BOUNDS_Z_MAX = 7.4;
+    let camBaseY = 28.0;
+    let camBaseZ = 11.8;
+
+    function syncViewportCameraAndBounds() {
+      const w = container.clientWidth || window.innerWidth;
+      const h = container.clientHeight || window.innerHeight;
+      const aspect = w / Math.max(1, h);
+
+      if (aspect >= 0.85) {
+        // PC / Widescreen Mode: Wider 3D Castle Bridge, Wider Playfield & Optimized Widescreen 3D Camera!
+        envGroup.scale.x = 1.38;
+        BOUNDS_X = 9.1;
+        camera.fov = 39;
+        camBaseY = 26.6;
+        camBaseZ = 11.4;
+      } else {
+        // Mobile Portrait Mode
+        envGroup.scale.x = 1.0;
+        BOUNDS_X = 6.6;
+        camera.fov = 42;
+        camBaseY = 28.0;
+        camBaseZ = 11.8;
+      }
+      camera.aspect = aspect;
+      camera.updateProjectionMatrix();
+      renderer.setSize(w, h);
+    }
 
     const sparkState = {
       x: 0,
@@ -1804,6 +1983,7 @@
       grp.add(floorStrip);
 
       grp.position.set(0, -1.9, -22);
+      grp.scale.x = envGroup.scale.x || 1.0;
       scene.add(grp);
 
       checkpointGates.push({
@@ -2873,6 +3053,14 @@
 
     window.addEventListener('keydown', (e) => {
       keys[e.code] = true;
+      if ((e.code === 'Space' || e.code === 'Enter') && gameState !== 'PLAYING') {
+        e.preventDefault();
+        if (gameState === 'START') {
+          startGame(selectedStartLevel, selectedStartLevel > 1 && selectedStartLevel === unlockedCheckpoint);
+        } else if (gameState === 'GAMEOVER') {
+          startGame(wave, true);
+        }
+      }
     });
     window.addEventListener('keyup', (e) => {
       keys[e.code] = false;
@@ -3817,8 +4005,8 @@
       }
 
       let camX = spark.root.position.x * 0.22;
-      let camY = 28.0;
-      let camZ = 11.8;
+      let camY = camBaseY;
+      let camZ = camBaseZ;
       if (screenShake > 0) {
         screenShake = Math.max(0, screenShake - dt * 1.8);
         camX += (Math.random() - 0.5) * screenShake * 1.6;
@@ -3831,11 +4019,10 @@
     }
 
     window.addEventListener('resize', () => {
-      camera.aspect = container.clientWidth / container.clientHeight;
-      camera.updateProjectionMatrix();
-      renderer.setSize(container.clientWidth, container.clientHeight);
+      syncViewportCameraAndBounds();
     });
 
+    syncViewportCameraAndBounds();
     requestAnimationFrame(animate);
   </script>
 </body>
