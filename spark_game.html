@@ -1677,87 +1677,87 @@
     const LEVEL_THEMES = [
       {
         name: 'OUTER COURTYARD',
-        quota: 10,
+        quota: 7,
         hasBoss: true,
         bossType: 'LONGBOW_CAPTAIN',
         bossName: 'CAPTAIN VANE, ROYAL LONGBOW COMMANDER',
-        bossSub: '5-Arrow Royal Fan Barrage + Predictive Laser Sniper!',
-        bossHp: 145,
+        bossSub: '3-Way Royal Fan Volley + Telegraphed Laser Sniper!',
+        bossHp: 75,
         rim1: 0x39ff14,
         rim2: 0xff2a85,
-        arrowSpd: 12.6,
-        cdScale: 0.84,
-        maxEn: 4
+        arrowSpd: 11.2,
+        cdScale: 0.96,
+        maxEn: 3
       },
       {
         name: 'CROSSBOW BATTLEMENTS',
-        quota: 14,
+        quota: 9,
         hasBoss: true,
         bossType: 'ARBALEST_GOLIATH',
         bossName: 'IRON ARBALEST GOLIATH',
-        bossSub: 'Twin 6-Bolt Arbalest Salvos + Dual Laser Harpoons!',
-        bossHp: 215,
+        bossSub: 'Twin Heavy Crossbow Arms + Dual Laser Bolts!',
+        bossHp: 105,
         rim1: 0x00f0ff,
         rim2: 0xa855f7,
-        arrowSpd: 14.4,
-        cdScale: 0.75,
-        maxEn: 5
+        arrowSpd: 12.4,
+        cdScale: 0.88,
+        maxEn: 3
       },
       {
         name: 'MOLTEN LAVA CAUSEWAY',
-        quota: 18,
+        quota: 11,
         hasBoss: true,
         bossType: 'DREAD_BALLISTA',
         bossName: 'INFERNAL DREAD BALLISTA WARLORD',
-        bossSub: '8-Bolt Siege Crossfire + Staggered Magma Harpoons!',
-        bossHp: 295,
+        bossSub: 'Twin Siege Turrets + Center Magma Laser Harpoon!',
+        bossHp: 140,
         rim1: 0xff7b00,
         rim2: 0xff2a55,
-        arrowSpd: 16.2,
-        cdScale: 0.67,
-        maxEn: 6
+        arrowSpd: 13.6,
+        cdScale: 0.80,
+        maxEn: 4
       },
       {
         name: 'ARCANE SHADOW KEEP',
-        quota: 22,
+        quota: 13,
         hasBoss: true,
         bossType: 'LICH_SOVEREIGN',
         bossName: 'HEX-BOW LICH SOVEREIGN',
-        bossSub: '7-Arrow Arcane Starburst + Triple Crossing Lasers!',
-        bossHp: 385,
+        bossSub: '5-Arrow Arcane Starburst + Crossing Laser Volleys!',
+        bossHp: 180,
         rim1: 0xc042ff,
         rim2: 0x00f0ff,
-        arrowSpd: 18.0,
-        cdScale: 0.59,
-        maxEn: 7
+        arrowSpd: 14.8,
+        cdScale: 0.73,
+        maxEn: 4
       },
       {
         name: 'DRAGON SLAYER CITADEL',
-        quota: 26,
+        quota: 15,
         hasBoss: true,
         bossType: 'SLAYER_TITAN',
         bossName: 'DRAGON-SLAYER TITAN CATAPULT',
-        bossSub: '9-Arrow Fortress Curtain + Triple Laser Harpoons!',
-        bossHp: 490,
+        bossSub: '6-Arrow Fortress Barrage + Triple Laser Harpoons!',
+        bossHp: 225,
         rim1: 0xff2a55,
         rim2: 0xfacc15,
-        arrowSpd: 19.8,
-        cdScale: 0.52,
-        maxEn: 8
+        arrowSpd: 16.0,
+        cdScale: 0.67,
+        maxEn: 5
       },
       {
         name: 'INFERNAL THRONE BRIDGE',
-        quota: 30,
+        quota: 17,
         hasBoss: true,
         bossType: 'THRONE_EMPEROR',
         bossName: 'EMPEROR MALAKOR, THRONE OVERLORD',
-        bossSub: 'Double-Wave Bullet Curtain + Triple Laser Harpoons!',
-        bossHp: 610,
+        bossSub: 'Triple-Turret Arrow Curtain + Triple Laser Harpoons!',
+        bossHp: 275,
         rim1: 0x39ff14,
         rim2: 0xff5500,
-        arrowSpd: 21.6,
-        cdScale: 0.46,
-        maxEn: 9
+        arrowSpd: 17.2,
+        cdScale: 0.62,
+        maxEn: 6
       }
     ];
 
@@ -1768,17 +1768,17 @@
       return {
         level: lvl,
         name: extra > 0 ? `NIGHTMARE CITADEL ${extra + 1}` : base.name,
-        quota: base.quota + extra * 5,
+        quota: base.quota + extra * 3,
         hasBoss: true, // EVERY level ends with an epic 3D Boss!
         bossType: base.bossType,
         bossName: extra > 0 ? `NIGHTMARE OVERLORD MK-${extra + 1}` : base.bossName,
         bossSub: base.bossSub,
-        bossHp: base.bossHp + extra * 150,
+        bossHp: base.bossHp + extra * 55,
         rim1: base.rim1,
         rim2: base.rim2,
-        arrowSpd: Math.min(27, base.arrowSpd + extra * 1.5),
-        cdScale: Math.max(0.36, base.cdScale * Math.pow(0.92, extra)),
-        maxEn: Math.min(10, base.maxEn + Math.floor(extra * 0.5))
+        arrowSpd: Math.min(23, base.arrowSpd + extra * 1.1),
+        cdScale: Math.max(0.45, base.cdScale * Math.pow(0.94, extra)),
+        maxEn: Math.min(8, base.maxEn + Math.floor(extra * 0.5))
       };
     }
 
@@ -2725,9 +2725,9 @@
 
       const maxHp =
         type === 'BOSS' ? cfg.bossHp :
-        type === 'BALLISTA' ? (16 + wave * 4) :
-        type === 'CROSSBOW' ? (9 + wave * 3) :
-        (5 + wave * 2);
+        type === 'BALLISTA' ? (9 + Math.floor(wave * 2.0)) :
+        type === 'CROSSBOW' ? (5 + Math.floor(wave * 1.2)) :
+        (3 + Math.floor(wave * 0.8));
 
       // Stop position on the upper battlefield where they stand and shoot arrows at Spark!
       const holdZ =
@@ -3109,14 +3109,13 @@
       const nonEscortEnemies = enemies.filter((e) => !e.isEscort && e.type !== 'BOSS').length;
       const remainingNeeded = Math.max(0, levelQuota - levelKills);
       if (!checkpointGateActive && !activeBoss && remainingNeeded > nonEscortEnemies && enemySpawnTimer <= 0 && enemies.length < cfg.maxEn) {
-        enemySpawnTimer = Math.max(0.48, 1.35 * cfg.cdScale);
+        enemySpawnTimer = Math.max(0.65, 1.65 * cfg.cdScale);
 
         const roll = Math.random();
         const ex = (Math.random() - 0.5) * (BOUNDS_X * 1.65);
 
-        // Aggressive squad mix right from Level 1!
-        const ballistaChance = Math.min(0.42, 0.14 + wave * 0.05);
-        const crossbowChance = Math.min(0.78, 0.36 + wave * 0.08);
+        const ballistaChance = wave === 1 ? 0.12 : Math.min(0.38, 0.14 + wave * 0.05);
+        const crossbowChance = wave === 1 ? 0.28 : Math.min(0.75, 0.34 + wave * 0.08);
 
         if (roll < ballistaChance) {
           spawnEnemy('BALLISTA', ex, -18.5);
@@ -3130,10 +3129,10 @@
         }
       }
 
-      // Ambient bonus power-up drops (rarer so you have to dodge with skill!)
+      // Ambient bonus power-up drops
       powerupSpawnTimer -= dt;
       if (powerupSpawnTimer <= 0) {
-        powerupSpawnTimer = 9.5 + Math.random() * 3.5;
+        powerupSpawnTimer = 6.6 + Math.random() * 2.5;
         const px = (Math.random() - 0.5) * (BOUNDS_X * 1.6);
         spawnPowerup(px, -18);
       }
@@ -3198,37 +3197,37 @@
           }
 
           if (en.type === 'BOSS') {
-            // Boss Tactical Evasive Strafing + Periodic Rapid Side-Dashes + Escort Minion Summons!
-            const enrageMult = en.enraged ? 1.38 : 1.0;
-            const strafeAmp = 4.35 * enrageMult;
-            const strafeSpd = 1.65 * (1 + (wave - 1) * 0.06) * enrageMult;
+            // Smooth Boss Tactical Strafing + Periodic Side-Shift
+            const enrageMult = en.enraged ? 1.25 : 1.0;
+            const strafeAmp = 3.8 * enrageMult;
+            const strafeSpd = 1.35 * (1 + (wave - 1) * 0.05) * enrageMult;
             en.mesh.position.x += Math.cos(t * strafeSpd + en.strafePhase) * strafeAmp * dt;
 
             en.dashTimer -= dt;
             if (en.dashTimer <= 0) {
-              en.dashTimer = en.enraged ? 1.85 : 2.55;
-              // Dash swiftly away from Spark's current X lane so Spark cannot camp in front of the Boss!
+              en.dashTimer = en.enraged ? 2.4 : 3.2;
               const dashDir = en.mesh.position.x > 0 ? -1 : 1;
-              en.dashVx = dashDir * (11.5 * enrageMult);
+              en.dashVx = dashDir * (7.5 * enrageMult);
             }
             if (Math.abs(en.dashVx) > 0.2) {
               en.mesh.position.x += en.dashVx * dt;
-              en.dashVx *= Math.pow(0.04, dt);
+              en.dashVx *= Math.pow(0.05, dt);
             }
             en.mesh.position.x = Math.max(-BOUNDS_X + 1.4, Math.min(BOUNDS_X - 1.4, en.mesh.position.x));
 
-            // Boss summons flanking Escort Minions during the Boss fight to create crossfire!
-            en.escortTimer -= dt;
-            const activeEscorts = enemies.filter((e) => e.isEscort).length;
-            if (en.escortTimer <= 0 && activeEscorts < 2) {
-              en.escortTimer = en.enraged ? 3.8 : 5.0;
-              const flankX = (Math.random() < 0.5 ? -1 : 1) * (BOUNDS_X - 1.2);
-              const escortType = (wave >= 2 && Math.random() < 0.5) ? 'CROSSBOW' : 'ARCHER';
-              spawnEnemy(escortType, flankX, -17.5, true);
+            // Only summon 1 escort minion on Level 4+ so Levels 1-3 are clean 1v1 Boss Showdowns!
+            if (wave >= 4) {
+              en.escortTimer -= dt;
+              const activeEscorts = enemies.filter((e) => e.isEscort).length;
+              if (en.escortTimer <= 0 && activeEscorts < 1) {
+                en.escortTimer = 7.5;
+                const flankX = (Math.random() < 0.5 ? -1 : 1) * (BOUNDS_X - 1.2);
+                spawnEnemy('ARCHER', flankX, -17.5, true);
+              }
             }
           } else {
-            const strafeAmp = en.type === 'BALLISTA' ? 1.55 : 2.35;
-            const strafeSpd = 1.85 * (1 + (wave - 1) * 0.07);
+            const strafeAmp = en.type === 'BALLISTA' ? 1.35 : 2.0;
+            const strafeSpd = 1.65 * (1 + (wave - 1) * 0.06);
             en.mesh.position.x += Math.cos(t * strafeSpd + en.strafePhase) * strafeAmp * dt;
             en.mesh.position.x = Math.max(-BOUNDS_X + 0.8, Math.min(BOUNDS_X - 0.8, en.mesh.position.x));
           }
@@ -3307,9 +3306,9 @@
 
         if (en.fireCooldown <= 0 && en.mesh.position.z >= -12.8) {
           en.recoilZ = 0.42;
-          const arrowSpeed = cfg.arrowSpd * (en.enraged ? 1.16 : 1.0);
-          // Predictive lead-target aiming right from Level 1!
-          const leadFactor = Math.min(0.36, 0.15 + wave * 0.035);
+          const arrowSpeed = cfg.arrowSpd * (en.enraged ? 1.12 : 1.0);
+          // Subtle lead-target aiming at Level 3+
+          const leadFactor = wave >= 3 ? Math.min(0.24, 0.08 + wave * 0.025) : 0;
           const targetX = sparkState.x + sparkState.vx * leadFactor;
           const ldx = targetX - en.mesh.position.x;
           const dist = Math.hypot(ldx, dz) || 1;
@@ -3320,7 +3319,7 @@
           spawnExplosion(en.mesh.position.x + dirX * 0.8, -0.8, en.mesh.position.z + dirZ * 0.8, 0xff4500, 4);
 
           if (en.type === 'ARCHER') {
-            en.fireCooldown = Math.max(0.85, 1.75 * cfg.cdScale);
+            en.fireCooldown = Math.max(1.05, 2.05 * cfg.cdScale);
             spawnArrow(
               en.mesh.position.x,
               en.mesh.position.z + 0.75,
@@ -3329,40 +3328,42 @@
               false,
               0
             );
-            // At Level 2+, Dread-Horn Hunters fire a rapid 2-arrow burst!
-            if (wave >= 2) {
+            // At Level 3+, Dread-Horn Hunters fire a rapid 2-arrow burst!
+            if (wave >= 3) {
               setTimeout(() => {
                 if (gameState === 'PLAYING' && en.hp > 0) {
                   spawnArrow(en.mesh.position.x, en.mesh.position.z + 0.75, dirX * arrowSpeed, dirZ * arrowSpeed, false, 0);
                 }
-              }, 150);
+              }, 165);
             }
           } else if (en.type === 'CROSSBOW') {
-            en.fireCooldown = Math.max(1.05, 1.95 * cfg.cdScale);
-            // Center laser-guided Hellfire Dragon-Piercer Bolt (FIREPROOF!)
+            en.fireCooldown = Math.max(1.25, 2.3 * cfg.cdScale);
+            // Center laser-guided Hellfire Dragon-Piercer Bolt
             spawnArrow(
               en.mesh.position.x,
               en.mesh.position.z + 0.8,
-              dirX * (arrowSpeed * 1.28),
-              dirZ * (arrowSpeed * 1.28),
+              dirX * (arrowSpeed * 1.24),
+              dirZ * (arrowSpeed * 1.24),
               true,
-              0.32
+              0.38
             );
-            // Plus 2 flanking barbed wing-bolts!
-            [-0.22, 0.22].forEach((sp) => {
-              const a = leadAimAngle + sp;
-              spawnArrow(
-                en.mesh.position.x + Math.sin(a) * 0.5,
-                en.mesh.position.z + 0.75,
-                Math.sin(a) * arrowSpeed,
-                Math.cos(a) * arrowSpeed,
-                true,
-                0
-              );
-            });
+            // At Level 3+, Juggernaut Arbalests also fire 2 flanking wing-bolts!
+            if (wave >= 3) {
+              [-0.24, 0.24].forEach((sp) => {
+                const a = leadAimAngle + sp;
+                spawnArrow(
+                  en.mesh.position.x + Math.sin(a) * 0.5,
+                  en.mesh.position.z + 0.75,
+                  Math.sin(a) * arrowSpeed,
+                  Math.cos(a) * arrowSpeed,
+                  true,
+                  0
+                );
+              });
+            }
           } else if (en.type === 'BALLISTA') {
-            en.fireCooldown = Math.max(1.25, 2.25 * cfg.cdScale);
-            const fanAngles = wave >= 3 ? [-0.38, -0.19, 0, 0.19, 0.38] : [-0.24, 0, 0.24];
+            en.fireCooldown = Math.max(1.45, 2.55 * cfg.cdScale);
+            const fanAngles = wave >= 4 ? [-0.36, -0.18, 0, 0.18, 0.36] : [-0.22, 0, 0.22];
             fanAngles.forEach((spread) => {
               const a = leadAimAngle + spread;
               spawnArrow(
@@ -3377,12 +3378,12 @@
           } else if (en.type === 'BOSS') {
             en.volleyCount = (en.volleyCount || 0) + 1;
             const bType = en.bossType || 'DREAD_BALLISTA';
-            const enrageCd = en.enraged ? 0.72 : 1.0;
+            const enrageCd = en.enraged ? 0.8 : 1.0;
 
             if (bType === 'LONGBOW_CAPTAIN') {
-              // Level 1 Boss: 5-Arrow Royal Fan Barrage (7 when Enraged) + Predictive Laser Sniper Arrow EVERY volley!
-              en.fireCooldown = Math.max(0.78, 1.25 * cfg.cdScale * enrageCd);
-              const spreads = en.enraged ? [-0.45, -0.3, -0.15, 0, 0.15, 0.3, 0.45] : [-0.34, -0.17, 0, 0.17, 0.34];
+              // Level 1 Boss: 3-Arrow Royal Fan Spread (4-Arrow when Enraged) + Telegraphed Laser Sniper every 2nd volley!
+              en.fireCooldown = Math.max(1.05, 1.5 * cfg.cdScale * enrageCd);
+              const spreads = en.enraged ? [-0.33, -0.11, 0.11, 0.33] : [-0.26, 0, 0.26];
               spreads.forEach((spread) => {
                 const a = leadAimAngle + spread;
                 spawnArrow(
@@ -3394,19 +3395,21 @@
                   0
                 );
               });
-              spawnArrow(
-                en.mesh.position.x,
-                en.mesh.position.z + 1.0,
-                dirX * (arrowSpeed * 1.3),
-                dirZ * (arrowSpeed * 1.3),
-                true,
-                0.34
-              );
+              if (en.volleyCount % 2 === 0 || en.enraged) {
+                spawnArrow(
+                  en.mesh.position.x,
+                  en.mesh.position.z + 1.0,
+                  dirX * (arrowSpeed * 1.24),
+                  dirZ * (arrowSpeed * 1.24),
+                  true,
+                  0.42
+                );
+              }
             } else if (bType === 'ARBALEST_GOLIATH') {
-              // Level 2 Boss: Twin Left/Right 3-Bolt Arbalest Clusters (6 bolts) + Dual Laser Harpoons!
-              en.fireCooldown = Math.max(0.75, 1.2 * cfg.cdScale * enrageCd);
+              // Level 2 Boss: Twin Left/Right 2-Bolt Arbalest Clusters + Dual Laser Harpoons every 2nd volley!
+              en.fireCooldown = Math.max(1.0, 1.45 * cfg.cdScale * enrageCd);
               [-1.45, 1.45].forEach((armX) => {
-                [-0.2, 0, 0.2].forEach((spread) => {
+                [-0.13, 0.13].forEach((spread) => {
                   const a = leadAimAngle + spread;
                   spawnArrow(
                     en.mesh.position.x + armX,
@@ -3418,20 +3421,22 @@
                   );
                 });
               });
-              [-1.1, 1.1].forEach((lx) => {
-                spawnArrow(
-                  en.mesh.position.x + lx,
-                  en.mesh.position.z + 1.0,
-                  dirX * (arrowSpeed * 1.3),
-                  dirZ * (arrowSpeed * 1.3),
-                  true,
-                  0.32
-                );
-              });
+              if (en.volleyCount % 2 === 1 || en.enraged) {
+                [-1.1, 1.1].forEach((lx) => {
+                  spawnArrow(
+                    en.mesh.position.x + lx,
+                    en.mesh.position.z + 1.0,
+                    dirX * (arrowSpeed * 1.25),
+                    dirZ * (arrowSpeed * 1.25),
+                    true,
+                    0.38
+                  );
+                });
+              }
             } else if (bType === 'LICH_SOVEREIGN') {
-              // Level 4 Boss: 7-Arrow Arcane Starburst Fan + Triple Crossing Laser Arrows!
-              en.fireCooldown = Math.max(0.72, 1.15 * cfg.cdScale * enrageCd);
-              [-0.48, -0.32, -0.16, 0, 0.16, 0.32, 0.48].forEach((spread) => {
+              // Level 4 Boss: 5-Arrow Arcane Starburst Fan + Dual Crossing Laser Arrows!
+              en.fireCooldown = Math.max(0.95, 1.4 * cfg.cdScale * enrageCd);
+              [-0.38, -0.19, 0, 0.19, 0.38].forEach((spread) => {
                 const a = leadAimAngle + spread;
                 spawnArrow(
                   en.mesh.position.x + Math.sin(a) * 0.8,
@@ -3442,22 +3447,22 @@
                   0
                 );
               });
-              [-0.18, 0, 0.18].forEach((lSpread) => {
+              [-0.16, 0.16].forEach((lSpread) => {
                 const la = leadAimAngle + lSpread;
                 spawnArrow(
                   en.mesh.position.x,
                   en.mesh.position.z + 1.0,
-                  Math.sin(la) * (arrowSpeed * 1.32),
-                  Math.cos(la) * (arrowSpeed * 1.32),
+                  Math.sin(la) * (arrowSpeed * 1.26),
+                  Math.cos(la) * (arrowSpeed * 1.26),
                   true,
-                  0.32
+                  0.38
                 );
               });
             } else if (bType === 'SLAYER_TITAN' || bType === 'THRONE_EMPEROR') {
-              // Level 5 & 6+ Bosses: 9-Arrow Triple Turret Barrage + Staggered Second Wave + Triple Laser Harpoons!
-              en.fireCooldown = Math.max(0.68, 1.1 * cfg.cdScale * enrageCd);
+              // Level 5 & 6+ Bosses: 6-Arrow Triple Turret Barrage + Triple Laser Harpoons!
+              en.fireCooldown = Math.max(0.92, 1.35 * cfg.cdScale * enrageCd);
               [-1.55, 0, 1.55].forEach((turretX) => {
-                [-0.22, 0, 0.22].forEach((spread) => {
+                [-0.15, 0.15].forEach((spread) => {
                   const a = leadAimAngle + spread;
                   spawnArrow(
                     en.mesh.position.x + turretX,
@@ -3469,22 +3474,22 @@
                   );
                 });
               });
-              [-0.22, 0, 0.22].forEach((lSpread) => {
+              [-0.2, 0, 0.2].forEach((lSpread) => {
                 const la = leadAimAngle + lSpread;
                 spawnArrow(
                   en.mesh.position.x,
                   en.mesh.position.z + 1.05,
-                  Math.sin(la) * (arrowSpeed * 1.35),
-                  Math.cos(la) * (arrowSpeed * 1.35),
+                  Math.sin(la) * (arrowSpeed * 1.28),
+                  Math.cos(la) * (arrowSpeed * 1.28),
                   true,
-                  0.3
+                  0.36
                 );
               });
             } else {
-              // Level 3 Boss: Infernal Dread Ballista Warlord (Twin 3-Bolt Turrets + Center Magma Laser + Follow-Up Salvo)
-              en.fireCooldown = Math.max(0.74, 1.18 * cfg.cdScale * enrageCd);
+              // Level 3 Boss: Infernal Dread Ballista Warlord (Twin 2-Bolt Turrets + Center Magma Laser)
+              en.fireCooldown = Math.max(0.98, 1.42 * cfg.cdScale * enrageCd);
               [-1.35, 1.35].forEach((turretOffset) => {
-                [-0.22, 0, 0.22].forEach((spread) => {
+                [-0.15, 0.15].forEach((spread) => {
                   const a = leadAimAngle + spread;
                   spawnArrow(
                     en.mesh.position.x + turretOffset,
@@ -3499,10 +3504,10 @@
               spawnArrow(
                 en.mesh.position.x,
                 en.mesh.position.z + 1.0,
-                dirX * (arrowSpeed * 1.32),
-                dirZ * (arrowSpeed * 1.32),
+                dirX * (arrowSpeed * 1.28),
+                dirZ * (arrowSpeed * 1.28),
                 true,
-                0.32
+                0.38
               );
             }
           }
@@ -3563,11 +3568,11 @@
       );
       showCritToast(`🎲 CRIT: "Level ${wave}: ${cfg.name}! Roast ${cfg.quota} enemies to unlock the Checkpoint!"`);
 
-      // Spawn fierce starter vanguard for this level
-      spawnEnemy('ARCHER', -3.2, -16.5);
-      spawnEnemy('ARCHER', 3.2, -16.5);
-      spawnEnemy('CROSSBOW', 0, -17.5);
-      if (wave >= 2) spawnEnemy('BALLISTA', -1.8, -18.5);
+      // Spawn starter vanguard for this level
+      spawnEnemy('ARCHER', -2.8, -16.5);
+      spawnEnemy('ARCHER', 2.8, -16.5);
+      if (wave >= 2) spawnEnemy('CROSSBOW', 0, -18.0);
+      spawnPowerup(-2.2, -13.0, 'D20');
     }
 
     function triggerGameOver() {
@@ -3765,7 +3770,7 @@
                 break;
               }
               if (en.type === 'BOSS') {
-                en.bossHitCooldown = 0.075;
+                en.bossHitCooldown = 0.055;
               }
 
               const dmg = fb.inferno ? 2 : 1;
@@ -3841,8 +3846,8 @@
                   spawnPowerup(en.mesh.position.x - 1.2, en.mesh.position.z, 'D20');
                   spawnPowerup(en.mesh.position.x, en.mesh.position.z, 'SHIELD');
                   spawnPowerup(en.mesh.position.x + 1.2, en.mesh.position.z, 'PEPPER');
-                } else if (en.type === 'BALLISTA' || Math.random() < 0.28) {
-                  spawnPowerup(en.mesh.position.x, en.mesh.position.z, Math.random() < 0.45 ? null : 'GEM');
+                } else if (en.type === 'BALLISTA' || Math.random() < 0.42) {
+                  spawnPowerup(en.mesh.position.x, en.mesh.position.z, Math.random() < 0.55 ? null : 'GEM');
                 }
 
                 scene.remove(en.mesh);
@@ -3853,13 +3858,12 @@
             }
           }
 
-          // If Inferno Breath is active, fireballs melt regular wooden arrows, but Elite/Boss red-hot harpoons are FIREPROOF!
+          // If Inferno Breath is active, fireballs melt incoming arrows!
           if (!removed && fb.inferno) {
             for (let a = arrows.length - 1; a >= 0; a--) {
               const ar = arrows[a];
-              if (ar.isElite) continue; // Elite & Boss Harpoon bolts cannot be melted!
               const dist = Math.hypot(fb.mesh.position.x - ar.mesh.position.x, fb.mesh.position.z - ar.mesh.position.z);
-              if (dist < 0.95) {
+              if (dist < 1.0) {
                 spawnExplosion(ar.mesh.position.x, -0.8, ar.mesh.position.z, 0xff5500, 9);
                 score += 75;
                 showFloatingPopup(ar.mesh.position.x, ar.mesh.position.z, '🌶️ MELTED +75!', '#ff9f1c');
